@@ -4,6 +4,7 @@
  <meta charset="UTF-8">
  <meta name="viewport" content="width=device-width, initial-scale=1.0">
  <title id="pageTitle">順送プレス加工実績入力</title>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
  <style>
  :root {
  --bg-color: #0d0e12;
@@ -29,417 +30,132 @@
  -webkit-font-smoothing: antialiased;
  }
   
- /* ★画面いっぱいの警告オーバーレイ用スタイル */
  #globalWarningOverlay {
  position: fixed;
- top: 0;
- left: 0;
- width: 100vw;
- height: 100vh;
+ top: 0; left: 0; width: 100vw; height: 100vh;
  background-color: rgba(220, 38, 38, 0.98);
- z-index: 100000;
- display: none;
- flex-direction: column;
- justify-content: center;
- align-items: center;
- text-align: center;
- padding: 24px;
- color: #ffffff;
- box-sizing: border-box;
+ z-index: 100000; display: none; flex-direction: column;
+ justify-content: center; align-items: center; text-align: center;
+ padding: 24px; color: #ffffff; box-sizing: border-box;
  }
- #globalWarningOverlay h1 {
- font-size: 2.5rem;
- margin-top: 0;
- margin-bottom: 20px;
- font-weight: 800;
- }
- #globalWarningOverlay p {
- font-size: 1.3rem;
- line-height: 1.6;
- margin-bottom: 35px;
- max-width: 600px;
- }
+ #globalWarningOverlay h1 { font-size: 2.5rem; margin-top: 0; margin-bottom: 20px; font-weight: 800; }
+ #globalWarningOverlay p { font-size: 1.3rem; line-height: 1.6; margin-bottom: 35px; max-width: 600px; }
  .warning-close-btn {
- padding: 16px 48px;
- background: #ffffff;
- color: #dc2626;
- border: none;
- border-radius: 50px;
- font-weight: 800;
- font-size: 1.2rem;
- cursor: pointer;
- box-shadow: 0 10px 20px rgba(0,0,0,0.3);
- transition: transform 0.1s ease;
+ padding: 16px 48px; background: #ffffff; color: #dc2626; border: none;
+ border-radius: 50px; font-weight: 800; font-size: 1.2rem; cursor: pointer;
+ box-shadow: 0 10px 20px rgba(0,0,0,0.3); transition: transform 0.1s ease;
  }
- .warning-close-btn:active {
- transform: scale(0.96);
- }
+ .warning-close-btn:active { transform: scale(0.96); }
   
- /* --- 国旗ボタンバー --- */
  .lang-bar {
- width: 100%;
- max-width: 500px;
- display: flex;
- justify-content: center;
- gap: 10px;
- margin-bottom: 20px;
+ width: 100%; max-width: 500px; display: flex; justify-content: center;
+ gap: 10px; margin-bottom: 20px;
  }
-   
-.lang-btn {
- padding: 14px 10px;
- background-color: var(--card-bg);
- border: 2px solid var(--border-color);
- border-radius: 12px;
- color: #94a3b8;
- font-size: 1.1rem;
- font-weight: 700;
- cursor: pointer;
- display: flex;
- align-items: center;
- justify-content: center;
- gap: 8px;
- transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
- flex: 1;
- box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+ .lang-btn {
+ padding: 14px 10px; background-color: var(--card-bg); border: 2px solid var(--border-color);
+ border-radius: 12px; color: #94a3b8; font-size: 1.1rem; font-weight: 700; cursor: pointer;
+ display: flex; align-items: center; justify-content: center; gap: 8px;
+ transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); flex: 1; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
  }
-   
-.lang-btn.active {
- background-color: #1e293b;
- color: #ffffff;
- border-color: var(--accent-color);
- box-shadow: 0 0 16px var(--accent-glow);
- transform: translateY(-2px);
+ .lang-btn.active {
+ background-color: #1e293b; color: #ffffff; border-color: var(--accent-color);
+ box-shadow: 0 0 16px var(--accent-glow); transform: translateY(-2px);
  }
   
- /* --- メインコンテナ --- */
  .container {
- width: 100%;
- max-width: 500px;
- background: var(--card-bg);
- padding: 24px;
- border-radius: 16px;
- border: 1px solid var(--border-color);
- box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
- box-sizing: border-box;
- margin-bottom: 25px;
+ width: 100%; max-width: 500px; background: var(--card-bg); padding: 24px;
+ border-radius: 16px; border: 1px solid var(--border-color);
+ box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5); box-sizing: border-box; margin-bottom: 25px;
  }
   
- h2 {
- text-align: center;
- color: #ffffff;
- margin-top: 0;
- margin-bottom: 24px;
- font-size: 1.5rem;
- letter-spacing: 0.05em;
- position: relative;
- }
- h2::after {
- content: '';
- display: block;
- width: 40px;
- height: 4px;
- background: var(--accent-color);
- margin: 8px auto 0;
- border-radius: 2px;
- }
-  
- .form-group {
- margin-bottom: 20px;
- }
-  
- label.field-label {
- display: block;
- margin-bottom: 8px;
- font-size: 0.95rem;
- color: #94a3b8;
- font-weight: 600;
- }
-  
+ h2 { text-align: center; color: #ffffff; margin-top: 0; margin-bottom: 24px; font-size: 1.5rem; letter-spacing: 0.05em; position: relative; }
+ h2::after { content: ''; display: block; width: 40px; height: 4px; background: var(--accent-color); margin: 8px auto 0; border-radius: 2px; }
+ .form-group { margin-bottom: 20px; }
+ label.field-label { display: block; margin-bottom: 8px; font-size: 0.95rem; color: #94a3b8; font-weight: 600; }
  input[type="text"], input[type="number"], select {
- width: 100%;
- padding: 14px 16px;
- box-sizing: border-box;
- background-color: var(--input-bg);
- border: 2px solid var(--border-color);
- border-radius: 10px;
- color: #ffffff;
- font-size: 1.15rem;
- font-weight: 500;
- transition: all 0.2s ease;
+ width: 100%; padding: 14px 16px; box-sizing: border-box; background-color: var(--input-bg);
+ border: 2px solid var(--border-color); border-radius: 10px; color: #ffffff;
+ font-size: 1.15rem; font-weight: 500; transition: all 0.2s ease;
  }
-  
- input:focus, select:focus {
- outline: none;
- border-color: var(--accent-color);
- box-shadow: 0 0 0 4px var(--accent-glow);
- background-color: #242837;
+ input:focus, select:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 0 4px var(--accent-glow); background-color: #242837; }
+ 
+ .inline-input-group { display: flex; gap: 10px; }
+ .inline-input-group input { flex: 1; }
+ 
+ /* ★追加: カメラボタンスタイル */
+ .scan-btn {
+ padding: 0 16px; background-color: #f59e0b; border: none; border-radius: 10px;
+ color: white; font-size: 1.2rem; cursor: pointer; transition: background 0.2s;
  }
-  
- .inline-input-group {
- display: flex;
- gap: 10px;
- }
- .inline-input-group input {
- flex: 1;
- }
+ .scan-btn:hover { background-color: #d97706; }
+ 
  .confirm-btn {
- padding: 0 24px;
- background-color: #3b82f6;
- border: none;
- border-radius: 10px;
- color: white;
- font-size: 1.1rem;
- font-weight: 700;
- cursor: pointer;
- white-space: nowrap;
- transition: background 0.2s;
- box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+ padding: 0 24px; background-color: #3b82f6; border: none; border-radius: 10px;
+ color: white; font-size: 1.1rem; font-weight: 700; cursor: pointer; white-space: nowrap;
+ transition: background 0.2s; box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
  }
- .confirm-btn:hover {
- background-color: #2563eb;
- }
+ .confirm-btn:hover { background-color: #2563eb; }
   
- /* --- 不良事例 警告表示ボックス --- */
  .defect-warning-box {
- margin-top: 14px;
- background: rgba(251, 146, 60, 0.08);
- border: 1px dashed #fb923c;
- border-radius: 10px;
- padding: 12px 14px;
- font-size: 0.95rem;
- color: #ffedd5;
- display: none;
- line-height: 1.4;
+ margin-top: 14px; background: rgba(251, 146, 60, 0.08); border: 1px dashed #fb923c;
+ border-radius: 10px; padding: 12px 14px; font-size: 0.95rem; color: #ffedd5; display: none; line-height: 1.4;
  }
- .defect-warning-box b {
- color: #fb923c;
- display: block;
- margin-bottom: 4px;
- font-size: 1rem;
- }
+ .defect-warning-box b { color: #fb923c; display: block; margin-bottom: 4px; font-size: 1rem; }
   
- /* --- OK/NG 判定ボックス --- */
  .judge-box {
- padding: 14px;
- border-radius: 10px;
- text-align: center;
- font-weight: 800;
- font-size: 1.6rem;
- letter-spacing: 0.05em;
- margin-top: 12px;
- display: none;
- box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
- animation: pulse 1.5s infinite alternate;
+ padding: 14px; border-radius: 10px; text-align: center; font-weight: 800; font-size: 1.6rem;
+ letter-spacing: 0.05em; margin-top: 12px; display: none; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); animation: pulse 1.5s infinite alternate;
  }
- .judge-ok { 
-background-color: rgba(16, 185, 129, 0.15);
- color: #34d399; 
-border: 2px solid #10b981;
- }
- .judge-ng { 
-background-color: rgba(239, 68, 68, 0.15);
- color: #f87171; 
-border: 2px solid #ef4444;
- }
+ .judge-ok { background-color: rgba(16, 185, 129, 0.15); color: #34d399; border: 2px solid #10b981; }
+ .judge-ng { background-color: rgba(239, 68, 68, 0.15); color: #f87171; border: 2px solid #ef4444; }
   
  .submit-btn {
- width: 100%;
- padding: 16px;
- background: linear-gradient(135deg, #00adb5, #008087);
- border: none;
- border-radius: 12px;
- color: white;
- font-size: 1.2rem;
- font-weight: 700;
- cursor: pointer;
- margin-top: 20px;
- transition: all 0.2s ease;
- box-shadow: 0 4px 12px rgba(0, 173, 181, 0.3);
+ width: 100%; padding: 16px; background: linear-gradient(135deg, #00adb5, #008087); border: none;
+ border-radius: 12px; color: white; font-size: 1.2rem; font-weight: 700; cursor: pointer; margin-top: 20px; transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(0, 173, 181, 0.3);
  }
- .submit-btn:active {
- transform: scale(0.98);
- }
- .submit-btn:disabled {
- background: #334155 !important;
- color: #64748b;
- cursor: not-allowed;
- box-shadow: none;
- }
+ .submit-btn:active { transform: scale(0.98); }
+ .submit-btn:disabled { background: #334155 !important; color: #64748b; cursor: not-allowed; box-shadow: none; }
   
- #message {
- margin-top: 18px;
- padding: 14px;
- border-radius: 10px;
- text-align: center;
- font-weight: 700;
- font-size: 1rem;
- display: none;
- }
- .success { background-color: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #10b981;
- }
+ #message { margin-top: 18px; padding: 14px; border-radius: 10px; text-align: center; font-weight: 700; font-size: 1rem; display: none; }
+ .success { background-color: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #10b981; }
  .error { background-color: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; }
- .hidden { display: none !important;
- }
-   
-.target-val {
- color: #fb923c;
- font-size: 0.85rem;
- margin-left: 8px;
- font-weight: normal;
- }
+ .hidden { display: none !important; }
+ .target-val { color: #fb923c; font-size: 0.85rem; margin-left: 8px; font-weight: normal; }
   
- /* --- 履歴コンテナ --- */
- .history-container {
- width: 100%;
- max-width: 500px;
- box-sizing: border-box;
- }
- .history-title {
- font-size: 1.2rem;
- color: #ffffff;
- margin-bottom: 16px;
- font-weight: 700;
- border-left: 4px solid var(--accent-color);
- padding-left: 10px;
- letter-spacing: 0.03em;
- }
- .history-list {
- display: flex;
- flex-direction: column;
- gap: 16px;
- }
- .history-card {
- background: var(--card-bg);
- border: 1px solid var(--border-color);
- border-radius: 14px;
- padding: 18px;
- box-shadow: 0 4px 12px rgba(0,0,0,0.2);
- }
- /* ★未完了履歴があるカードの強調スタイル */
- .history-card.is-incomplete {
- border: 2px solid #ef4444;
- background: rgba(239, 68, 68, 0.03);
- box-shadow: 0 0 10px rgba(239, 68, 68, 0.2);
- }
- .card-top {
- border-bottom: 1px solid var(--border-color);
- padding-bottom: 10px;
- margin-bottom: 12px;
- }
- .card-coil-title {
- font-size: 1.2rem;
- font-weight: 800;
- color: #ffffff;
- }
- .card-meta-info {
- font-size: 0.9rem;
- color: #94a3b8;
- margin-top: 6px;
- display: flex;
- gap: 16px;
- }
- .card-meta-info span b {
- color: var(--accent-color);
- }
-   
-.timeline-container {
- display: flex;
- flex-direction: column;
- gap: 8px;
- }
- .timeline-row {
- background: #1e2230;
- border-radius: 8px;
- padding: 10px 14px;
- display: flex;
- justify-content: space-between;
- align-items: center;
- font-size: 0.95rem;
- }
- .stage-label {
- font-weight: 800;
- width: 48px;
- padding: 3px 0;
- border-radius: 6px;
- text-align: center;
- font-size: 0.8rem;
- }
- .lbl-始 { background-color: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4);
- }
- .lbl-中 { background-color: rgba(234, 179, 8, 0.15); color: #fde047; border: 1px solid rgba(234, 179, 8, 0.4);
- }
- .lbl-終 { background-color: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4);
- }
-   
-.stage-details {
- flex: 1;
- margin-left: 14px;
- display: flex;
- flex-wrap: wrap;
- gap: 8px;
- color: #cbd5e1;
- }
- .stage-time {
- font-size: 0.8rem;
- color: #64748b;
- text-align: right;
- white-space: nowrap;
- }
-   
-.qty-display-box {
- margin-top: 12px;
- background: rgba(0, 173, 181, 0.08);
- border: 1px dashed rgba(0, 173, 181, 0.5);
- border-radius: 8px;
- padding: 10px 14px;
- font-size: 1.05rem;
- font-weight: 700;
- color: #ffffff;
- display: flex;
- align-items: center;
- gap: 8px;
- }
+ .history-container { width: 100%; max-width: 500px; box-sizing: border-box; }
+ .history-title { font-size: 1.2rem; color: #ffffff; margin-bottom: 16px; font-weight: 700; border-left: 4px solid var(--accent-color); padding-left: 10px; letter-spacing: 0.03em; }
+ .history-list { display: flex; flex-direction: column; gap: 16px; }
+ .history-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 14px; padding: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+ .history-card.is-incomplete { border: 2px solid #ef4444; background: rgba(239, 68, 68, 0.03); box-shadow: 0 0 10px rgba(239, 68, 68, 0.2); }
+ .card-top { border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 12px; }
+ .card-coil-title { font-size: 1.2rem; font-weight: 800; color: #ffffff; }
+ .card-meta-info { font-size: 0.9rem; color: #94a3b8; margin-top: 6px; display: flex; gap: 16px; }
+ .card-meta-info span b { color: var(--accent-color); }
+ .timeline-container { display: flex; flex-direction: column; gap: 8px; }
+ .timeline-row { background: #1e2230; border-radius: 8px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; }
+ .stage-label { font-weight: 800; width: 48px; padding: 3px 0; border-radius: 6px; text-align: center; font-size: 0.8rem; }
+ .lbl-始 { background-color: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+ .lbl-中 { background-color: rgba(234, 179, 8, 0.15); color: #fde047; border: 1px solid rgba(234, 179, 8, 0.4); }
+ .lbl-終 { background-color: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+ .stage-details { flex: 1; margin-left: 14px; display: flex; flex-wrap: wrap; gap: 8px; color: #cbd5e1; }
+ .stage-time { font-size: 0.8rem; color: #64748b; text-align: right; white-space: nowrap; }
+ .qty-display-box { margin-top: 12px; background: rgba(0, 173, 181, 0.08); border: 1px dashed rgba(0, 173, 181, 0.5); border-radius: 8px; padding: 10px 14px; font-size: 1.05rem; font-weight: 700; color: #ffffff; display: flex; align-items: center; gap: 8px; }
   
- .overlay {
- position: fixed;
- top: 0;
- left: 0;
- width: 100vw;
- height: 100vh;
- background-color: rgba(13, 14, 18, 0.9);
- z-index: 9999;
- display: flex;
- flex-direction: column;
- justify-content: center;
- align-items: center;
- opacity: 0;
- pointer-events: none;
- transition: opacity 0.25s ease;
- }
- .overlay.show {
- opacity: 1;
- pointer-events: auto;
- }
- .spinner {
- width: 56px;
- height: 56px;
- border: 5px solid #1f222f;
- border-top: 5px solid var(--accent-color);
- border-radius: 50%;
- animation: spin 0.8s linear infinite;
- }
- .overlay-text {
- margin-top: 18px;
- color: var(--accent-color);
- font-weight: 700;
- font-size: 1.2rem;
- letter-spacing: 0.05em;
- }
- @keyframes spin {
- 0% { transform: rotate(0deg); }
- 100% { transform: rotate(360deg);
- }
- }
+ .overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(13, 14, 18, 0.9); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.25s ease; }
+ .overlay.show { opacity: 1; pointer-events: auto; }
+ .spinner { width: 56px; height: 56px; border: 5px solid #1f222f; border-top: 5px solid var(--accent-color); border-radius: 50%; animation: spin 0.8s linear infinite; }
+ .overlay-text { margin-top: 18px; color: var(--accent-color); font-weight: 700; font-size: 1.2rem; letter-spacing: 0.05em; }
+ @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+ /* ★追加: ネイティブカメラスキャナー用UI */
+ #scannerOverlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 99999; display: none; flex-direction: column; }
+ #scannerHeader { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; background: #111; color: white; border-bottom: 2px solid #333; }
+ #scannerHeader button { background: #ef4444; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; font-size: 1.1rem; cursor: pointer; }
+ #preview-container { flex: 1; position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center;}
+ #preview-container video { width: 100%; height: 100%; object-fit: cover; }
+ #scan-line { position: absolute; top: 50%; left: 10%; width: 80%; height: 2px; background: #ff375f; box-shadow: 0 0 15px #ff375f; z-index: 10; animation: scanMotion 1.5s ease-in-out infinite alternate; }
+ @keyframes scanMotion { 0% { transform: translateY(-70px); } 100% { transform: translateY(70px); } }
+ #scanStatus { padding: 20px; text-align: center; background: #111; color: #f59e0b; font-weight: bold; font-size: 1.1rem; }
  </style>
 </head>
 <body>
@@ -453,6 +169,18 @@ border: 2px solid #ef4444;
 <div id="loadingOverlay" class="overlay">
  <div class="spinner"></div>
  <div id="overlayText" class="overlay-text">処理中...</div>
+</div>
+
+<div id="scannerOverlay">
+  <div id="scannerHeader">
+    <h3 style="margin:0; color:#58a6ff; font-size:1.1rem;">枠内にバーコードを写してください</h3>
+    <button onclick="stopBarcodeScanning()">閉じる</button>
+  </div>
+  <div id="preview-container">
+    <div id="scan-line"></div>
+    <div id="preview"></div>
+  </div>
+  <div id="scanStatus">カメラを起動中...</div>
 </div>
   
 <div class="lang-bar">
@@ -485,8 +213,8 @@ border: 2px solid #ef4444;
  <div class="form-group">
  <label class="field-label" id="lblCoilNo" for="coilNo">コイルNo</label>
  <div class="inline-input-group">
- <input type="text" id="coilNo" list="coilHistoryOptions" required onkeydown="if(event.key === 'Enter'){ onCoilDetermined(); return false;
- }">
+ <input type="text" id="coilNo" list="coilHistoryOptions" required onkeydown="if(event.key === 'Enter'){ onCoilDetermined(); return false; }">
+ <button type="button" class="scan-btn" id="btnScan" onclick="startBarcodeScanning()" title="カメラでバーコードを読み取る">📷</button>
  <button type="button" class="confirm-btn" id="btnConfirm" onclick="onCoilDetermined()">確定</button>
  </div>
  <datalist id="coilHistoryOptions"></datalist>
@@ -536,7 +264,7 @@ border: 2px solid #ef4444;
  worker: "作業者",
  machine: "使用する機械",
  coilNo: "コイルNo",
- coilPlaceholder: "入力・スキャン または一覧から選択",
+ coilPlaceholder: "手入力・カメラ または一覧から選択",
  confirm: "確定",
  productName: "該当品名",
  measured: "実寸計測値 (mm)",
@@ -560,7 +288,8 @@ border: 2px solid #ef4444;
  defectTitle: "⚠️ 過去の不良事例・注意点",
  warnTitle: "⚠️ 未完了の作業があります",
  warnBody: "前日以前の履歴で「終」まで完了していないデータがあります。<br>まず履歴を確認してください。",
- warnClose: "確認しました"
+ warnClose: "確認しました",
+ scanMsg: "スキャン中... 赤い線をバーコードに合わせてください"
  },
  id: {
  title: "Input Hasil Produksi Press",
@@ -569,7 +298,7 @@ border: 2px solid #ef4444;
  worker: "Operator",
  machine: "Mesin yang digunakan",
  coilNo: "No Coil",
- coilPlaceholder: "Input/Scan atau pilih dari daftar",
+ coilPlaceholder: "Input manual/Kamera atau pilih",
  confirm: "Konfirmasi",
  productName: "Nama Produk",
  measured: "Nilai Pengukuran Aktual (mm)",
@@ -593,7 +322,8 @@ border: 2px solid #ef4444;
  defectTitle: "⚠️ Riwayat Cacat / Poin Perhatian",
  warnTitle: "⚠️ Ada Pekerjaan Belum Selesai",
  warnBody: "Ada data dalam riwayat sebelum hari ini yang belum selesai hingga tahap [Akhir].<br>Silakan periksa riwayat terlebih dahulu.",
- warnClose: "Saya mengerti"
+ warnClose: "Saya mengerti",
+ scanMsg: "Memindai... Arahkan garis merah ke barcode"
  },
  pt: {
  title: "Entrada de Resultados de Prensa",
@@ -602,7 +332,7 @@ border: 2px solid #ef4444;
  worker: "Operador",
  machine: "Máquina Utilizada",
  coilNo: "Nº da Bobina (Coil No)",
- coilPlaceholder: "Digite/Escaneie ou selecione da lista",
+ coilPlaceholder: "Manual/Câmera ou selecione da lista",
  confirm: "Confirmar",
  productName: "Nome do Produto",
  measured: "Valor Medido Real (mm)",
@@ -626,7 +356,8 @@ border: 2px solid #ef4444;
  defectTitle: "⚠️ Histórico de Defeitos / Pontos de Atenção",
  warnTitle: "⚠️ Existe Trabalho Inacabado",
  warnBody: "Existem dados no histórico de dias anteriores que não foram concluídos até o [Fim]. Por favor, verifique o histórico primeiro.",
- warnClose: "Entendido"
+ warnClose: "Entendido",
+ scanMsg: "Escaneando... Alinhe a linha vermelha com o código de barras"
  }
  };
   
@@ -656,6 +387,68 @@ border: 2px solid #ef4444;
      console.error('API Error:', error);
      throw error;
    }
+ }
+
+ // ==========================================
+ // バーコードスキャナー制御ロジック (QuaggaJS)
+ // ==========================================
+ let barcodeMatchCount = 0;
+ let lastBarcode = "";
+
+ function startBarcodeScanning() {
+   const scannerOverlay = document.getElementById('scannerOverlay');
+   const scanStatus = document.getElementById('scanStatus');
+   scannerOverlay.style.display = 'flex';
+   scanStatus.innerText = LANG_DATA[currentLang].scanMsg || "スキャン中...";
+   
+   barcodeMatchCount = 0;
+   lastBarcode = "";
+
+   Quagga.init({
+     inputStream: {
+       name: "Live",
+       type: "LiveStream",
+       target: document.querySelector('#preview'),
+       constraints: {
+         facingMode: "environment" // 背面カメラを優先
+       }
+     },
+     decoder: {
+       readers: ["code_128_reader", "ean_reader", "code_39_reader"] // よく使われるバーコード規格
+     }
+   }, function(err) {
+     if (err) {
+       console.error(err);
+       scanStatus.innerText = "カメラの起動に失敗しました。権限を確認してください。";
+       return;
+     }
+     Quagga.start();
+   });
+
+   Quagga.onDetected(function(data) {
+     const code = data.codeResult.code;
+     // 誤認識を防ぐため、同じコードを2回連続で認識したら確定とする
+     if (code === lastBarcode) {
+       barcodeMatchCount++;
+     } else {
+       lastBarcode = code;
+       barcodeMatchCount = 0;
+     }
+
+     if (barcodeMatchCount >= 2) {
+       // LA700Wのスクリプト同様に大文字化の強制処理
+       document.getElementById('coilNo').value = code.toUpperCase(); 
+       stopBarcodeScanning();
+       onCoilDetermined(); // 確定ボタンを自動で押す
+     }
+   });
+ }
+
+ function stopBarcodeScanning() {
+   try {
+     Quagga.stop();
+   } catch(e) {}
+   document.getElementById('scannerOverlay').style.display = 'none';
  }
 
  // ==========================================
