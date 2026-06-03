@@ -155,22 +155,28 @@
  // ==========================================
  // API通信の心臓部（fetch API）
  // ==========================================
- async function callGAS(action, payload = {}) {
-   try {
-     const response = await fetch(GAS_API_URL, {
-       method: 'POST',
-       headers: { 'Content-Type': 'text/plain' }, // CORS回避の鉄則
-       body: JSON.stringify({ action: action, ...payload })
-     });
-     const data = await response.json();
-     if (data.error) throw new Error(data.error);
-     return data;
-   } catch (error) {
-     console.error('API Error:', error);
-     throw error;
-   }
- }
+// あなたの正しいGASのURLを設定済みです
+  const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyKuZhZb_aOg7Iyb2YTYHOwOMKognF57OpGuzmPJxNfo2dpa-F81j-iI5yuRVDqaidvRg/exec";
 
+  async function callGAS(action, payload = {}) {
+    try {
+      const response = await fetch(GAS_API_URL, {
+        method: 'POST',
+        headers: {
+          // ★ここを text/plain にするのが、ブラウザのブロックを確実に回避する最大のコツです
+          'Content-Type': 'text/plain' 
+        },
+        body: JSON.stringify({ action: action, ...payload })
+      });
+      
+      const data = await response.json();
+      if (data.error) throw new Error(data.error);
+      return data;
+    } catch (error) {
+      console.error('API Error:', error);
+      throw error;
+    }
+  }
  window.onload = async () => {
    showOverlay("システム初期化中...");
    try {
