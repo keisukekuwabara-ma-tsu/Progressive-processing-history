@@ -1,358 +1,1090 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>順送加工履歴システム</title>
-  <style>
-    /* 工場内でも視認性の高いダークモード・デザイン */
-    body {
-      background-color: #0d1117;
-      color: #c9d1d9;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-      margin: 0;
-      padding: 15px;
-    }
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-      background: #161b22;
-      border: 1px solid #30363d;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-    }
-    h1 {
-      color: #58a6ff;
-      font-size: 22px;
-      text-align: center;
-      margin-top: 0;
-      border-bottom: 2px solid #30363d;
-      padding-bottom: 12px;
-    }
-    .form-group {
-      margin-bottom: 20px;
-    }
-    label {
-      display: block;
-      margin-bottom: 8px;
-      color: #8b949e;
-      font-weight: bold;
-      font-size: 14px;
-    }
-    select, input, button {
-      width: 100%;
-      padding: 12px;
-      background-color: #21262d;
-      border: 1px solid #30363d;
-      color: #c9d1d9;
-      border-radius: 8px;
-      box-sizing: border-box;
-      font-size: 16px;
-    }
-    select:focus, input:focus {
-      outline: none;
-      border-color: #58a6ff;
-      box-shadow: 0 0 0 3px rgba(88,166,255,0.3);
-    }
-    button {
-      background-color: #238636;
-      color: #ffffff;
-      font-weight: bold;
-      cursor: pointer;
-      border: none;
-      transition: background-color 0.2s;
-    }
-    button:hover {
-      background-color: #2ea043;
-    }
-    .camera-box {
-      text-align: center;
-      background: #000;
-      border: 1px solid #30363d;
-      border-radius: 8px;
-      padding: 8px;
-      margin-bottom: 10px;
-    }
-    video {
-      width: 100%;
-      max-height: 250px;
-      border-radius: 6px;
-      background-color: #1f242c;
-      object-fit: cover;
-    }
-    .btn-secondary {
-      background-color: #21262d;
-      border: 1px solid #30363d;
-      color: #58a6ff;
-      margin-top: 8px;
-    }
-    .btn-secondary:hover {
-      background-color: #30363d;
-    }
-    .history-section {
-      margin-top: 30px;
-      border-top: 1px solid #30363d;
-      padding-top: 15px;
-    }
-    .history-section h2 {
-      font-size: 16px;
-      color: #8b949e;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-      font-size: 14px;
-    }
-    th, td {
-      border: 1px solid #30363d;
-      padding: 10px;
-      text-align: left;
-    }
-    th {
-      background-color: #1f242c;
-      color: #58a6ff;
-    }
-    tr:nth-child(even) {
-      background-color: #0d1117;
-    }
-    .status-msg {
-      text-align: center;
-      color: #ff7b72;
-      font-weight: bold;
-      margin: 10px 0;
-      font-size: 14px;
-    }
-  </style>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title id="pageTitle">順送プレス加工実績入力</title>
+ <style>
+ :root {
+ --bg-color: #0d0e12;
+ --card-bg: #161820;
+ --text-color: #e2e8f0;
+ --accent-color: #00adb5;
+ --accent-glow: rgba(0, 173, 181, 0.4);
+ --border-color: #262936;
+ --input-bg: #1f222f;
+ --success-color: #10b981;
+ --error-color: #ef4444;
+ }
+  
+ body {
+ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+ background-color: var(--bg-color);
+ color: var(--text-color);
+ margin: 0;
+ padding: 16px;
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ -webkit-font-smoothing: antialiased;
+ }
+  
+ /* ★画面いっぱいの警告オーバーレイ用スタイル */
+ #globalWarningOverlay {
+ position: fixed;
+ top: 0;
+ left: 0;
+ width: 100vw;
+ height: 100vh;
+ background-color: rgba(220, 38, 38, 0.98);
+ z-index: 100000;
+ display: none;
+ flex-direction: column;
+ justify-content: center;
+ align-items: center;
+ text-align: center;
+ padding: 24px;
+ color: #ffffff;
+ box-sizing: border-box;
+ }
+ #globalWarningOverlay h1 {
+ font-size: 2.5rem;
+ margin-top: 0;
+ margin-bottom: 20px;
+ font-weight: 800;
+ }
+ #globalWarningOverlay p {
+ font-size: 1.3rem;
+ line-height: 1.6;
+ margin-bottom: 35px;
+ max-width: 600px;
+ }
+ .warning-close-btn {
+ padding: 16px 48px;
+ background: #ffffff;
+ color: #dc2626;
+ border: none;
+ border-radius: 50px;
+ font-weight: 800;
+ font-size: 1.2rem;
+ cursor: pointer;
+ box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+ transition: transform 0.1s ease;
+ }
+ .warning-close-btn:active {
+ transform: scale(0.96);
+ }
+  
+ /* --- 国旗ボタンバー --- */
+ .lang-bar {
+ width: 100%;
+ max-width: 500px;
+ display: flex;
+ justify-content: center;
+ gap: 10px;
+ margin-bottom: 20px;
+ }
+   
+.lang-btn {
+ padding: 14px 10px;
+ background-color: var(--card-bg);
+ border: 2px solid var(--border-color);
+ border-radius: 12px;
+ color: #94a3b8;
+ font-size: 1.1rem;
+ font-weight: 700;
+ cursor: pointer;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ gap: 8px;
+ transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+ flex: 1;
+ box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+ }
+   
+.lang-btn.active {
+ background-color: #1e293b;
+ color: #ffffff;
+ border-color: var(--accent-color);
+ box-shadow: 0 0 16px var(--accent-glow);
+ transform: translateY(-2px);
+ }
+  
+ /* --- メインコンテナ --- */
+ .container {
+ width: 100%;
+ max-width: 500px;
+ background: var(--card-bg);
+ padding: 24px;
+ border-radius: 16px;
+ border: 1px solid var(--border-color);
+ box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+ box-sizing: border-box;
+ margin-bottom: 25px;
+ }
+  
+ h2 {
+ text-align: center;
+ color: #ffffff;
+ margin-top: 0;
+ margin-bottom: 24px;
+ font-size: 1.5rem;
+ letter-spacing: 0.05em;
+ position: relative;
+ }
+ h2::after {
+ content: '';
+ display: block;
+ width: 40px;
+ height: 4px;
+ background: var(--accent-color);
+ margin: 8px auto 0;
+ border-radius: 2px;
+ }
+  
+ .form-group {
+ margin-bottom: 20px;
+ }
+  
+ label.field-label {
+ display: block;
+ margin-bottom: 8px;
+ font-size: 0.95rem;
+ color: #94a3b8;
+ font-weight: 600;
+ }
+  
+ input[type="text"], input[type="number"], select {
+ width: 100%;
+ padding: 14px 16px;
+ box-sizing: border-box;
+ background-color: var(--input-bg);
+ border: 2px solid var(--border-color);
+ border-radius: 10px;
+ color: #ffffff;
+ font-size: 1.15rem;
+ font-weight: 500;
+ transition: all 0.2s ease;
+ }
+  
+ input:focus, select:focus {
+ outline: none;
+ border-color: var(--accent-color);
+ box-shadow: 0 0 0 4px var(--accent-glow);
+ background-color: #242837;
+ }
+  
+ .inline-input-group {
+ display: flex;
+ gap: 10px;
+ }
+ .inline-input-group input {
+ flex: 1;
+ }
+ .confirm-btn {
+ padding: 0 24px;
+ background-color: #3b82f6;
+ border: none;
+ border-radius: 10px;
+ color: white;
+ font-size: 1.1rem;
+ font-weight: 700;
+ cursor: pointer;
+ white-space: nowrap;
+ transition: background 0.2s;
+ box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+ }
+ .confirm-btn:hover {
+ background-color: #2563eb;
+ }
+  
+ /* --- 不良事例 警告表示ボックス --- */
+ .defect-warning-box {
+ margin-top: 14px;
+ background: rgba(251, 146, 60, 0.08);
+ border: 1px dashed #fb923c;
+ border-radius: 10px;
+ padding: 12px 14px;
+ font-size: 0.95rem;
+ color: #ffedd5;
+ display: none;
+ line-height: 1.4;
+ }
+ .defect-warning-box b {
+ color: #fb923c;
+ display: block;
+ margin-bottom: 4px;
+ font-size: 1rem;
+ }
+  
+ /* --- OK/NG 判定ボックス --- */
+ .judge-box {
+ padding: 14px;
+ border-radius: 10px;
+ text-align: center;
+ font-weight: 800;
+ font-size: 1.6rem;
+ letter-spacing: 0.05em;
+ margin-top: 12px;
+ display: none;
+ box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+ animation: pulse 1.5s infinite alternate;
+ }
+ .judge-ok { 
+background-color: rgba(16, 185, 129, 0.15);
+ color: #34d399; 
+border: 2px solid #10b981;
+ }
+ .judge-ng { 
+background-color: rgba(239, 68, 68, 0.15);
+ color: #f87171; 
+border: 2px solid #ef4444;
+ }
+  
+ .submit-btn {
+ width: 100%;
+ padding: 16px;
+ background: linear-gradient(135deg, #00adb5, #008087);
+ border: none;
+ border-radius: 12px;
+ color: white;
+ font-size: 1.2rem;
+ font-weight: 700;
+ cursor: pointer;
+ margin-top: 20px;
+ transition: all 0.2s ease;
+ box-shadow: 0 4px 12px rgba(0, 173, 181, 0.3);
+ }
+ .submit-btn:active {
+ transform: scale(0.98);
+ }
+ .submit-btn:disabled {
+ background: #334155 !important;
+ color: #64748b;
+ cursor: not-allowed;
+ box-shadow: none;
+ }
+  
+ #message {
+ margin-top: 18px;
+ padding: 14px;
+ border-radius: 10px;
+ text-align: center;
+ font-weight: 700;
+ font-size: 1rem;
+ display: none;
+ }
+ .success { background-color: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #10b981;
+ }
+ .error { background-color: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; }
+ .hidden { display: none !important;
+ }
+   
+.target-val {
+ color: #fb923c;
+ font-size: 0.85rem;
+ margin-left: 8px;
+ font-weight: normal;
+ }
+  
+ /* --- 履歴コンテナ --- */
+ .history-container {
+ width: 100%;
+ max-width: 500px;
+ box-sizing: border-box;
+ }
+ .history-title {
+ font-size: 1.2rem;
+ color: #ffffff;
+ margin-bottom: 16px;
+ font-weight: 700;
+ border-left: 4px solid var(--accent-color);
+ padding-left: 10px;
+ letter-spacing: 0.03em;
+ }
+ .history-list {
+ display: flex;
+ flex-direction: column;
+ gap: 16px;
+ }
+ .history-card {
+ background: var(--card-bg);
+ border: 1px solid var(--border-color);
+ border-radius: 14px;
+ padding: 18px;
+ box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+ }
+ /* ★未完了履歴があるカードの強調スタイル */
+ .history-card.is-incomplete {
+ border: 2px solid #ef4444;
+ background: rgba(239, 68, 68, 0.03);
+ box-shadow: 0 0 10px rgba(239, 68, 68, 0.2);
+ }
+ .card-top {
+ border-bottom: 1px solid var(--border-color);
+ padding-bottom: 10px;
+ margin-bottom: 12px;
+ }
+ .card-coil-title {
+ font-size: 1.2rem;
+ font-weight: 800;
+ color: #ffffff;
+ }
+ .card-meta-info {
+ font-size: 0.9rem;
+ color: #94a3b8;
+ margin-top: 6px;
+ display: flex;
+ gap: 16px;
+ }
+ .card-meta-info span b {
+ color: var(--accent-color);
+ }
+   
+.timeline-container {
+ display: flex;
+ flex-direction: column;
+ gap: 8px;
+ }
+ .timeline-row {
+ background: #1e2230;
+ border-radius: 8px;
+ padding: 10px 14px;
+ display: flex;
+ justify-content: space-between;
+ align-items: center;
+ font-size: 0.95rem;
+ }
+ .stage-label {
+ font-weight: 800;
+ width: 48px;
+ padding: 3px 0;
+ border-radius: 6px;
+ text-align: center;
+ font-size: 0.8rem;
+ }
+ .lbl-始 { background-color: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4);
+ }
+ .lbl-中 { background-color: rgba(234, 179, 8, 0.15); color: #fde047; border: 1px solid rgba(234, 179, 8, 0.4);
+ }
+ .lbl-終 { background-color: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4);
+ }
+   
+.stage-details {
+ flex: 1;
+ margin-left: 14px;
+ display: flex;
+ flex-wrap: wrap;
+ gap: 8px;
+ color: #cbd5e1;
+ }
+ .stage-time {
+ font-size: 0.8rem;
+ color: #64748b;
+ text-align: right;
+ white-space: nowrap;
+ }
+   
+.qty-display-box {
+ margin-top: 12px;
+ background: rgba(0, 173, 181, 0.08);
+ border: 1px dashed rgba(0, 173, 181, 0.5);
+ border-radius: 8px;
+ padding: 10px 14px;
+ font-size: 1.05rem;
+ font-weight: 700;
+ color: #ffffff;
+ display: flex;
+ align-items: center;
+ gap: 8px;
+ }
+  
+ .overlay {
+ position: fixed;
+ top: 0;
+ left: 0;
+ width: 100vw;
+ height: 100vh;
+ background-color: rgba(13, 14, 18, 0.9);
+ z-index: 9999;
+ display: flex;
+ flex-direction: column;
+ justify-content: center;
+ align-items: center;
+ opacity: 0;
+ pointer-events: none;
+ transition: opacity 0.25s ease;
+ }
+ .overlay.show {
+ opacity: 1;
+ pointer-events: auto;
+ }
+ .spinner {
+ width: 56px;
+ height: 56px;
+ border: 5px solid #1f222f;
+ border-top: 5px solid var(--accent-color);
+ border-radius: 50%;
+ animation: spin 0.8s linear infinite;
+ }
+ .overlay-text {
+ margin-top: 18px;
+ color: var(--accent-color);
+ font-weight: 700;
+ font-size: 1.2rem;
+ letter-spacing: 0.05em;
+ }
+ @keyframes spin {
+ 0% { transform: rotate(0deg); }
+ 100% { transform: rotate(360deg);
+ }
+ }
+ </style>
 </head>
 <body>
-
-<div class="container">
-  <h1>順送加工履歴管理システム</h1>
   
-  <div id="statusMessage" class="status-msg"></div>
-
-  <div class="form-group">
-    <label>📷 カメラプレビュー（配置・作業確認用）</label>
-    <div class="camera-box">
-      <video id="video" autoplay playsinline></video>
-      <button type="button" class="btn-secondary" id="startCamBtn">カメラを起動する</button>
-    </div>
-  </div>
-
-  <div class="form-group">
-    <label for="workerSelect">👤 作業者を選択</label>
-    <select id="workerSelect">
-      <option value="">読み込み中...</option>
-    </select>
-  </div>
-
-  <div class="form-group">
-    <label for="coilSelect">🌀 実稼働コイル番号</label>
-    <select id="coilSelect" onchange="onCoilChange()">
-      <option value="">読み込み中...</option>
-    </select>
-  </div>
-
-  <div class="form-group">
-    <label for="productInfo">📦 対象製品情報</label>
-    <input type="text" id="productInfo" readonly placeholder="コイルを選択すると自動連動します">
-  </div>
-
-  <button type="button" id="saveBtn" style="margin-top: 10px;" onclick="submitLog()">打刻・加工履歴を保存</button>
-
-  <div class="history-section">
-    <h2>📋 最近の加工履歴（直近10件）</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>日時</th>
-          <th>作業者</th>
-          <th>コイル番号</th>
-          <th>製品名</th>
-        </tr>
-      </thead>
-      <tbody id="historyBody">
-        <tr>
-          <td colspan="4" style="text-align:center; color:#8b949e;">データを取得しています...</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+<div id="globalWarningOverlay">
+ <h1 id="uiWarningTitle">⚠️ 未完了の作業があります</h1>
+ <p id="uiWarningBody">前日以前の履歴で「終」まで完了していないデータがあります。<br>まず履歴を確認してください。</p>
+ <button type="button" class="warning-close-btn" id="btnWarningClose" onclick="closeGlobalWarning()">確認しました</button>
 </div>
-
+  
+<div id="loadingOverlay" class="overlay">
+ <div class="spinner"></div>
+ <div id="overlayText" class="overlay-text">処理中...</div>
+</div>
+  
+<div class="lang-bar">
+ <button type="button" id="btn-lang-ja" class="lang-btn active" onclick="switchLanguage('ja')">🇯🇵 日本語</button>
+ <button type="button" id="btn-lang-id" class="lang-btn" onclick="switchLanguage('id')">🇮🇩 Indo</button>
+ <button type="button" id="btn-lang-pt" class="lang-btn" onclick="switchLanguage('pt')">🇧🇷 Port</button>
+</div>
+  
+<div class="container">
+ <h2 id="uiMainHeader">順送プレス加工実績入力</h2>
+   
+<form id="pressForm" onkeydown="return event.key != 'Enter';">
+ <div class="form-group">
+ <label class="field-label" id="lblWorker" for="worker">作業者</label>
+ <select id="worker" required onchange="moveToNextField('machine')">
+ <option value="">選択してください</option>
+ </select>
+ </div>
+  
+ <div class="form-group">
+ <label class="field-label" id="lblMachine" for="machine">使用する機械</label>
+ <select id="machine" required onchange="moveToNextField('coilNo')">
+ <option value="" id="optMachineDefault">選択してください</option>
+ <option value="順送【80ｔ】">順送【80ｔ】</option>
+ <option value="順送【110ｔ】">順送【110ｔ】</option>
+ <option value="順送【200ｔ】">順送【200ｔ】</option>
+ </select>
+ </div>
+  
+ <div class="form-group">
+ <label class="field-label" id="lblCoilNo" for="coilNo">コイルNo</label>
+ <div class="inline-input-group">
+ <input type="text" id="coilNo" list="coilHistoryOptions" required onkeydown="if(event.key === 'Enter'){ onCoilDetermined(); return false;
+ }">
+ <button type="button" class="confirm-btn" id="btnConfirm" onclick="onCoilDetermined()">確定</button>
+ </div>
+ <datalist id="coilHistoryOptions"></datalist>
+ </div>
+  
+ <div id="dynamic-area" class="hidden">
+ <div class="form-group">
+ <label class="field-label" id="lblProductName" for="productName">該当品名</label>
+ <select id="productName" required onchange="onProductChanged()">
+ </select>
+ <div id="defectWarning" class="defect-warning-box"></div>
+ </div>
+  
+ <div class="form-group">
+ <label class="field-label" id="lblMeasured" for="measured">
+ 実寸計測値 (mm) <span id="masterTargetDisplay" class="target-val"></span>
+ </label>
+ <input type="number" id="measured" step="0.1" required placeholder="0.0" oninput="checkMeasuredValue()">
+ <div id="judgeResult" class="judge-box"></div>
+ </div>
+  
+ <div id="quantity-field" class="form-group hidden">
+ <label class="field-label" id="lblQuantity" for="quantity">加工数量 (個数) 【※今回の送信で加工終了となります】</label>
+ <input type="number" id="quantity">
+ </div>
+  
+ <button type="submit" id="submitBtn" class="submit-btn">実績を送信</button>
+ </div>
+ </form>
+  
+ <div id="message"></div>
+</div>
+  
+<div class="history-container">
+ <div class="history-title" id="uiHistoryTitle">直近20件の品名別加工履歴</div>
+ <div id="historyList" class="history-list">
+ <div style="text-align:center;color:#666;padding:20px;" id="uiHistoryLoading">履歴データを読み込み中...</div>
+ </div>
+</div>
+  
 <script>
-  // お使いの正しいGAS WebアプリURLを設定済み
-  const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyKuZhZb_aOg7Iyb2YTYHOwOMKognF57OpGuzmPJxNfo2dpa-F81j-iI5yuRVDqaidvRg/exec";
+ const LANG_DATA = {
+ ja: {
+ title: "順送プレス加工実績入力",
+ selectPlease: "選択してください",
+ selectProduct: "該当複数あり、品名を選択してください▼",
+ worker: "作業者",
+ machine: "使用する機械",
+ coilNo: "コイルNo",
+ coilPlaceholder: "入力・スキャン または一覧から選択",
+ confirm: "確定",
+ productName: "該当品名",
+ measured: "実寸計測値 (mm)",
+ rangeText: "基準",
+ okRange: "OK範囲",
+ quantity: "加工数量 (個数) 【※今回の送信で加工終了となります】",
+ qtyPlaceholder: "数量を入力",
+ submit: "実績を送信",
+ historyTitle: "直近20件の品名別加工履歴",
+ historyLoading: "履歴データを読み込み中...",
+ noHistory: "履歴データがまだありません。",
+ commError: "通信エラーが発生しました。",
+ historyCommError: "履歴の通信エラーが発生しました",
+ checkingStock: "在庫データを照合中...",
+ saving: "実績ログへ書き込み中...",
+ ok: "判定：OK",
+ ng: "判定：NG (許容範囲外)",
+ successSaved: "実績ログに正常に登録・追記しました！",
+ saveError: "保存エラー: ",
+ lockError: "🚨 <b>入力エラー:</b> このコイルにおける「{prod}」の加工はすでに【終】まで完全に完了しています。<br>二周目の再加工登録は認められません。",
+ defectTitle: "⚠️ 過去の不良事例・注意点",
+ warnTitle: "⚠️ 未完了の作業があります",
+ warnBody: "前日以前の履歴で「終」まで完了していないデータがあります。<br>まず履歴を確認してください。",
+ warnClose: "確認しました"
+ },
+ id: {
+ title: "Input Hasil Produksi Press",
+ selectPlease: "Silakan pilih",
+ selectProduct: "Ada beberapa produk, silakan pilih nama produk▼",
+ worker: "Operator",
+ machine: "Mesin yang digunakan",
+ coilNo: "No Coil",
+ coilPlaceholder: "Input/Scan atau pilih dari daftar",
+ confirm: "Konfirmasi",
+ productName: "Nama Produk",
+ measured: "Nilai Pengukuran Aktual (mm)",
+ rangeText: "Standar",
+ okRange: "Kisaran OK",
+ quantity: "Jumlah Produksi (Pcs) 【*Pengiriman ini akan menyelesaikan proses】",
+ qtyPlaceholder: "Masukkan jumlah kuantitas",
+ submit: "Kirim Hasil",
+ historyTitle: "20 Riwayat Pemrosesan Terakhir Berdasarkan Produk",
+ historyLoading: "Memuat data riwayat...",
+ noHistory: "Belum ada data riwayat.",
+ commError: "Terjadi kesalahan komunikasi.",
+ historyCommError: "Kesalahan komunikasi data riwayat",
+ checkingStock: "Memeriksa data stok...",
+ saving: "Menyimpan ke log hasil...",
+ ok: "Penilaian: OK",
+ ng: "Penilaian: NG (Di luar kisaran)",
+ successSaved: "Berhasil terdaftar dan diperbarui di log hasil!",
+ saveError: "Kesalahan penyimpanan: ",
+ lockError: "🚨 <b>Kesalahan Input:</b> Proses untuk produk \"{prod}\" pada coil ini telah selesai sepenuhnya hingga tahap [Akhir].<br>Penginputan ulang untuk kedua kalinya tidak diperbolehkan.",
+ defectTitle: "⚠️ Riwayat Cacat / Poin Perhatian",
+ warnTitle: "⚠️ Ada Pekerjaan Belum Selesai",
+ warnBody: "Ada data dalam riwayat sebelum hari ini yang belum selesai hingga tahap [Akhir].<br>Silakan periksa riwayat terlebih dahulu.",
+ warnClose: "Saya mengerti"
+ },
+ pt: {
+ title: "Entrada de Resultados de Prensa",
+ selectPlease: "Por favor, selecione",
+ selectProduct: "Múltiplos produtos encontrados, selecione o nome▼",
+ worker: "Operador",
+ machine: "Máquina Utilizada",
+ coilNo: "Nº da Bobina (Coil No)",
+ coilPlaceholder: "Digite/Escaneie ou selecione da lista",
+ confirm: "Confirmar",
+ productName: "Nome do Produto",
+ measured: "Valor Medido Real (mm)",
+ rangeText: "Padrão",
+ okRange: "Faixa OK",
+ quantity: "Quantidade Produzida (Pcs) 【*Este envio interrompe o processo】",
+ qtyPlaceholder: "Digite a quantidade",
+ submit: "Enviar Resultado",
+ historyTitle: "Últimos 20 Históricos de Processamento por Produto",
+ historyLoading: "Carregando dados do histórico...",
+ noHistory: "Nenhum dado de histórico disponível.",
+ commError: "Ocorreu um erro de comunicação.",
+ historyCommError: "Erro de comunicação no histórico",
+ checkingStock: "Verificando dados de estoque...",
+ saving: "Gravando no log de resultados...",
+ ok: "Resultado: OK",
+ ng: "Resultado: NG (Fora da faixa)",
+ successSaved: "Registrado e updated com sucesso no log de resultados!",
+ saveError: "Erro ao salvar: ",
+ lockError: "Erro de Entrada: O processamento do produto \"{prod}\" nesta bobina já foi totalmente concluído até a etapa [Fim]. Não é permitido registrar novamente.",
+ defectTitle: "⚠️ Histórico de Defeitos / Pontos de Atenção",
+ warnTitle: "⚠️ Existe Trabalho Inacabado",
+ warnBody: "Existem dados no histórico de dias anteriores que não foram concluídos até o [Fim]. Por favor, verifique o histórico primeiro.",
+ warnClose: "Entendido"
+ }
+ };
+  
+ let currentLang = 'ja'; 
+ let currentProducts = []; 
+ let targetValue = null; 
+ let nextStage = '始'; 
+ let fullHistoryLogs = []; 
+ let rawWorkers = []; 
+  
+ // ==========================================
+ // API通信の心臓部（CORS回避用の fetch API）
+ // ==========================================
+ const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyKuZhZb_aOg7Iyb2YTYHOwOMKognF57OpGuzmPJxNfo2dpa-F81j-iI5yuRVDqaidvRg/exec";
 
-  // --- GAS通信関数 (Content-Typeをtext/plainにすることでCORS制限を100%突破) ---
-  async function callGAS(action, payload = {}) {
-    try {
-      const response = await fetch(GAS_API_URL, {
-        method: 'POST',
-        mode: 'cors',
-        headers: {
-          'Content-Type': 'text/plain' 
-        },
-        body: JSON.stringify({ action: action, ...payload })
-      });
+ async function callGAS(action, payload = {}) {
+   try {
+     const response = await fetch(GAS_API_URL, {
+       method: 'POST',
+       headers: { 'Content-Type': 'text/plain' },
+       body: JSON.stringify({ action: action, ...payload })
+     });
+     const data = await response.json();
+     if (data.error) throw new Error(data.error);
+     return data;
+   } catch (error) {
+     console.error('API Error:', error);
+     throw error;
+   }
+ }
+
+ // ==========================================
+ // アプリケーションロジック
+ // ==========================================
+ window.onload = async function() { 
+   initStaticLabels(); 
+   loadWorkerList(); 
+   loadRecentHistory(); 
+   refreshCoilSupportList(); 
+ }; 
+  
+ function initStaticLabels() { 
+   const lang = LANG_DATA[currentLang]; 
+   document.title = lang.title; 
+   const pageTitleEl = document.getElementById('pageTitle'); 
+   if(pageTitleEl) pageTitleEl.textContent = lang.title; 
+     
+   document.getElementById('uiMainHeader').textContent = lang.title; 
+   document.getElementById('lblWorker').textContent = lang.worker; 
+   document.getElementById('lblMachine').textContent = lang.machine; 
+   document.getElementById('lblCoilNo').textContent = lang.coilNo; 
+   
+   document.getElementById('btnConfirm').textContent = lang.confirm; 
+   document.getElementById('lblProductName').textContent = lang.productName; 
+   document.getElementById('lblMeasured').childNodes[0].textContent = lang.measured + " "; 
+   document.getElementById('lblQuantity').textContent = lang.quantity;
+   document.getElementById('submitBtn').textContent = lang.submit;
+   document.getElementById('uiHistoryTitle').textContent = lang.historyTitle; 
+   document.getElementById('coilNo').placeholder = lang.coilPlaceholder; 
+   document.getElementById('quantity').placeholder = lang.qtyPlaceholder; 
+    
+   document.getElementById('uiWarningTitle').textContent = lang.warnTitle; 
+   document.getElementById('uiWarningBody').innerHTML = lang.warnBody;
+   document.getElementById('btnWarningClose').textContent = lang.warnClose;
+   const optMachine = document.getElementById('optMachineDefault'); 
+   if (optMachine) optMachine.textContent = lang.selectPlease; 
+    
+   renderWorkerDropdown();
+ } 
+  
+ function renderWorkerDropdown() { 
+   const select = document.getElementById('worker'); 
+   if (!select) return; 
+    
+   const currentSelectedValue = select.value;
+   select.innerHTML = ''; 
+     
+   const firstOpt = document.createElement('option'); 
+   firstOpt.value = ""; 
+   firstOpt.textContent = LANG_DATA[currentLang].selectPlease; 
+   select.appendChild(firstOpt);
+   
+   rawWorkers.forEach(name => { 
+     const opt = document.createElement('option'); 
+     opt.value = name; 
+     opt.textContent = name; 
+     select.appendChild(opt); 
+   });
+   select.value = currentSelectedValue; 
+ } 
+  
+ function switchLanguage(langCode) { 
+   currentLang = langCode; 
+   document.querySelectorAll('.lang-bar .lang-btn').forEach(btn => btn.classList.remove('active'));
+   const targetBtn = document.getElementById('btn-lang-' + langCode); 
+   if (targetBtn) { 
+     targetBtn.classList.add('active'); 
+   } 
+   initStaticLabels(); 
+   if(document.getElementById('productName').value) { 
+     onProductChanged();
+   } 
+   checkMeasuredValue(); 
+ } 
+  
+ async function loadWorkerList() { 
+   try {
+     const workers = await callGAS('getWorkers');
+     rawWorkers = workers || []; 
+     renderWorkerDropdown(); 
+   } catch(e) {
+     console.error("Worker load error:", e);
+   }
+ } 
+
+ async function refreshCoilSupportList() {
+   try {
+     const coilList = await callGAS('getActiveCoils');
+     const datalist = document.getElementById('coilHistoryOptions');
+     if (!datalist) return;
+     datalist.innerHTML = '';
+     (coilList || []).forEach(function(coilNo) {
+       const option = document.createElement('option');
+       option.value = coilNo;
+       datalist.appendChild(option);
+     });
+   } catch(e) {
+     console.error("Coil support list error:", e);
+   }
+ }
+  
+ function closeGlobalWarning() { 
+   document.getElementById('globalWarningOverlay').style.display = 'none';
+ } 
+  
+ async function loadRecentHistory() { 
+   const historyListDiv = document.getElementById('historyList'); 
+   const historyLoadingEl = document.getElementById('uiHistoryLoading');
+   if (historyLoadingEl) { 
+     historyLoadingEl.textContent = LANG_DATA[currentLang].historyLoading; 
+   } 
+  
+   try {
+     const logs = await callGAS('getHistory');
+     fullHistoryLogs = logs || []; 
       
-      if (!response.ok) throw new Error('サーバーから応答がありません。');
+     const hasWarning = fullHistoryLogs.some(log => log.isWarning); 
+     if (hasWarning) { 
+       document.getElementById('globalWarningOverlay').style.display = 'flex'; 
+     } 
       
-      const data = await response.json();
-      if (data.error) throw new Error(data.error);
-      return data;
-    } catch (error) {
-      console.error('API Error:', error);
-      document.getElementById('statusMessage').style.color = "#ff7b72";
-      document.getElementById('statusMessage').innerText = "通信エラーが発生しました。GASの公開設定かコードを確認してください。";
-      throw error;
-    }
-  }
+     if(fullHistoryLogs.length === 0) { 
+       historyListDiv.innerHTML = `<div style="text-align:center;color:#666;padding:20px;">${LANG_DATA[currentLang].noHistory}</div>`; 
+       return; 
+     } 
+       
+     let html = ''; 
+     const displayLogs = fullHistoryLogs.slice(0, 20); 
+     displayLogs.forEach(log => { 
+       let timelineHtml = ''; 
+       let finalQty = ''; 
+        
+       const isEndReached = !!(log.end); 
+       const cardClass = isEndReached ? 'history-card' : 'history-card is-incomplete'; 
+        
+       if(log.start) { 
+         timelineHtml += ` 
+         <div class="timeline-row"> 
+         <span class="stage-label lbl-始">▶ 始</span> 
+         <span class="stage-details">👤 ${log.start.worker} &nbsp;
+         📐 ${log.start.measured ? parseFloat(log.start.measured).toFixed(1)+'mm' : '-'}</span> 
+         <span class="stage-time">${log.start.time}</span> 
+         </div> 
+         `;
+       } 
+       if(log.middle) { 
+         timelineHtml += ` 
+         <div class="timeline-row"> 
+         <span class="stage-label lbl-中">🔄 中</span> 
+         <span class="stage-details">👤 ${log.middle.worker} &nbsp;
+         📐 ${log.middle.measured ? parseFloat(log.middle.measured).toFixed(1)+'mm' : '-'}</span> 
+         <span class="stage-time">${log.middle.time}</span> 
+         </div> 
+         `;
+       } 
+       if(log.end) { 
+         timelineHtml += ` 
+         <div class="timeline-row"> 
+         <span class="stage-label lbl-終">■ 終</span> 
+         <span class="stage-details">👤 ${log.end.worker} &nbsp;
+         📐 ${log.end.measured ? parseFloat(log.end.measured).toFixed(1)+'mm' : '-'}</span> 
+         <span class="stage-time">${log.end.time}</span> 
+         </div> 
+         `;
+         if(log.end.qty) { 
+           finalQty = `<div class="qty-display-box">📦 Qty: ${log.end.qty}</div>`; 
+         } 
+       } 
+        
+       html += ` 
+       <div class="${cardClass}"> 
+       <div class="card-top"> 
+       <div class="card-coil-title">Coil No: ${log.coilNo}</div> 
+       <div class="card-meta-info"> 
+       <span>Product: <b>${log.productName}</b></span> 
+       <span>Machine: <b>${log.machine}</b></span> 
+       </div> 
+       </div> 
+       <div class="timeline-container"> 
+       ${timelineHtml} 
+       </div> 
+       ${finalQty} 
+       </div> 
+       `;
+     }); 
+     historyListDiv.innerHTML = html; 
+   } catch(err) {
+     historyListDiv.innerHTML = `<div style="text-align:center;color:#b71c1c;padding:20px;">${LANG_DATA[currentLang].historyCommError}</div>`; 
+   }
+ } 
+  
+ function moveToNextField(nextFieldId) { 
+   const nextField = document.getElementById(nextFieldId);
+   if (nextField) { 
+     setTimeout(() => { nextField.focus(); }, 100);
+   } 
+ } 
+  
+ function showOverlay(text) { 
+   document.getElementById('overlayText').textContent = text; 
+   document.getElementById('loadingOverlay').classList.add('show');
+ } 
+  
+ function hideOverlay() { 
+   document.getElementById('loadingOverlay').classList.remove('show'); 
+ } 
+  
+ async function onCoilDetermined() { 
+   const coilNo = document.getElementById('coilNo').value.trim();
+   if (!coilNo) return; 
+   const dynamicArea = document.getElementById('dynamic-area'); 
+   const msgDiv = document.getElementById('message'); 
+     
+   showOverlay(LANG_DATA[currentLang].checkingStock); 
+   dynamicArea.classList.add('hidden'); 
+   msgDiv.style.display = 'none'; 
+   resetJudge(); 
+   document.getElementById('quantity-field').classList.add('hidden');
+   document.getElementById('quantity').required = false; 
+  
+   try {
+     const res = await callGAS('getProducts', { coilNo: coilNo });
+     hideOverlay(); 
+     if (res.success) { 
+       currentProducts = res.products || []; 
+       const pSelect = document.getElementById('productName'); 
+       pSelect.innerHTML = ''; 
+         
+       if (currentProducts.length > 1) { 
+         const defaultOpt = document.createElement('option'); 
+         defaultOpt.value = ''; 
+         defaultOpt.textContent = LANG_DATA[currentLang].selectProduct; 
+         pSelect.appendChild(defaultOpt); 
+       } 
+       currentProducts.forEach(prod => { 
+         const opt = document.createElement('option'); 
+         opt.value = prod.name; 
+         opt.textContent = prod.name; 
+         pSelect.appendChild(opt); 
+       }); 
+       dynamicArea.classList.remove('hidden'); 
+       if (currentProducts.length === 1) { 
+         onProductChanged(); 
+       } else { 
+         pSelect.focus(); 
+       } 
+     } else { 
+       msgDiv.className = 'error'; 
+       msgDiv.textContent = res.msg; 
+       msgDiv.style.display = 'block'; 
+     } 
+   } catch (err) {
+     hideOverlay();
+     msgDiv.className = 'error'; 
+     msgDiv.textContent = LANG_DATA[currentLang].commError; 
+     msgDiv.style.display = 'block'; 
+   }
+ } 
+  
+ function onProductChanged() { 
+   const selectedName = document.getElementById('productName').value; 
+   const targetDisplay = document.getElementById('masterTargetDisplay');
+   const coilNo = document.getElementById('coilNo').value.trim(); 
+   const msgDiv = document.getElementById('message'); 
+   const submitBtn = document.getElementById('submitBtn'); 
+   const defectDiv = document.getElementById('defectWarning'); 
+     
+   msgDiv.style.display = 'none';
+   submitBtn.disabled = false; 
+   defectDiv.style.display = 'none'; 
+   defectDiv.innerHTML = ''; 
+    
+   if (!selectedName) { 
+     targetValue = null; 
+     targetDisplay.textContent = ''; 
+     resetJudge();
+     return; 
+   } 
+    
+   const matched = currentProducts.find(p => p.name === selectedName); 
+   if (matched) { 
+     targetValue = parseFloat(matched.measured);
+     const minOk = (targetValue - 0.8).toFixed(1); 
+     const maxOk = (targetValue + 0.8).toFixed(1); 
+     targetDisplay.textContent = `（${LANG_DATA[currentLang].rangeText}: ${targetValue.toFixed(1)} / ${LANG_DATA[currentLang].okRange}: ${minOk}～${maxOk}）`;
+     
+     if (matched.defect) { 
+       const defectText = (typeof matched.defect === 'object') ?
+       (matched.defect[currentLang] || matched.defect['ja'] || '') : matched.defect; 
+         
+       if (defectText.trim() !== "") { 
+         defectDiv.innerHTML = `<b>${LANG_DATA[currentLang].defectTitle}</b>${defectText}`; 
+         defectDiv.style.display = 'block';
+       } 
+     } 
+   } 
+    
+   const todayStr = new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/-/g, '/');
+   let foundLog = fullHistoryLogs.find(l => {
+     let logDateStr = '';
+     if (l.start && l.start.time) logDateStr = l.start.time.split(' ')[0];
+     else if (l.middle && l.middle.time) logDateStr = l.middle.time.split(' ')[0];
+     else if (l.end && l.end.time) logDateStr = l.end.time.split(' ')[0];
+     return l.coilNo === coilNo && l.productName === selectedName && logDateStr === todayStr;
+   });
+    
+   if (foundLog) { 
+     if (foundLog.end) { 
+       let lockMsg = LANG_DATA[currentLang].lockError.replace('{prod}', selectedName); 
+       msgDiv.className = 'error';
+       msgDiv.innerHTML = lockMsg;
+       msgDiv.style.display = 'block'; 
+       submitBtn.disabled = true; 
+       return; 
+     } else if (foundLog.middle) { 
+       nextStage = '終';
+     } else if (foundLog.start) { 
+       nextStage = '中'; 
+     } else { 
+       nextStage = '始';
+     } 
+   } else { 
+     nextStage = '始'; 
+   } 
+    
+   const qtyField = document.getElementById('quantity-field');
+   const qtyInput = document.getElementById('quantity'); 
+   if (nextStage === '終') { 
+     qtyField.classList.remove('hidden'); 
+     qtyInput.required = true; 
+   } else { 
+     qtyField.classList.add('hidden');
+     qtyInput.required = false; 
+   } 
+     
+   document.getElementById('measured').focus(); 
+   checkMeasuredValue(); 
+ } 
+  
+ function checkMeasuredValue() { 
+   const inputValue = document.getElementById('measured').value.trim();
+   const judgeBox = document.getElementById('judgeResult'); 
+   if (inputValue === '' || targetValue === null) { 
+     resetJudge(); 
+     return;
+   } 
+   const currentInput = parseFloat(inputValue); 
+   const lowerLimit = targetValue - 0.8; 
+   const upperLimit = targetValue + 0.8;
+   if (currentInput >= lowerLimit && currentInput <= upperLimit) { 
+     judgeBox.textContent = LANG_DATA[currentLang].ok; 
+     judgeBox.className = 'judge-box judge-ok'; 
+     judgeBox.style.display = 'block';
+   } else { 
+     judgeBox.textContent = LANG_DATA[currentLang].ng; 
+     judgeBox.className = 'judge-box judge-ng'; 
+     judgeBox.style.display = 'block';
+   } 
+ } 
+  
+ function resetJudge() { 
+   const judgeBox = document.getElementById('judgeResult');
+   if (judgeBox) { 
+     judgeBox.style.display = 'none'; 
+     judgeBox.textContent = '';
+   } 
+ } 
+  
+ document.getElementById('pressForm').addEventListener('submit', async function(e) { 
+   e.preventDefault(); 
+    
+   const judgeBox = document.getElementById('judgeResult');
+   if (judgeBox && judgeBox.classList.contains('judge-ng')) {
+       let alertMsg = "⚠️ 判定がNGのため、送信できません。\n数値を再度確認してください。";
+       if (currentLang === 'id') alertMsg = "⚠️ Penilaian NG, tidak dapat mengirim.\nSilakan periksa kembali nilainya.";
+       if (currentLang === 'pt') alertMsg = "⚠️ Resultado NG, não é possível enviar.\nPor favor, verifique o valor novamente.";
+       alert(alertMsg);
+       return; 
+   }
+  
+   const submitBtn = document.getElementById('submitBtn'); 
+   const msgDiv = document.getElementById('message'); 
+     
+   submitBtn.disabled = true; 
+   msgDiv.style.display = 'none'; 
+   showOverlay(LANG_DATA[currentLang].saving); 
+    
+   const logData = { 
+     coilNo: document.getElementById('coilNo').value.trim(), 
+     worker: document.getElementById('worker').value, 
+     machine: document.getElementById('machine').value, 
+     productName: document.getElementById('productName').value, 
+     measured: document.getElementById('measured').value, 
+     enforcedStage: nextStage, 
+     quantity: document.getElementById('quantity').value 
+   };
 
-  // --- 画面起動時の初期化 ---
-  window.addEventListener('DOMContentLoaded', async () => {
-    setupCamera();
-    await loadInitialData();
-  });
-
-  // --- マスターデータの初期読み込み ---
-  async function loadInitialData() {
-    try {
-      document.getElementById('statusMessage').innerText = "";
+   try {
+     const res = await callGAS('saveLog', { logData: logData });
+     hideOverlay(); 
+     submitBtn.disabled = false; 
+     msgDiv.className = 'success'; 
+     msgDiv.textContent = `【${res.type}】 ${LANG_DATA[currentLang].successSaved}`; 
+     msgDiv.style.display = 'block'; 
+       
+     document.getElementById('coilNo').value = ''; 
+     document.getElementById('measured').value = ''; 
+     document.getElementById('quantity').value = ''; 
+     document.getElementById('quantity-field').classList.add('hidden'); 
+     document.getElementById('quantity').required = false; 
+     document.getElementById('dynamic-area').classList.add('hidden'); 
+     currentProducts = []; 
+     targetValue = null; 
+     nextStage = '始'; 
+     document.getElementById('masterTargetDisplay').textContent = ''; 
+     resetJudge(); 
       
-      // 1. 作業者リストの取得
-      const workers = await callGAS('getWorkers');
-      const workerSelect = document.getElementById('workerSelect');
-      workerSelect.innerHTML = '<option value="">選択してください</option>';
-      if (Array.isArray(workers)) {
-        workers.forEach(w => {
-          const opt = document.createElement('option');
-          opt.value = w; opt.textContent = w;
-          workerSelect.appendChild(opt);
-        });
-      }
-
-      // 2. 実稼働コイル番号の取得
-      const coils = await callGAS('getActiveCoils');
-      const coilSelect = document.getElementById('coilSelect');
-      coilSelect.innerHTML = '<option value="">選択してください</option>';
-      if (Array.isArray(coils)) {
-        coils.forEach(c => {
-          const opt = document.createElement('option');
-          opt.value = c; opt.textContent = c;
-          coilSelect.appendChild(opt);
-        });
-      }
-
-      // 3. 履歴の読込
-      await refreshHistory();
-
-    } catch (e) {
-      console.error("初期化エラー:", e);
-    }
-  }
-
-  // --- コイルが選ばれたら製品情報を自動引っ張り ---
-  async function onCoilChange() {
-    const coilNo = document.getElementById('coilSelect').value;
-    const prodInput = document.getElementById('productInfo');
-    if (!coilNo) {
-      prodInput.value = "";
-      return;
-    }
-    prodInput.value = "自動検索中...";
-    try {
-      const prod = await callGAS('getProducts', { coilNo: coilNo });
-      if (prod && prod.productName) {
-        prodInput.value = prod.productName;
-      } else {
-        prodInput.value = "製品情報が見つかりません";
-      }
-    } catch (e) {
-      prodInput.value = "データ取得エラー";
-    }
-  }
-
-  // --- 履歴テーブルをリフレッシュ ---
-  async function refreshHistory() {
-    const historyBody = document.getElementById('historyBody');
-    try {
-      const history = await callGAS('getHistory');
-      historyBody.innerHTML = '';
-      if (Array.isArray(history) && history.length > 0) {
-        history.forEach(row => {
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td>${row.timestamp || ''}</td>
-            <td>${row.worker || ''}</td>
-            <td>${row.coilNo || ''}</td>
-            <td>${row.productName || ''}</td>
-          `;
-          historyBody.appendChild(tr);
-        });
-      } else {
-        historyBody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#8b949e;">履歴はありません</td></tr>';
-      }
-    } catch (e) {
-      historyBody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#ff7b72;">履歴の読み込みに失敗しました</td></tr>';
-    }
-  }
-
-  // --- データの保存処理 ---
-  async function submitLog() {
-    const worker = document.getElementById('workerSelect').value;
-    const coilNo = document.getElementById('coilSelect').value;
-    const product = document.getElementById('productInfo').value;
-    const statusMsg = document.getElementById('statusMessage');
-
-    if (!worker || !coilNo) {
-      statusMsg.style.color = "#ff7b72";
-      statusMsg.innerText = "エラー: 作業者とコイル番号を両方選択してください。";
-      return;
-    }
-
-    statusMsg.style.color = "#58a6ff";
-    statusMsg.innerText = "スプレッドシートに書き込み中...";
-
-    try {
-      const res = await callGAS('saveLog', {
-        logData: { worker: worker, coilNo: coilNo, productName: product }
-      });
-      if (res && res.success) {
-        statusMsg.style.color = "#56d364";
-        statusMsg.innerText = "正常に保存されました！";
-        await refreshHistory();
-      } else {
-        throw new Error("保存に失敗しました。");
-      }
-    } catch (e) {
-      statusMsg.style.color = "#ff7b72";
-      statusMsg.innerText = "保存エラー: " + e.message;
-    }
-  }
-
-  // --- スマホカメラ起動処理 (背面カメラを強制指定) ---
-  function setupCamera() {
-    const video = document.getElementById('video');
-    const startBtn = document.getElementById('startCamBtn');
-
-    startBtn.addEventListener('click', async () => {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: 'environment' }, // 背面カメラを優先起動
-          audio: false
-        });
-        video.srcObject = stream;
-        startBtn.style.display = 'none'; // 成功したらボタンを非表示に
-      } catch (err) {
-        console.error("カメラアクセスエラー:", err);
-        alert("カメラの起動に失敗しました。ブラウザのカメラ権限が許可されているか確認してください。");
-      }
-    });
-  }
+     loadRecentHistory(); 
+     refreshCoilSupportList();
+     document.getElementById('coilNo').focus(); 
+   } catch(err) {
+     hideOverlay();
+     submitBtn.disabled = false; 
+     msgDiv.className = 'error'; 
+     msgDiv.textContent = LANG_DATA[currentLang].saveError + err.message; 
+     msgDiv.style.display = 'block'; 
+   }
+ });
 </script>
-
 </body>
 </html>
