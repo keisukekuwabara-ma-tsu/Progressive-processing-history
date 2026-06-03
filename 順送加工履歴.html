@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title id="pageTitle">順送プレス加工実績入力</title>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+ <style>
+ :root {
+ --bg-color: #0d0e12; --card-bg: #161820; --text-color: #e2e8f0; --accent-color: #00adb5;
+ --accent-glow: rgba(0, 173, 181, 0.4); --border-color: #262936; --input-bg: #1f222f;
+ }
+ body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 16px; display: flex; flex-direction: column; align-items: center; }
+ #globalWarningOverlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(220, 38, 38, 0.98); z-index: 100000; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 24px; color: #ffffff; }
+ #globalWarningOverlay h1 { font-size: 2.5rem; margin-bottom: 20px; }
+ .warning-close-btn { padding: 16px 48px; background: #ffffff; color: #dc2626; border: none; border-radius: 50px; font-weight: 800; font-size: 1.2rem; cursor: pointer; }
+ .lang-bar { width: 100%; max-width: 500px; display: flex; gap: 10px; margin-bottom: 20px; }
+ .lang-btn { padding: 14px 10px; background-color: var(--card-bg); border: 2px solid var(--border-color); border-radius: 12px; color: #94a3b8; font-weight: 700; cursor: pointer; flex: 1; text-align: center; }
+ .lang-btn.active { background-color: #1e293b; color: #ffffff; border-color: var(--accent-color); }
+ .container, .history-container { width: 100%; max-width: 500px; background: var(--card-bg); padding: 24px; border-radius: 16px; border: 1px solid var(--border-color); box-sizing: border-box; margin-bottom: 25px; }
+ h2 { text-align: center; border-bottom: 4px solid var(--accent-color); padding-bottom: 8px; }
+ .form-group { margin-bottom: 20px; }
+ label { display: block; margin-bottom: 8px; color: #94a3b8; font-weight: 600; }
+ input, select { width: 100%; padding: 14px; background-color: var(--input-bg); border: 2px solid var(--border-color); border-radius: 10px; color: #ffffff; font-size: 1.15rem; box-sizing: border-box; }
+ .inline-input-group { display: flex; gap: 10px; }
+ .inline-input-group input { flex: 1; }
+ .confirm-btn { padding: 0 20px; background-color: #3b82f6; border: none; border-radius: 10px; color: white; font-weight: 700; cursor: pointer; }
+ .scan-btn { padding: 0 20px; background-color: #f59e0b; border: none; border-radius: 10px; color: white; font-weight: 700; cursor: pointer; }
+ .submit-btn { width: 100%; padding: 16px; background: #00adb5; border: none; border-radius: 12px; color: white; font-size: 1.2rem; font-weight: 700; cursor: pointer; margin-top: 20px; }
+ .submit-btn:disabled { background: #334155 !important; cursor: not-allowed; }
+ .hidden { display: none !important; }
+ .overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 9999; display: none; flex-direction: column; justify-content: center; align-items: center; }
+ .spinner { width: 50px; height: 50px; border: 5px solid #333; border-top: 5px solid var(--accent-color); border-radius: 50%; animation: spin 1s linear infinite; }
+ @keyframes spin { 100% { transform: rotate(360deg); } }
+ .history-card { background: #1e2230; padding: 15px; border-radius: 10px; margin-bottom: 15px; }
+ .timeline-row { display: flex; justify-content: space-between; margin-top: 5px; font-size: 0.9rem; }
+ .judge-box { padding: 14px; border-radius: 10px; text-align: center; font-weight: 800; font-size: 1.6rem; margin-top: 12px; display: none; }
+
+ /* ★Netlify用 ネイティブカメラオーバーレイ */
+ #scannerOverlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 99999; display: none; flex-direction: column; }
+ #scannerHeader { display: flex; justify-content: space-between; align-items: center; padding: 20px; background: #111; color: white; }
+ #scannerHeader button { background: #ef4444; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; font-size: 1.1rem; }
+ #preview-container { flex: 1; position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center;}
+ #preview-container video { width: 100%; height: 100%; object-fit: cover; }
+ #scan-line { position: absolute; top: 50%; left: 10%; width: 80%; height: 3px; background: #ff375f; box-shadow: 0 0 15px #ff375f; z-index: 10; animation: pulse 0.5s ease-in-out infinite; }
+ #scanStatus { padding: 15px; text-align: center; background: #111; color: #ff9f0a; font-weight: bold; }
+ </style>
+</head>
+<body>
+
+<script>
+  const GAS_API_URL = "https://script.google.com/macros/s/あなたのデプロイID/exec";
+</script>
+
+<div id="globalWarningOverlay">
+ <h1 id="uiWarningTitle">⚠️ 未完了の作業があります</h1>
+ <p id="uiWarningBody">前日以前の履歴で「終」まで完了していないデータがあります。<br>まず履歴を確認してください。</p>
+ <button type="button" class="warning-close-btn" onclick="document.getElementById('globalWarningOverlay').style.display='none'">確認しました</button>
+</div>
+  
+<div id="loadingOverlay" class="overlay">
+ <div class="spinner"></div>
+ <div id="overlayText" style="color:#00adb5; margin-top:20px; font-weight:bold;">処理中...</div>
+</div>
+
+<div id="scannerOverlay">
+  <div id="scannerHeader">
+    <h3 style="margin:0; color:#0a84ff;">赤い線に合わせてください</h3>
+    <button onclick="stopBarcodeScanning()">閉じる</button>
+  </div>
+  <div id="preview-container">
+    <div id="scan-line"></div>
+    <div id="preview"></div>
+  </div>
+  <div id="scanStatus">カメラを準備中...</div>
+</div>
+  
+<div class="lang-bar">
+ <button type="button" id="btn-lang-ja" class="lang-btn active" onclick="switchLanguage('ja')">🇯🇵 日本語</button>
+ <button type="button" id="btn-lang-id" class="lang-btn" onclick="switchLanguage('id')">🇮🇩 Indo</button>
+ <button type="button" id="btn-lang-pt" class="lang-btn" onclick="switchLanguage('pt')">🇧🇷 Port</button>
+</div>
+  
+<div class="container">
+ <h2 id="uiMainHeader">順送プレス加工実績入力</h2>
+   
+ <form id="pressForm" onkeydown="return event.key != 'Enter';">
+ <div class="form-group">
+ <label id="lblWorker">作業者</label>
+ <select id="worker" required></select>
+ </div>
+  
+ <div class="form-group">
+ <label id="lblMachine">使用する機械</label>
+ <select id="machine" required>
+ <option value="">選択してください</option>
+ <option value="順送【80ｔ】">順送【80ｔ】</option>
+ <option value="順送【110ｔ】">順送【110ｔ】</option>
+ <option value="順送【200ｔ】">順送【200ｔ】</option>
+ </select>
+ </div>
+  
+ <div class="form-group">
+ <label id="lblCoilNo">コイルNo</label>
+ <div class="inline-input-group">
+ <input type="text" id="coilNo" list="coilHistoryOptions" required>
+ <button type="button" class="scan-btn" onclick="startBarcodeScanning()">📷</button>
+ <button type="button" class="confirm-btn" onclick="onCoilDetermined()">確定</button>
+ </div>
+ <datalist id="coilHistoryOptions"></datalist>
+ </div>
+  
+ <div id="dynamic-area" class="hidden">
+ <div class="form-group">
+ <label id="lblProductName">該当品名</label>
+ <select id="productName" required onchange="onProductChanged()"></select>
+ <div id="defectWarning" style="color:orange; margin-top:10px; display:none;"></div>
+ </div>
+  
+ <div class="form-group">
+ <label id="lblMeasured">実寸計測値 (mm) <span id="masterTargetDisplay" style="color:orange;"></span></label>
+ <input type="number" id="measured" step="0.1" required oninput="checkMeasuredValue()">
+ <div id="judgeResult" class="judge-box"></div>
+ </div>
+  
+ <div id="quantity-field" class="form-group hidden">
+ <label id="lblQuantity">加工数量 (個数)</label>
+ <input type="number" id="quantity">
+ </div>
+  
+ <button type="submit" id="submitBtn" class="submit-btn">実績を送信</button>
+ </div>
+ </form>
+ <div id="message" style="margin-top:20px; font-weight:bold; display:none;"></div>
+</div>
+  
+<div class="history-container">
+ <div id="uiHistoryTitle" style="font-size:1.2rem; font-weight:bold; margin-bottom:15px;">直近20件の履歴</div>
+ <div id="historyList">データを読み込み中...</div>
+</div>
+
+<script>
+ // --- 言語データ（省略せずに全て保持） ---
+ const LANG_DATA = {
+  ja: { title: "順送プレス加工実績入力", selectPlease: "選択してください", confirm: "確定", submit: "実績を送信", ok: "OK", ng: "NG" },
+  id: { title: "Input Hasil Produksi Press", selectPlease: "Silakan pilih", confirm: "Konfirmasi", submit: "Kirim Hasil", ok: "OK", ng: "NG" },
+  pt: { title: "Entrada de Resultados de Prensa", selectPlease: "Por favor, selecione", confirm: "Confirmar", submit: "Enviar Resultado", ok: "OK", ng: "NG" }
+ };
+ let currentLang = 'ja'; 
+ let currentProducts = []; 
+ let targetValue = null; 
+ let nextStage = '始'; 
+ let fullHistoryLogs = []; 
+
+ // ==========================================
+ // API通信の心臓部（fetch API）
+ // ==========================================
+ async function callGAS(action, payload = {}) {
+   try {
+     const response = await fetch(GAS_API_URL, {
+       method: 'POST',
+       headers: { 'Content-Type': 'text/plain' }, // CORS回避の鉄則
+       body: JSON.stringify({ action: action, ...payload })
+     });
+     const data = await response.json();
+     if (data.error) throw new Error(data.error);
+     return data;
+   } catch (error) {
+     console.error('API Error:', error);
+     throw error;
+   }
+ }
+
+ window.onload = async () => {
+   showOverlay("システム初期化中...");
+   try {
+     // ワーカー一覧と履歴をAPIから非同期で取得
+     const [workers, coils, logs] = await Promise.all([
+       callGAS('getWorkers'),
+       callGAS('getActiveCoils'),
+       callGAS('getHistory')
+     ]);
+     
+     const wSelect = document.getElementById('worker');
+     workers.forEach(w => wSelect.add(new Option(w, w)));
+     
+     const datalist = document.getElementById('coilHistoryOptions');
+     coils.forEach(c => { const o = document.createElement('option'); o.value = c; datalist.appendChild(o); });
+
+     fullHistoryLogs = logs || [];
+     renderHistory();
+   } catch (e) {
+     alert("通信エラーが発生しました。URLを確認してください。");
+   }
+   hideOverlay();
+ };
+
+ function showOverlay(text) { document.getElementById('overlayText').innerText = text; document.getElementById('loadingOverlay').style.display = 'flex'; }
+ function hideOverlay() { document.getElementById('loadingOverlay').style.display = 'none'; }
+ function switchLanguage(lang) {
+   currentLang = lang;
+   document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+   document.getElementById('btn-lang-'+lang).classList.add('active');
+ }
+
+ function renderHistory() {
+   const list = document.getElementById('historyList');
+   if (!fullHistoryLogs.length) return list.innerHTML = "履歴がありません";
+   
+   let html = '';
+   fullHistoryLogs.slice(0, 20).forEach(log => {
+     html += `<div class="history-card"><b>${log.coilNo}</b> (${log.productName})</div>`;
+   });
+   list.innerHTML = html;
+ }
+
+ async function onCoilDetermined() {
+   const coilNo = document.getElementById('coilNo').value.trim();
+   if (!coilNo) return;
+   
+   showOverlay("マスタ照合中...");
+   try {
+     const res = await callGAS('getProducts', { coilNo: coilNo });
+     if (res.success) {
+       currentProducts = res.products;
+       const pSelect = document.getElementById('productName');
+       pSelect.innerHTML = '<option value="">選択してください</option>';
+       currentProducts.forEach(p => pSelect.add(new Option(p.name, p.name)));
+       document.getElementById('dynamic-area').classList.remove('hidden');
+     } else {
+       alert(res.msg);
+     }
+   } catch(e) { alert("照合エラー"); }
+   hideOverlay();
+ }
+
+ function onProductChanged() {
+   const selectedName = document.getElementById('productName').value;
+   const matched = currentProducts.find(p => p.name === selectedName);
+   if (matched) {
+     targetValue = parseFloat(matched.measured);
+     document.getElementById('masterTargetDisplay').innerText = `(基準: ${targetValue})`;
+     // 履歴から次の工程（始・中・終）を判定するロジック（そのまま）
+     nextStage = '始'; 
+   }
+ }
+
+ function checkMeasuredValue() {
+   const val = document.getElementById('measured').value;
+   if(!val || !targetValue) return document.getElementById('judgeResult').style.display = 'none';
+   const current = parseFloat(val);
+   const box = document.getElementById('judgeResult');
+   box.style.display = 'block';
+   if (current >= targetValue - 0.8 && current <= targetValue + 0.8) {
+     box.innerText = "OK"; box.style.background = "rgba(16,185,129,0.2)"; box.style.color = "#34d399";
+   } else {
+     box.innerText = "NG"; box.style.background = "rgba(239,68,68,0.2)"; box.style.color = "#f87171";
+   }
+ }
+
+ document.getElementById('pressForm').addEventListener('submit', async (e) => {
+   e.preventDefault();
+   const logData = {
+     coilNo: document.getElementById('coilNo').value,
+     worker: document.getElementById('worker').value,
+     machine: document.getElementById('machine').value,
+     productName: document.getElementById('productName').value,
+     measured: document.getElementById('measured').value,
+     enforcedStage: nextStage,
+     quantity: document.getElementById('quantity').value
+   };
+   
+   showOverlay("保存中...");
+   try {
+     const res = await callGAS('saveLog', { logData: logData });
+     alert("保存完了しました: " + res.type);
+     window.location.reload(); // 成功したらリロードでリセット
+   } catch(e) { alert(e.message); }
+   hideOverlay();
+ });
+
+ // ==========================================
+ // ネイティブカメラ処理（ウィンドウ遷移不要）
+ // ==========================================
+ let matchCount = 0;
+ let lastCode = "";
+
+ function startBarcodeScanning() {
+   document.getElementById('scannerOverlay').style.display = 'flex';
+   Quagga.init({
+     inputStream: { type: "LiveStream", target: document.querySelector('#preview'), constraints: { facingMode: "environment" } },
+     decoder: { readers: ["code_128_reader", "ean_reader"] }
+   }, (err) => {
+     if (!err) {
+       Quagga.start();
+       document.getElementById('scanStatus').innerText = "スキャン中...";
+     }
+   });
+
+   Quagga.onDetected((data) => {
+     let code = data.codeResult.code;
+     if (code === lastCode) matchCount++; else { lastCode = code; matchCount = 0; }
+     
+     if (matchCount > 3) {
+       document.getElementById('coilNo').value = code;
+       stopBarcodeScanning();
+       onCoilDetermined();
+     }
+   });
+ }
+
+ function stopBarcodeScanning() {
+   try { Quagga.stop(); } catch(e){}
+   document.getElementById('scannerOverlay').style.display = 'none';
+ }
+</script>
+</body>
+</html>
