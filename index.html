@@ -1,1 +1,358 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>順送加工履歴システム</title>
+  <style>
+    /* 工場内でも視認性の高いダークモード・デザイン */
+    body {
+      background-color: #0d1117;
+      color: #c9d1d9;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 15px;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+    h1 {
+      color: #58a6ff;
+      font-size: 22px;
+      text-align: center;
+      margin-top: 0;
+      border-bottom: 2px solid #30363d;
+      padding-bottom: 12px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #8b949e;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    select, input, button {
+      width: 100%;
+      padding: 12px;
+      background-color: #21262d;
+      border: 1px solid #30363d;
+      color: #c9d1d9;
+      border-radius: 8px;
+      box-sizing: border-box;
+      font-size: 16px;
+    }
+    select:focus, input:focus {
+      outline: none;
+      border-color: #58a6ff;
+      box-shadow: 0 0 0 3px rgba(88,166,255,0.3);
+    }
+    button {
+      background-color: #238636;
+      color: #ffffff;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+      transition: background-color 0.2s;
+    }
+    button:hover {
+      background-color: #2ea043;
+    }
+    .camera-box {
+      text-align: center;
+      background: #000;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 8px;
+      margin-bottom: 10px;
+    }
+    video {
+      width: 100%;
+      max-height: 250px;
+      border-radius: 6px;
+      background-color: #1f242c;
+      object-fit: cover;
+    }
+    .btn-secondary {
+      background-color: #21262d;
+      border: 1px solid #30363d;
+      color: #58a6ff;
+      margin-top: 8px;
+    }
+    .btn-secondary:hover {
+      background-color: #30363d;
+    }
+    .history-section {
+      margin-top: 30px;
+      border-top: 1px solid #30363d;
+      padding-top: 15px;
+    }
+    .history-section h2 {
+      font-size: 16px;
+      color: #8b949e;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    th, td {
+      border: 1px solid #30363d;
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #1f242c;
+      color: #58a6ff;
+    }
+    tr:nth-child(even) {
+      background-color: #0d1117;
+    }
+    .status-msg {
+      text-align: center;
+      color: #ff7b72;
+      font-weight: bold;
+      margin: 10px 0;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
 
+<div class="container">
+  <h1>順送加工履歴管理システム</h1>
+  
+  <div id="statusMessage" class="status-msg"></div>
+
+  <div class="form-group">
+    <label>📷 カメラプレビュー（配置・作業確認用）</label>
+    <div class="camera-box">
+      <video id="video" autoplay playsinline></video>
+      <button type="button" class="btn-secondary" id="startCamBtn">カメラを起動する</button>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="workerSelect">👤 作業者を選択</label>
+    <select id="workerSelect">
+      <option value="">読み込み中...</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="coilSelect">🌀 実稼働コイル番号</label>
+    <select id="coilSelect" onchange="onCoilChange()">
+      <option value="">読み込み中...</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="productInfo">📦 対象製品情報</label>
+    <input type="text" id="productInfo" readonly placeholder="コイルを選択すると自動連動します">
+  </div>
+
+  <button type="button" id="saveBtn" style="margin-top: 10px;" onclick="submitLog()">打刻・加工履歴を保存</button>
+
+  <div class="history-section">
+    <h2>📋 最近の加工履歴（直近10件）</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>日時</th>
+          <th>作業者</th>
+          <th>コイル番号</th>
+          <th>製品名</th>
+        </tr>
+      </thead>
+      <tbody id="historyBody">
+        <tr>
+          <td colspan="4" style="text-align:center; color:#8b949e;">データを取得しています...</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  // お使いの正しいGAS WebアプリURLを設定済み
+  const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyKuZhZb_aOg7Iyb2YTYHOwOMKognF57OpGuzmPJxNfo2dpa-F81j-iI5yuRVDqaidvRg/exec";
+
+  // --- GAS通信関数 (Content-Typeをtext/plainにすることでCORS制限を100%突破) ---
+  async function callGAS(action, payload = {}) {
+    try {
+      const response = await fetch(GAS_API_URL, {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'text/plain' 
+        },
+        body: JSON.stringify({ action: action, ...payload })
+      });
+      
+      if (!response.ok) throw new Error('サーバーから応答がありません。');
+      
+      const data = await response.json();
+      if (data.error) throw new Error(data.error);
+      return data;
+    } catch (error) {
+      console.error('API Error:', error);
+      document.getElementById('statusMessage').style.color = "#ff7b72";
+      document.getElementById('statusMessage').innerText = "通信エラーが発生しました。GASの公開設定かコードを確認してください。";
+      throw error;
+    }
+  }
+
+  // --- 画面起動時の初期化 ---
+  window.addEventListener('DOMContentLoaded', async () => {
+    setupCamera();
+    await loadInitialData();
+  });
+
+  // --- マスターデータの初期読み込み ---
+  async function loadInitialData() {
+    try {
+      document.getElementById('statusMessage').innerText = "";
+      
+      // 1. 作業者リストの取得
+      const workers = await callGAS('getWorkers');
+      const workerSelect = document.getElementById('workerSelect');
+      workerSelect.innerHTML = '<option value="">選択してください</option>';
+      if (Array.isArray(workers)) {
+        workers.forEach(w => {
+          const opt = document.createElement('option');
+          opt.value = w; opt.textContent = w;
+          workerSelect.appendChild(opt);
+        });
+      }
+
+      // 2. 実稼働コイル番号の取得
+      const coils = await callGAS('getActiveCoils');
+      const coilSelect = document.getElementById('coilSelect');
+      coilSelect.innerHTML = '<option value="">選択してください</option>';
+      if (Array.isArray(coils)) {
+        coils.forEach(c => {
+          const opt = document.createElement('option');
+          opt.value = c; opt.textContent = c;
+          coilSelect.appendChild(opt);
+        });
+      }
+
+      // 3. 履歴の読込
+      await refreshHistory();
+
+    } catch (e) {
+      console.error("初期化エラー:", e);
+    }
+  }
+
+  // --- コイルが選ばれたら製品情報を自動引っ張り ---
+  async function onCoilChange() {
+    const coilNo = document.getElementById('coilSelect').value;
+    const prodInput = document.getElementById('productInfo');
+    if (!coilNo) {
+      prodInput.value = "";
+      return;
+    }
+    prodInput.value = "自動検索中...";
+    try {
+      const prod = await callGAS('getProducts', { coilNo: coilNo });
+      if (prod && prod.productName) {
+        prodInput.value = prod.productName;
+      } else {
+        prodInput.value = "製品情報が見つかりません";
+      }
+    } catch (e) {
+      prodInput.value = "データ取得エラー";
+    }
+  }
+
+  // --- 履歴テーブルをリフレッシュ ---
+  async function refreshHistory() {
+    const historyBody = document.getElementById('historyBody');
+    try {
+      const history = await callGAS('getHistory');
+      historyBody.innerHTML = '';
+      if (Array.isArray(history) && history.length > 0) {
+        history.forEach(row => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${row.timestamp || ''}</td>
+            <td>${row.worker || ''}</td>
+            <td>${row.coilNo || ''}</td>
+            <td>${row.productName || ''}</td>
+          `;
+          historyBody.appendChild(tr);
+        });
+      } else {
+        historyBody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#8b949e;">履歴はありません</td></tr>';
+      }
+    } catch (e) {
+      historyBody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#ff7b72;">履歴の読み込みに失敗しました</td></tr>';
+    }
+  }
+
+  // --- データの保存処理 ---
+  async function submitLog() {
+    const worker = document.getElementById('workerSelect').value;
+    const coilNo = document.getElementById('coilSelect').value;
+    const product = document.getElementById('productInfo').value;
+    const statusMsg = document.getElementById('statusMessage');
+
+    if (!worker || !coilNo) {
+      statusMsg.style.color = "#ff7b72";
+      statusMsg.innerText = "エラー: 作業者とコイル番号を両方選択してください。";
+      return;
+    }
+
+    statusMsg.style.color = "#58a6ff";
+    statusMsg.innerText = "スプレッドシートに書き込み中...";
+
+    try {
+      const res = await callGAS('saveLog', {
+        logData: { worker: worker, coilNo: coilNo, productName: product }
+      });
+      if (res && res.success) {
+        statusMsg.style.color = "#56d364";
+        statusMsg.innerText = "正常に保存されました！";
+        await refreshHistory();
+      } else {
+        throw new Error("保存に失敗しました。");
+      }
+    } catch (e) {
+      statusMsg.style.color = "#ff7b72";
+      statusMsg.innerText = "保存エラー: " + e.message;
+    }
+  }
+
+  // --- スマホカメラ起動処理 (背面カメラを強制指定) ---
+  function setupCamera() {
+    const video = document.getElementById('video');
+    const startBtn = document.getElementById('startCamBtn');
+
+    startBtn.addEventListener('click', async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'environment' }, // 背面カメラを優先起動
+          audio: false
+        });
+        video.srcObject = stream;
+        startBtn.style.display = 'none'; // 成功したらボタンを非表示に
+      } catch (err) {
+        console.error("カメラアクセスエラー:", err);
+        alert("カメラの起動に失敗しました。ブラウザのカメラ権限が許可されているか確認してください。");
+      }
+    });
+  }
+</script>
+
+</body>
+</html>
