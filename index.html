@@ -415,6 +415,11 @@
          facingMode: "environment"
        }
      },
+     locator: {
+       patchSize: "medium",
+       halfSample: false
+     },
+     frequency: 10,
      decoder: {
        readers: [
          "code_128_reader",
@@ -460,14 +465,14 @@
        barcodeMatchCount = 1;
      }
 
-     if (barcodeMatchCount >= 2) {
+     if (barcodeMatchCount >= 3) {
        console.log('Barcode detected:', code);
        document.getElementById('coilNo').value = code;
        stopBarcodeScanning();
        setTimeout(() => onCoilDetermined(), 500);
      } else {
        // 進捗表示
-       scanStatus.innerText = `${LANG_DATA[currentLang].scanMsg || "スキャン中..."} (${barcodeMatchCount}/2)`;
+       scanStatus.innerText = `${LANG_DATA[currentLang].scanMsg || "スキャン中..."} (${barcodeMatchCount}/3)`;
      }
    });
  }
