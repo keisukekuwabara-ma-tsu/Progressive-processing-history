@@ -82,7 +82,6 @@
  .inline-input-group { display: flex; gap: 10px; }
  .inline-input-group input { flex: 1; }
  
- /* ★追加: カメラボタンスタイル */
  .scan-btn {
  padding: 0 16px; background-color: #f59e0b; border: none; border-radius: 10px;
  color: white; font-size: 1.2rem; cursor: pointer; transition: background 0.2s;
@@ -147,15 +146,25 @@
  .overlay-text { margin-top: 18px; color: var(--accent-color); font-weight: 700; font-size: 1.2rem; letter-spacing: 0.05em; }
  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
- /* ★追加: ネイティブカメラスキャナー用UI */
+ /* スキャナー用UI */
  #scannerOverlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 99999; display: none; flex-direction: column; }
  #scannerHeader { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; background: #111; color: white; border-bottom: 2px solid #333; }
  #scannerHeader button { background: #ef4444; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; font-size: 1.1rem; cursor: pointer; }
  #preview-container { flex: 1; position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center;}
- #preview-container video { width: 100%; height: 100%; object-fit: cover; }
+ #preview-container video { width: 100%; height: 100%; object-fit: cover; filter: brightness(1); }
+ #scan-guide { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 300px; height: 150px; border: 3px dashed #00ff00; border-radius: 8px; box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.2); z-index: 5; }
  #scan-line { position: absolute; top: 50%; left: 10%; width: 80%; height: 2px; background: #ff375f; box-shadow: 0 0 15px #ff375f; z-index: 10; animation: scanMotion 1.5s ease-in-out infinite alternate; }
  @keyframes scanMotion { 0% { transform: translateY(-70px); } 100% { transform: translateY(70px); } }
  #scanStatus { padding: 20px; text-align: center; background: #111; color: #f59e0b; font-weight: bold; font-size: 1.1rem; }
+ 
+ /* コントロールパネル */
+ #scannerControls { background: #1a1a1a; padding: 16px; border-top: 1px solid #333; color: white; display: flex; flex-direction: column; gap: 12px; max-height: 200px; overflow-y: auto; }
+ .control-group { display: flex; align-items: center; gap: 12px; }
+ .control-label { font-size: 0.9rem; font-weight: 600; min-width: 80px; color: #cbd5e1; }
+ .control-slider { flex: 1; height: 6px; background: #333; border-radius: 3px; outline: none; cursor: pointer; accent-color: #00adb5; }
+ .control-btn { padding: 8px 16px; background: #00adb5; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.9rem; transition: background 0.2s; white-space: nowrap; }
+ .control-btn:hover { background: #008087; }
+ .control-btn.active { background: #10b981; }
  </style>
 </head>
 <body>
@@ -177,10 +186,27 @@
     <button onclick="stopBarcodeScanning()">閉じる</button>
   </div>
   <div id="preview-container">
+    <div id="scan-guide"></div>
     <div id="scan-line"></div>
     <div id="preview"></div>
   </div>
   <div id="scanStatus">カメラを起動中...</div>
+  <div id="scannerControls">
+    <div class="control-group">
+      <label class="control-label">🔍 ズーム</label>
+      <input type="range" id="zoomSlider" class="control-slider" min="1" max="4" value="1" step="0.1" oninput="updateZoom(this.value)">
+      <span style="min-width: 40px; text-align: right; font-size: 0.9rem;" id="zoomValue">1.0x</span>
+    </div>
+    <div class="control-group">
+      <label class="control-label">💡 ライティング</label>
+      <input type="range" id="brightnessSlider" class="control-slider" min="-50" max="50" value="0" step="5" oninput="updateBrightness(this.value)">
+      <span style="min-width: 40px; text-align: right; font-size: 0.9rem;" id="brightnessValue">標準</span>
+    </div>
+    <div class="control-group">
+      <label class="control-label">🔄 フォーカス</label>
+      <button class="control-btn active" id="focusBtn" onclick="toggleAutoFocus()">オートフォーカス ON</button>
+    </div>
+  </div>
 </div>
   
 <div class="lang-bar">
@@ -367,9 +393,18 @@
  let nextStage = '始'; 
  let fullHistoryLogs = []; 
  let rawWorkers = []; 
+ 
+ // カメラ制御用グローバル変数
+ let barcodeMatchCount = 0;
+ let lastBarcode = "";
+ let quaggaInitialized = false;
+ let currentZoom = 1;
+ let currentBrightness = 0;
+ let autoFocusEnabled = true;
+ let videoElement = null;
   
  // ==========================================
- // API通信の心臓部（CORS回避用の fetch API）
+ // API通信
  // ==========================================
  const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyKuZhZb_aOg7Iyb2YTYHOwOMKognF57OpGuzmPJxNfo2dpa-F81j-iI5yuRVDqaidvRg/exec";
 
@@ -390,12 +425,41 @@
  }
 
  // ==========================================
- // バーコードスキャナー制御ロジック (QuaggaJS) - 強化版
+ // カメラ制御機能
  // ==========================================
- let barcodeMatchCount = 0;
- let lastBarcode = "";
- let quaggaInitialized = false;
+ function updateZoom(value) {
+   currentZoom = parseFloat(value);
+   document.getElementById('zoomValue').textContent = currentZoom.toFixed(1) + 'x';
+   applyVideoFilter();
+ }
 
+ function updateBrightness(value) {
+   currentBrightness = parseInt(value);
+   const brightVal = (100 + currentBrightness);
+   document.getElementById('brightnessValue').textContent = 
+     currentBrightness > 0 ? `明るい+${currentBrightness}` : 
+     currentBrightness < 0 ? `暗い${currentBrightness}` : '標準';
+   applyVideoFilter();
+ }
+
+ function toggleAutoFocus() {
+   autoFocusEnabled = !autoFocusEnabled;
+   const btn = document.getElementById('focusBtn');
+   btn.textContent = autoFocusEnabled ? 'オートフォーカス ON' : 'オートフォーカス OFF';
+   btn.classList.toggle('active');
+ }
+
+ function applyVideoFilter() {
+   const video = document.querySelector('#preview-container video');
+   if (!video) return;
+   const brightVal = (100 + currentBrightness);
+   const scale = currentZoom;
+   video.style.filter = `brightness(${brightVal}%) scale(${scale})`;
+ }
+
+ // ==========================================
+ // バーコードスキャナー
+ // ==========================================
  function startBarcodeScanning() {
    const scannerOverlay = document.getElementById('scannerOverlay');
    const scanStatus = document.getElementById('scanStatus');
@@ -405,6 +469,16 @@
    barcodeMatchCount = 0;
    lastBarcode = "";
    quaggaInitialized = false;
+   currentZoom = 1;
+   currentBrightness = 0;
+   autoFocusEnabled = true;
+   
+   document.getElementById('zoomSlider').value = 1;
+   document.getElementById('brightnessSlider').value = 0;
+   document.getElementById('zoomValue').textContent = '1.0x';
+   document.getElementById('brightnessValue').textContent = '標準';
+   document.getElementById('focusBtn').classList.add('active');
+   document.getElementById('focusBtn').textContent = 'オートフォーカス ON';
 
    Quagga.init({
      inputStream: {
@@ -412,7 +486,8 @@
        type: "LiveStream",
        target: document.querySelector('#preview'),
        constraints: {
-         facingMode: "environment"
+         facingMode: "environment",
+         focusMode: "continuous"
        }
      },
      locator: {
@@ -421,11 +496,7 @@
      },
      frequency: 10,
      decoder: {
-       readers: [
-         "code_128_reader",
-         "ean_reader",
-         "code_39_reader"
-       ]
+       readers: ["code_128_reader", "ean_reader", "code_39_reader"]
      }
    }, function(err) {
      if (err) {
@@ -436,13 +507,11 @@
      Quagga.start();
      quaggaInitialized = true;
      scanStatus.innerText = LANG_DATA[currentLang].scanMsg || "スキャン中...";
-   });
-
-   Quagga.onProcessed(function(result) {
-     // リアルタイムの検出状態表示
-     if (result && result.boxes) {
-       // スキャンが動作していることを示す
-     }
+     
+     setTimeout(() => {
+       videoElement = document.querySelector('#preview video');
+       if (videoElement) applyVideoFilter();
+     }, 500);
    });
 
    Quagga.onDetected(function(data) {
@@ -451,13 +520,9 @@
      let code = data.codeResult.code;
      if (!code) return;
      
-     // ★先頭の0を削除（ただし0だけの場合は0を保持）
      code = code.replace(/^0+(?=.)/,'') || code;
-     
-     // 大文字化の強制処理
      code = code.toUpperCase();
      
-     // 誤認識を防ぐため、同じコードを2回連続で認識したら確定とする
      if (code === lastBarcode) {
        barcodeMatchCount++;
      } else {
@@ -466,13 +531,12 @@
      }
 
      if (barcodeMatchCount >= 3) {
-       console.log('Barcode detected:', code);
        document.getElementById('coilNo').value = code;
        stopBarcodeScanning();
        setTimeout(() => onCoilDetermined(), 500);
      } else {
-       // 進捗表示
-       scanStatus.innerText = `${LANG_DATA[currentLang].scanMsg || "スキャン中..."} (${barcodeMatchCount}/3)`;
+       document.getElementById('scanStatus').innerText = 
+         `${LANG_DATA[currentLang].scanMsg || "スキャン中..."} (${barcodeMatchCount}/3)`;
      }
    });
  }
@@ -499,14 +563,11 @@
  function initStaticLabels() { 
    const lang = LANG_DATA[currentLang]; 
    document.title = lang.title; 
-   const pageTitleEl = document.getElementById('pageTitle'); 
-   if(pageTitleEl) pageTitleEl.textContent = lang.title; 
-     
+   document.getElementById('pageTitle').textContent = lang.title; 
    document.getElementById('uiMainHeader').textContent = lang.title; 
    document.getElementById('lblWorker').textContent = lang.worker; 
    document.getElementById('lblMachine').textContent = lang.machine; 
    document.getElementById('lblCoilNo').textContent = lang.coilNo; 
-   
    document.getElementById('btnConfirm').textContent = lang.confirm; 
    document.getElementById('lblProductName').textContent = lang.productName; 
    document.getElementById('lblMeasured').childNodes[0].textContent = lang.measured + " "; 
@@ -515,28 +576,23 @@
    document.getElementById('uiHistoryTitle').textContent = lang.historyTitle; 
    document.getElementById('coilNo').placeholder = lang.coilPlaceholder; 
    document.getElementById('quantity').placeholder = lang.qtyPlaceholder; 
-    
    document.getElementById('uiWarningTitle').textContent = lang.warnTitle; 
    document.getElementById('uiWarningBody').innerHTML = lang.warnBody;
    document.getElementById('btnWarningClose').textContent = lang.warnClose;
    const optMachine = document.getElementById('optMachineDefault'); 
    if (optMachine) optMachine.textContent = lang.selectPlease; 
-    
    renderWorkerDropdown();
  } 
   
  function renderWorkerDropdown() { 
    const select = document.getElementById('worker'); 
    if (!select) return; 
-    
    const currentSelectedValue = select.value;
    select.innerHTML = ''; 
-     
    const firstOpt = document.createElement('option'); 
    firstOpt.value = ""; 
    firstOpt.textContent = LANG_DATA[currentLang].selectPlease; 
    select.appendChild(firstOpt);
-   
    rawWorkers.forEach(name => { 
      const opt = document.createElement('option'); 
      opt.value = name; 
@@ -550,13 +606,9 @@
    currentLang = langCode; 
    document.querySelectorAll('.lang-bar .lang-btn').forEach(btn => btn.classList.remove('active'));
    const targetBtn = document.getElementById('btn-lang-' + langCode); 
-   if (targetBtn) { 
-     targetBtn.classList.add('active'); 
-   } 
+   if (targetBtn) targetBtn.classList.add('active'); 
    initStaticLabels(); 
-   if(document.getElementById('productName').value) { 
-     onProductChanged();
-   } 
+   if(document.getElementById('productName').value) onProductChanged();
    checkMeasuredValue(); 
  } 
   
@@ -593,18 +645,13 @@
  async function loadRecentHistory() { 
    const historyListDiv = document.getElementById('historyList'); 
    const historyLoadingEl = document.getElementById('uiHistoryLoading');
-   if (historyLoadingEl) { 
-     historyLoadingEl.textContent = LANG_DATA[currentLang].historyLoading; 
-   } 
+   if (historyLoadingEl) historyLoadingEl.textContent = LANG_DATA[currentLang].historyLoading; 
   
    try {
      const logs = await callGAS('getHistory');
      fullHistoryLogs = logs || []; 
-      
      const hasWarning = fullHistoryLogs.some(log => log.isWarning); 
-     if (hasWarning) { 
-       document.getElementById('globalWarningOverlay').style.display = 'flex'; 
-     } 
+     if (hasWarning) document.getElementById('globalWarningOverlay').style.display = 'flex'; 
       
      if(fullHistoryLogs.length === 0) { 
        historyListDiv.innerHTML = `<div style="text-align:center;color:#666;padding:20px;">${LANG_DATA[currentLang].noHistory}</div>`; 
@@ -616,59 +663,20 @@
      displayLogs.forEach(log => { 
        let timelineHtml = ''; 
        let finalQty = ''; 
-        
        const isEndReached = !!(log.end); 
        const cardClass = isEndReached ? 'history-card' : 'history-card is-incomplete'; 
         
        if(log.start) { 
-         timelineHtml += ` 
-         <div class="timeline-row"> 
-         <span class="stage-label lbl-始">▶ 始</span> 
-         <span class="stage-details">👤 ${log.start.worker} &nbsp;
-         📐 ${log.start.measured ? parseFloat(log.start.measured).toFixed(1)+'mm' : '-'}</span> 
-         <span class="stage-time">${log.start.time}</span> 
-         </div> 
-         `;
+         timelineHtml += `<div class="timeline-row"><span class="stage-label lbl-始">▶ 始</span><span class="stage-details">👤 ${log.start.worker} &nbsp;📐 ${log.start.measured ? parseFloat(log.start.measured).toFixed(1)+'mm' : '-'}</span><span class="stage-time">${log.start.time}</span></div>`; 
        } 
        if(log.middle) { 
-         timelineHtml += ` 
-         <div class="timeline-row"> 
-         <span class="stage-label lbl-中">🔄 中</span> 
-         <span class="stage-details">👤 ${log.middle.worker} &nbsp;
-         📐 ${log.middle.measured ? parseFloat(log.middle.measured).toFixed(1)+'mm' : '-'}</span> 
-         <span class="stage-time">${log.middle.time}</span> 
-         </div> 
-         `;
+         timelineHtml += `<div class="timeline-row"><span class="stage-label lbl-中">🔄 中</span><span class="stage-details">👤 ${log.middle.worker} &nbsp;📐 ${log.middle.measured ? parseFloat(log.middle.measured).toFixed(1)+'mm' : '-'}</span><span class="stage-time">${log.middle.time}</span></div>`; 
        } 
        if(log.end) { 
-         timelineHtml += ` 
-         <div class="timeline-row"> 
-         <span class="stage-label lbl-終">■ 終</span> 
-         <span class="stage-details">👤 ${log.end.worker} &nbsp;
-         📐 ${log.end.measured ? parseFloat(log.end.measured).toFixed(1)+'mm' : '-'}</span> 
-         <span class="stage-time">${log.end.time}</span> 
-         </div> 
-         `;
-         if(log.end.qty) { 
-           finalQty = `<div class="qty-display-box">📦 Qty: ${log.end.qty}</div>`; 
-         } 
+         timelineHtml += `<div class="timeline-row"><span class="stage-label lbl-終">■ 終</span><span class="stage-details">👤 ${log.end.worker} &nbsp;📐 ${log.end.measured ? parseFloat(log.end.measured).toFixed(1)+'mm' : '-'}</span><span class="stage-time">${log.end.time}</span></div>`; 
+         if(log.end.qty) finalQty = `<div class="qty-display-box">📦 Qty: ${log.end.qty}</div>`; 
        } 
-        
-       html += ` 
-       <div class="${cardClass}"> 
-       <div class="card-top"> 
-       <div class="card-coil-title">Coil No: ${log.coilNo}</div> 
-       <div class="card-meta-info"> 
-       <span>Product: <b>${log.productName}</b></span> 
-       <span>Machine: <b>${log.machine}</b></span> 
-       </div> 
-       </div> 
-       <div class="timeline-container"> 
-       ${timelineHtml} 
-       </div> 
-       ${finalQty} 
-       </div> 
-       `;
+       html += `<div class="${cardClass}"><div class="card-top"><div class="card-coil-title">Coil No: ${log.coilNo}</div><div class="card-meta-info"><span>Product: <b>${log.productName}</b></span><span>Machine: <b>${log.machine}</b></span></div></div><div class="timeline-container">${timelineHtml}</div>${finalQty}</div>`; 
      }); 
      historyListDiv.innerHTML = html; 
    } catch(err) {
@@ -678,9 +686,7 @@
   
  function moveToNextField(nextFieldId) { 
    const nextField = document.getElementById(nextFieldId);
-   if (nextField) { 
-     setTimeout(() => { nextField.focus(); }, 100);
-   } 
+   if (nextField) setTimeout(() => { nextField.focus(); }, 100);
  } 
   
  function showOverlay(text) { 
@@ -697,7 +703,6 @@
    if (!coilNo) return; 
    const dynamicArea = document.getElementById('dynamic-area'); 
    const msgDiv = document.getElementById('message'); 
-     
    showOverlay(LANG_DATA[currentLang].checkingStock); 
    dynamicArea.classList.add('hidden'); 
    msgDiv.style.display = 'none'; 
@@ -712,7 +717,6 @@
        currentProducts = res.products || []; 
        const pSelect = document.getElementById('productName'); 
        pSelect.innerHTML = ''; 
-         
        if (currentProducts.length > 1) { 
          const defaultOpt = document.createElement('option'); 
          defaultOpt.value = ''; 
@@ -726,11 +730,8 @@
          pSelect.appendChild(opt); 
        }); 
        dynamicArea.classList.remove('hidden'); 
-       if (currentProducts.length === 1) { 
-         onProductChanged(); 
-       } else { 
-         pSelect.focus(); 
-       } 
+       if (currentProducts.length === 1) onProductChanged(); 
+       else pSelect.focus(); 
      } else { 
        msgDiv.className = 'error'; 
        msgDiv.textContent = res.msg; 
@@ -751,37 +752,30 @@
    const msgDiv = document.getElementById('message'); 
    const submitBtn = document.getElementById('submitBtn'); 
    const defectDiv = document.getElementById('defectWarning'); 
-     
    msgDiv.style.display = 'none';
    submitBtn.disabled = false; 
    defectDiv.style.display = 'none'; 
    defectDiv.innerHTML = ''; 
-    
    if (!selectedName) { 
      targetValue = null; 
      targetDisplay.textContent = ''; 
      resetJudge();
      return; 
    } 
-    
    const matched = currentProducts.find(p => p.name === selectedName); 
    if (matched) { 
      targetValue = parseFloat(matched.measured);
      const minOk = (targetValue - 0.8).toFixed(1); 
      const maxOk = (targetValue + 0.8).toFixed(1); 
      targetDisplay.textContent = `（${LANG_DATA[currentLang].rangeText}: ${targetValue.toFixed(1)} / ${LANG_DATA[currentLang].okRange}: ${minOk}～${maxOk}）`;
-     
      if (matched.defect) { 
-       const defectText = (typeof matched.defect === 'object') ?
-       (matched.defect[currentLang] || matched.defect['ja'] || '') : matched.defect; 
-         
+       const defectText = (typeof matched.defect === 'object') ? (matched.defect[currentLang] || matched.defect['ja'] || '') : matched.defect; 
        if (defectText.trim() !== "") { 
          defectDiv.innerHTML = `<b>${LANG_DATA[currentLang].defectTitle}</b>${defectText}`; 
          defectDiv.style.display = 'block';
        } 
      } 
    } 
-    
    const todayStr = new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/-/g, '/');
    let foundLog = fullHistoryLogs.find(l => {
      let logDateStr = '';
@@ -790,7 +784,6 @@
      else if (l.end && l.end.time) logDateStr = l.end.time.split(' ')[0];
      return l.coilNo === coilNo && l.productName === selectedName && logDateStr === todayStr;
    });
-    
    if (foundLog) { 
      if (foundLog.end) { 
        let lockMsg = LANG_DATA[currentLang].lockError.replace('{prod}', selectedName); 
@@ -799,17 +792,12 @@
        msgDiv.style.display = 'block'; 
        submitBtn.disabled = true; 
        return; 
-     } else if (foundLog.middle) { 
-       nextStage = '終';
-     } else if (foundLog.start) { 
-       nextStage = '中'; 
-     } else { 
-       nextStage = '始';
-     } 
+     } else if (foundLog.middle) nextStage = '終';
+     else if (foundLog.start) nextStage = '中'; 
+     else nextStage = '始';
    } else { 
      nextStage = '始'; 
    } 
-    
    const qtyField = document.getElementById('quantity-field');
    const qtyInput = document.getElementById('quantity'); 
    if (nextStage === '終') { 
@@ -819,7 +807,6 @@
      qtyField.classList.add('hidden');
      qtyInput.required = false; 
    } 
-     
    document.getElementById('measured').focus(); 
    checkMeasuredValue(); 
  } 
@@ -855,7 +842,6 @@
   
  document.getElementById('pressForm').addEventListener('submit', async function(e) { 
    e.preventDefault(); 
-    
    const judgeBox = document.getElementById('judgeResult');
    if (judgeBox && judgeBox.classList.contains('judge-ng')) {
        let alertMsg = "⚠️ 判定がNGのため、送信できません。\n数値を再度確認してください。";
@@ -864,14 +850,11 @@
        alert(alertMsg);
        return; 
    }
-  
    const submitBtn = document.getElementById('submitBtn'); 
    const msgDiv = document.getElementById('message'); 
-     
    submitBtn.disabled = true; 
    msgDiv.style.display = 'none'; 
    showOverlay(LANG_DATA[currentLang].saving); 
-    
    const logData = { 
      coilNo: document.getElementById('coilNo').value.trim(), 
      worker: document.getElementById('worker').value, 
@@ -881,7 +864,6 @@
      enforcedStage: nextStage, 
      quantity: document.getElementById('quantity').value 
    };
-
    try {
      const res = await callGAS('saveLog', { logData: logData });
      hideOverlay(); 
@@ -889,7 +871,6 @@
      msgDiv.className = 'success'; 
      msgDiv.textContent = `【${res.type}】 ${LANG_DATA[currentLang].successSaved}`; 
      msgDiv.style.display = 'block'; 
-       
      document.getElementById('coilNo').value = ''; 
      document.getElementById('measured').value = ''; 
      document.getElementById('quantity').value = ''; 
@@ -901,7 +882,6 @@
      nextStage = '始'; 
      document.getElementById('masterTargetDisplay').textContent = ''; 
      resetJudge(); 
-      
      loadRecentHistory(); 
      refreshCoilSupportList();
      document.getElementById('coilNo').focus(); 
