@@ -412,30 +412,19 @@
        type: "LiveStream",
        target: document.querySelector('#preview'),
        constraints: {
-         facingMode: "environment",
-         width: { min: 640, ideal: 1280, max: 1920 },
-         height: { min: 480, ideal: 720, max: 1080 }
+         facingMode: "environment"
        }
      },
-     locator: {
-       halfSample: false
-     },
-     frequency: 10,
      decoder: {
        readers: [
          "code_128_reader",
          "ean_reader",
-         "ean_8_reader",
-         "code_39_reader",
-         "code_93_reader",
-         "code_11_reader",
-         "codabar_reader"
-       ],
-       multiple: false
+         "code_39_reader"
+       ]
      }
    }, function(err) {
      if (err) {
-       console.error(err);
+       console.error('Quagga init error:', err);
        scanStatus.innerText = "カメラの起動に失敗しました。権限を確認してください。";
        return;
      }
@@ -444,14 +433,18 @@
      scanStatus.innerText = LANG_DATA[currentLang].scanMsg || "スキャン中...";
    });
 
+   Quagga.onProcessed(function(result) {
+     // リアルタイムの検出状態表示
+     if (result && result.boxes) {
+       // スキャンが動作していることを示す
+     }
+   });
+
    Quagga.onDetected(function(data) {
      if (!quaggaInitialized || !data.codeResult) return;
      
-     // 信頼度チェック（0.7以上の精度のみを受け入れ）
-     const confidence = data.codeResult.confidence || 0;
-     if (confidence < 0.7) return;
-     
      let code = data.codeResult.code;
+     if (!code) return;
      
      // ★先頭の0を削除（ただし0だけの場合は0を保持）
      code = code.replace(/^0+(?=.)/,'') || code;
@@ -459,21 +452,22 @@
      // 大文字化の強制処理
      code = code.toUpperCase();
      
-     // 誤認識を防ぐため、同じコードを3回連続で認識したら確定とする（精度向上）
+     // 誤認識を防ぐため、同じコードを2回連続で認識したら確定とする
      if (code === lastBarcode) {
        barcodeMatchCount++;
      } else {
        lastBarcode = code;
-       barcodeMatchCount = 0;
+       barcodeMatchCount = 1;
      }
 
-     if (barcodeMatchCount >= 3) {
+     if (barcodeMatchCount >= 2) {
+       console.log('Barcode detected:', code);
        document.getElementById('coilNo').value = code;
        stopBarcodeScanning();
-       onCoilDetermined();
+       setTimeout(() => onCoilDetermined(), 500);
      } else {
        // 進捗表示
-       scanStatus.innerText = `${LANG_DATA[currentLang].scanMsg || "スキャン中..."} (${barcodeMatchCount + 1}/3)`;
+       scanStatus.innerText = `${LANG_DATA[currentLang].scanMsg || "スキャン中..."} (${barcodeMatchCount}/2)`;
      }
    });
  }
