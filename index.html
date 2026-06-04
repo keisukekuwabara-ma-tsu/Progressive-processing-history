@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
  <meta charset="UTF-8">
- <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=4.0">
  <title id="pageTitle">順送プレス加工実績入力</title>
  <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
  <style>
@@ -152,7 +152,7 @@
  #scannerHeader button { background: #ef4444; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; font-size: 1.1rem; cursor: pointer; }
  #preview-container { flex: 1; position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center;}
  #preview-container video { width: 100%; height: 100%; object-fit: cover; filter: brightness(1); }
- #scan-guide { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 300px; height: 150px; border: 3px dashed #00ff00; border-radius: 8px; box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.2); z-index: 5; }
+ #scan-guide { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80%; max-width: 500px; height: auto; aspect-ratio: 3 / 1.5; border: 3px dashed #00ff00; border-radius: 8px; box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.2); z-index: 5; }
  #scan-line { position: absolute; top: 50%; left: 10%; width: 80%; height: 2px; background: #ff375f; box-shadow: 0 0 15px #ff375f; z-index: 10; animation: scanMotion 1.5s ease-in-out infinite alternate; }
  @keyframes scanMotion { 0% { transform: translateY(-70px); } 100% { transform: translateY(70px); } }
  #scanStatus { padding: 20px; text-align: center; background: #111; color: #f59e0b; font-weight: bold; font-size: 1.1rem; }
@@ -165,6 +165,85 @@
  .control-btn { padding: 8px 16px; background: #00adb5; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.9rem; transition: background 0.2s; white-space: nowrap; }
  .control-btn:hover { background: #008087; }
  .control-btn.active { background: #10b981; }
+
+ /* タブレット対応（横向き・大画面） */
+ @media (min-width: 768px) {
+   body {
+     padding: 24px;
+   }
+   .container {
+     max-width: 600px;
+   }
+   .history-container {
+     max-width: 600px;
+   }
+   #scannerOverlay {
+     flex-direction: row;
+   }
+   #scannerHeader {
+     flex-direction: column;
+     width: 200px;
+     padding: 20px;
+     border-right: 2px solid #333;
+     border-bottom: none;
+     justify-content: flex-start;
+     gap: 20px;
+   }
+   #scannerHeader h3 {
+     writing-mode: vertical-lr;
+     transform: rotate(180deg);
+     margin: 0;
+   }
+   #scannerHeader button {
+     width: 100%;
+   }
+   #preview-container {
+     flex: 1;
+   }
+   #scannerControls {
+     position: absolute;
+     bottom: 0;
+     right: 0;
+     width: 300px;
+     flex-direction: row;
+     gap: 8px;
+     max-height: none;
+     overflow-x: auto;
+     padding: 12px;
+   }
+   .control-group {
+     flex-direction: column;
+     gap: 6px;
+     min-width: 90px;
+   }
+   .control-label {
+     min-width: auto;
+     font-size: 0.8rem;
+     text-align: center;
+   }
+   .control-slider {
+     height: 100px;
+     writing-mode: bt-lr;
+     transform: rotate(90deg);
+   }
+ }
+
+ /* iPad Pro 等の超大型タブレット */
+ @media (min-width: 1024px) {
+   .container {
+     max-width: 800px;
+   }
+   h2 {
+     font-size: 2rem;
+   }
+   input[type="text"], input[type="number"], select {
+     font-size: 1.3rem;
+     padding: 16px 18px;
+   }
+   #scannerControls {
+     width: 350px;
+   }
+ }
  </style>
 </head>
 <body>
@@ -191,21 +270,8 @@
     <div id="preview"></div>
   </div>
   <div id="scanStatus">カメラを起動中...</div>
-  <div id="scannerControls">
-    <div class="control-group">
-      <label class="control-label">🔍 ズーム</label>
-      <input type="range" id="zoomSlider" class="control-slider" min="1" max="4" value="1" step="0.1" oninput="updateZoom(this.value)">
-      <span style="min-width: 40px; text-align: right; font-size: 0.9rem;" id="zoomValue">1.0x</span>
-    </div>
-    <div class="control-group">
-      <label class="control-label">💡 ライティング</label>
-      <input type="range" id="brightnessSlider" class="control-slider" min="-50" max="50" value="0" step="5" oninput="updateBrightness(this.value)">
-      <span style="min-width: 40px; text-align: right; font-size: 0.9rem;" id="brightnessValue">標準</span>
-    </div>
-    <div class="control-group">
-      <label class="control-label">🔄 フォーカス</label>
-      <button class="control-btn active" id="focusBtn" onclick="toggleAutoFocus()">オートフォーカス ON</button>
-    </div>
+  <div style="text-align: center; color: #94a3b8; font-size: 0.85rem; padding: 8px; background: #111; border-top: 1px solid #333;">
+    💡 ピンチズームで拡大・縮小できます ｜ 暗い場合は照明を確保してください
   </div>
 </div>
   
@@ -425,39 +491,6 @@
  }
 
  // ==========================================
- // カメラ制御機能
- // ==========================================
- function updateZoom(value) {
-   currentZoom = parseFloat(value);
-   document.getElementById('zoomValue').textContent = currentZoom.toFixed(1) + 'x';
-   applyVideoFilter();
- }
-
- function updateBrightness(value) {
-   currentBrightness = parseInt(value);
-   const brightVal = (100 + currentBrightness);
-   document.getElementById('brightnessValue').textContent = 
-     currentBrightness > 0 ? `明るい+${currentBrightness}` : 
-     currentBrightness < 0 ? `暗い${currentBrightness}` : '標準';
-   applyVideoFilter();
- }
-
- function toggleAutoFocus() {
-   autoFocusEnabled = !autoFocusEnabled;
-   const btn = document.getElementById('focusBtn');
-   btn.textContent = autoFocusEnabled ? 'オートフォーカス ON' : 'オートフォーカス OFF';
-   btn.classList.toggle('active');
- }
-
- function applyVideoFilter() {
-   const video = document.querySelector('#preview-container video');
-   if (!video) return;
-   const brightVal = (100 + currentBrightness);
-   const scale = currentZoom;
-   video.style.filter = `brightness(${brightVal}%) scale(${scale})`;
- }
-
- // ==========================================
  // バーコードスキャナー
  // ==========================================
  function startBarcodeScanning() {
@@ -469,16 +502,6 @@
    barcodeMatchCount = 0;
    lastBarcode = "";
    quaggaInitialized = false;
-   currentZoom = 1;
-   currentBrightness = 0;
-   autoFocusEnabled = true;
-   
-   document.getElementById('zoomSlider').value = 1;
-   document.getElementById('brightnessSlider').value = 0;
-   document.getElementById('zoomValue').textContent = '1.0x';
-   document.getElementById('brightnessValue').textContent = '標準';
-   document.getElementById('focusBtn').classList.add('active');
-   document.getElementById('focusBtn').textContent = 'オートフォーカス ON';
 
    Quagga.init({
      inputStream: {
@@ -507,11 +530,6 @@
      Quagga.start();
      quaggaInitialized = true;
      scanStatus.innerText = LANG_DATA[currentLang].scanMsg || "スキャン中...";
-     
-     setTimeout(() => {
-       videoElement = document.querySelector('#preview video');
-       if (videoElement) applyVideoFilter();
-     }, 500);
    });
 
    Quagga.onDetected(function(data) {
@@ -625,12 +643,22 @@
  async function refreshCoilSupportList() {
    try {
      const coilList = await callGAS('getActiveCoils');
+     
+     // 履歴から「終」未完了（スキャン途中）のコイルNo.を抽出
+     const incompleteLogs = fullHistoryLogs.filter(log => !log.end);
+     const incompleteCoils = [...new Set(incompleteLogs.map(log => log.coilNo))];
+     
+     // 完成済みコイルとスキャン途中のコイルを合併（重複削除）
+     const allCoils = [...new Set([...(coilList || []), ...incompleteCoils])].sort();
+     
      const datalist = document.getElementById('coilHistoryOptions');
      if (!datalist) return;
      datalist.innerHTML = '';
-     (coilList || []).forEach(function(coilNo) {
+     
+     allCoils.forEach(function(coilNo) {
        const option = document.createElement('option');
        option.value = coilNo;
+       option.textContent = coilNo;
        datalist.appendChild(option);
      });
    } catch(e) {
@@ -655,6 +683,7 @@
       
      if(fullHistoryLogs.length === 0) { 
        historyListDiv.innerHTML = `<div style="text-align:center;color:#666;padding:20px;">${LANG_DATA[currentLang].noHistory}</div>`; 
+       refreshCoilSupportList();
        return; 
      } 
        
@@ -678,7 +707,10 @@
        } 
        html += `<div class="${cardClass}"><div class="card-top"><div class="card-coil-title">Coil No: ${log.coilNo}</div><div class="card-meta-info"><span>Product: <b>${log.productName}</b></span><span>Machine: <b>${log.machine}</b></span></div></div><div class="timeline-container">${timelineHtml}</div>${finalQty}</div>`; 
      }); 
-     historyListDiv.innerHTML = html; 
+     historyListDiv.innerHTML = html;
+     
+     // ★履歴読み込み後、ドロップダウンを更新
+     refreshCoilSupportList();
    } catch(err) {
      historyListDiv.innerHTML = `<div style="text-align:center;color:#b71c1c;padding:20px;">${LANG_DATA[currentLang].historyCommError}</div>`; 
    }
