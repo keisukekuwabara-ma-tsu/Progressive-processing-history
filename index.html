@@ -390,10 +390,11 @@
  }
 
  // ==========================================
- // バーコードスキャナー制御ロジック (QuaggaJS)
+ // バーコードスキャナー制御ロジック (QuaggaJS) - 強化版
  // ==========================================
  let barcodeMatchCount = 0;
  let lastBarcode = "";
+ let quaggaInitialized = false;
 
  function startBarcodeScanning() {
    const scannerOverlay = document.getElementById('scannerOverlay');
@@ -403,6 +404,7 @@
    
    barcodeMatchCount = 0;
    lastBarcode = "";
+   quaggaInitialized = false;
 
    Quagga.init({
      inputStream: {
@@ -410,11 +412,26 @@
        type: "LiveStream",
        target: document.querySelector('#preview'),
        constraints: {
-         facingMode: "environment" // 背面カメラを優先
+         facingMode: "environment",
+         width: { min: 640, ideal: 1280, max: 1920 },
+         height: { min: 480, ideal: 720, max: 1080 }
        }
      },
+     locator: {
+       halfSample: false
+     },
+     frequency: 10,
      decoder: {
-       readers: ["code_128_reader", "ean_reader", "code_39_reader"] // よく使われるバーコード規格
+       readers: [
+         "code_128_reader",
+         "ean_reader",
+         "ean_8_reader",
+         "code_39_reader",
+         "code_93_reader",
+         "code_11_reader",
+         "codabar_reader"
+       ],
+       multiple: false
      }
    }, function(err) {
      if (err) {
@@ -423,11 +440,26 @@
        return;
      }
      Quagga.start();
+     quaggaInitialized = true;
+     scanStatus.innerText = LANG_DATA[currentLang].scanMsg || "スキャン中...";
    });
 
    Quagga.onDetected(function(data) {
-     const code = data.codeResult.code;
-     // 誤認識を防ぐため、同じコードを2回連続で認識したら確定とする
+     if (!quaggaInitialized || !data.codeResult) return;
+     
+     // 信頼度チェック（0.7以上の精度のみを受け入れ）
+     const confidence = data.codeResult.confidence || 0;
+     if (confidence < 0.7) return;
+     
+     let code = data.codeResult.code;
+     
+     // ★先頭の0を削除（ただし0だけの場合は0を保持）
+     code = code.replace(/^0+(?=.)/,'') || code;
+     
+     // 大文字化の強制処理
+     code = code.toUpperCase();
+     
+     // 誤認識を防ぐため、同じコードを3回連続で認識したら確定とする（精度向上）
      if (code === lastBarcode) {
        barcodeMatchCount++;
      } else {
@@ -435,11 +467,13 @@
        barcodeMatchCount = 0;
      }
 
-     if (barcodeMatchCount >= 2) {
-       // LA700Wのスクリプト同様に大文字化の強制処理
-       document.getElementById('coilNo').value = code.toUpperCase(); 
+     if (barcodeMatchCount >= 3) {
+       document.getElementById('coilNo').value = code;
        stopBarcodeScanning();
-       onCoilDetermined(); // 確定ボタンを自動で押す
+       onCoilDetermined();
+     } else {
+       // 進捗表示
+       scanStatus.innerText = `${LANG_DATA[currentLang].scanMsg || "スキャン中..."} (${barcodeMatchCount + 1}/3)`;
      }
    });
  }
@@ -447,8 +481,10 @@
  function stopBarcodeScanning() {
    try {
      Quagga.stop();
+     Quagga.offDetected();
    } catch(e) {}
    document.getElementById('scannerOverlay').style.display = 'none';
+   quaggaInitialized = false;
  }
 
  // ==========================================
