@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>棚卸しアプリ - QRコードスキャナー</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
+        * { font-family: 'Noto Sans JP', sans-serif; }
+        body { background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); }
+
+        .scan-guide {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            border: 3px solid #06b6d4;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.5);
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(6, 182, 212, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(6, 182, 212, 0.8); }
+        }
+
+        .corner {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #06b6d4;
+        }
+
+        .corner.top-left { top: -3px; left: -3px; border-right: none; border-bottom: none; }
+        .corner.top-right { top: -3px; right: -3px; border-left: none; border-bottom: none; }
+        .corner.bottom-left { bottom: -3px; left: -3px; border-right: none; border-top: none; }
+        .corner.bottom-right { bottom: -3px; right: -3px; border-left: none; border-top: none; }
+
+        .card-enter { animation: slideUp 0.3s ease-out; }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .badge { display: inline-block; padding: 4px 12px; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; }
+        .badge.submitted { background-color: rgba(34, 197, 94, 0.2); color: #86efac; }
+        .badge.inputting { background-color: rgba(59, 130, 246, 0.2); color: #93c5fd; }
+
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .error-box {
+            background-color: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            padding: 16px;
+            border-radius: 12px;
+            margin: 12px 0;
+        }
+
+        .info-box {
+            background-color: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            padding: 16px;
+            border-radius: 12px;
+            margin: 12px 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+
+    <script>
+        class InventoryApp {
+            constructor() {
+                this.mode = 'staff'; // staff, scan, input, history, diagnosis
+                this.history = JSON.parse(localStorage.getItem('inventory-history')) || [];
+                this.lastStaff = localStorage.getItem('last-staff') || '';
+                this.currentStaff = this.lastStaff;
+                this.scanning = false;
+                this.stream = null;
+                this.scanInterval = null;
+                this.currentInput = null;
+                this.cameraSupported = this.checkCameraSupport();
+                this.previousMode = null; // 前のモードを記憶
+                this.render(); // render 内で setupEventListeners が呼ばれる
+            }
+
+            checkCameraSupport() {
+                return !!(
+                    navigator.mediaDevices &&
+                    navigator.mediaDevices.getUserMedia
+                );
+            }
+
+            render() {
+                const app = document.getElementById('app');
+                app.innerHTML = this.getHTML();
+                // HTML再生成後にイベントリスナーを設定
+                setTimeout(() => this.setupEventListeners(), 0);
+            }
+
+            getHTML() {
+                if (this.mode === 'staff') {
+                    return this.getStaffInputHTML();
+                } else if (this.scanning) {
+                    return this.getScanningHTML();
+                } else if (this.mode === 'input') {
+                    return this.getInputHTML();
+                } else if (this.mode === 'history') {
+                    return this.getHistoryHTML();
+                } else if (this.mode === 'diagnosis') {
+                    return this.getDiagnosisHTML();
+                } else {
+                    return this.getScanModeHTML();
+                }
+            }
+
+            getStaffInputHTML() {
+                return `
+                    <div class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white flex flex-col">
+                        <div class="sticky top-0 z-50 backdrop-blur-md bg-slate-900/80 border-b border-slate-700/50">
+                            <div class="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
+                                <h1 class="text-2xl font-bold">棚卸しアプリ</h1>
+                                ${this.previousMode ? `
+                                    <button id="backBtn" class="text-slate-400 hover:text-white text-2xl">✕</button>
+                                ` : ''}
+                            </div>
+                        </div>
+
+                        <div class="flex-1 flex items-center justify-center px-4 py-6">
+                            <div class="w-full max-w-md space-y-6">
+                                <!-- 大きなアイコン -->
+                                <div class="text-center">
+                                    <div class="inline-block bg-gradient-to-br from-cyan-400 to-blue-500 p-6 rounded-2xl">
+                                        <svg class="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+
+                                <div class="text-center space-y-2">
+                                    <h2 class="text-3xl font-bold">担当者を入力</h2>
+                                    <p class="text-slate-400 text-sm">棚卸し作業者の名前を入力してください</p>
+                                </div>
+
+                                <!-- 入力フィールド -->
+                                <div class="space-y-3">
+                                    <input 
+                                        type="text" 
+                                        id="staffInput" 
+                                        placeholder="例：山田太郎"
+                                        value="${this.lastStaff}"
+                                        class="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-4 text-white text-lg focus:outline-none focus:border-cyan-400 placeholder-slate-500"
+                                    >
+                                    <p class="text-xs text-slate-400 text-center">
+                                        ${this.lastStaff ? `前回：${this.lastStaff}` : ''}
+                                    </p>
+                                </div>
+
+                                <!-- ボタン -->
+                                <button id="confirmStaffBtn" class="w-full py-4 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 rounded-xl font-bold text-lg transition-all shadow-lg hover:shadow-cyan-400/25 flex items-center justify-center gap-2">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                                    ${this.previousMode === 'input' ? '変更確定' : 'スキャンを開始'}
+                                </button>
+
+                                <!-- 履歴確認 -->
+                                ${this.history.length > 0 && !this.previousMode ? `
+                                    <button id="viewHistoryBtn" class="w-full py-3 bg-slate-700/50 hover:bg-slate-700 border border-slate-600 rounded-xl font-semibold transition-colors">
+                                        📋 送信履歴を表示 (${this.history.length})
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            getScanningHTML() {
+                return `
+                    <div class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
+                        <div class="sticky top-0 z-50 backdrop-blur-md bg-slate-900/80 border-b border-slate-700/50">
+                            <div class="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
+                                <h1 class="text-2xl font-bold">棚卸しアプリ</h1>
+                                <div class="text-sm text-slate-300 bg-slate-800/50 px-3 py-1 rounded-full">
+                                    👤 ${this.currentStaff}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="max-w-2xl mx-auto px-4 py-6 space-y-4">
+                            <div class="relative rounded-2xl overflow-hidden bg-black aspect-video">
+                                <video id="video" autoplay playsinline class="w-full h-full object-cover"></video>
+                                <canvas id="canvas" class="hidden"></canvas>
+                                
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <div class="scan-guide">
+                                        <div class="corner top-left"></div>
+                                        <div class="corner top-right"></div>
+                                        <div class="corner bottom-left"></div>
+                                        <div class="corner bottom-right"></div>
+                                    </div>
+                                </div>
+
+                                <div class="absolute top-4 right-4 flex items-center gap-2 bg-slate-900/80 px-3 py-2 rounded-lg backdrop-blur">
+                                    <div class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+                                    <span class="text-sm font-medium">スキャン中...</span>
+                                </div>
+                            </div>
+
+                            <div class="flex gap-3">
+                                <button id="cancelBtn" class="flex-1 py-3 bg-slate-700 hover:bg-slate-600 rounded-xl font-semibold transition-colors">
+                                    キャンセル
+                                </button>
+                                <button id="changeStaffBtn" class="py-3 px-4 bg-slate-700 hover:bg-slate-600 rounded-xl font-semibold transition-colors">
+                                    担当者変更
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            getInputHTML() {
+                if (!this.currentInput) return this.getStaffInputHTML();
+
+                const item = this.currentInput;
+                return `
+                    <div class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
+                        <div class="sticky top-0 z-50 backdrop-blur-md bg-slate-900/80 border-b border-slate-700/50">
+                            <div class="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
+                                <h1 class="text-2xl font-bold">棚卸しアプリ</h1>
+                                <div class="text-sm text-slate-300 bg-slate-800/50 px-3 py-1 rounded-full">
+                                    👤 ${this.currentStaff}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="max-w-2xl mx-auto px-4 py-6 pb-20">
+                            <div class="bg-gradient-to-br from-slate-800 to-slate-800/50 rounded-2xl p-6 border border-slate-700/50 mb-6 space-y-3">
+                                <h2 class="text-xl font-bold text-cyan-300 mb-4">📦 スキャン情報</h2>
+                                
+                                <div class="space-y-2">
+                                    <p class="text-sm text-slate-400">品名</p>
+                                    <div class="text-lg font-bold text-white">${item.productName}</div>
+                                </div>
+
+                                <div class="space-y-2">
+                                    <p class="text-sm text-slate-400">在庫場所</p>
+                                    <div class="text-lg font-bold text-white">📍 ${item.location}</div>
+                                </div>
+
+                                <div class="pt-3 border-t border-slate-700/50 space-y-2">
+                                    <p class="text-xs text-slate-500">スキャン時刻</p>
+                                    <div class="text-sm font-mono text-cyan-300">${item.timestamp.datetime}</div>
+                                </div>
+                            </div>
+
+                            <div class="space-y-4">
+                                <div class="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
+                                    <label class="block text-sm font-semibold mb-3 text-slate-300">📊 数量</label>
+                                    <div class="flex gap-3">
+                                        <input type="number" id="quantityInput" min="0" value="${item.quantity}" placeholder="0" class="flex-1 bg-slate-700 border border-slate-600 rounded-lg px-4 py-3 text-white text-lg font-bold focus:outline-none focus:border-cyan-400">
+                                        <button id="incrementBtn" class="px-4 bg-slate-700 hover:bg-slate-600 rounded-lg font-bold">+</button>
+                                        <button id="decrementBtn" class="px-4 bg-slate-700 hover:bg-slate-600 rounded-lg font-bold">−</button>
+                                    </div>
+                                </div>
+
+                                <button id="changeStaffBtn2" class="w-full py-3 bg-slate-700/50 hover:bg-slate-700 border border-slate-600 rounded-xl font-semibold transition-colors mb-3">
+                                    👤 担当者を変更（${this.currentStaff}）
+                                </button>
+
+                                <div class="flex gap-3 pt-4">
+                                    <button id="submitBtn" class="flex-1 py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-400 hover:to-green-500 rounded-xl font-bold transition-all flex items-center justify-center gap-2">
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                                        送信
+                                    </button>
+                                    <button id="cancelInputBtn" class="flex-1 py-3 bg-slate-700 hover:bg-slate-600 rounded-xl font-bold transition-colors flex items-center justify-center gap-2">
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                                        キャンセル
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            getScanModeHTML() {
+                return `
+                    <div class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
+                        <div class="sticky top-0 z-50 backdrop-blur-md bg-slate-900/80 border-b border-slate-700/50">
+                            <div class="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
+                                <h1 class="text-2xl font-bold">棚卸しアプリ</h1>
+                                <div class="text-sm text-slate-300 bg-slate-800/50 px-3 py-1 rounded-full">
+                                    👤 ${this.currentStaff}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="max-w-2xl mx-auto px-4 py-6 pb-20 space-y-6">
+                            <div class="bg-gradient-to-br from-slate-800 to-slate-800/50 p-8 rounded-2xl border border-slate-700/50 text-center space-y-4">
+                                <svg class="w-16 h-16 mx-auto text-cyan-400 opacity-80" fill="currentColor" viewBox="0 0 24 24"><path d="M3 5v14h4v-2H5V5h2V3H3zm18 0v14h-2v2h4V5h-4zm-8 2a4 4 0 100 8 4 4 0 000-8z"/></svg>
+                                <h2 class="text-2xl font-bold">QRコードをスキャン</h2>
+                                <p class="text-slate-400 text-sm">品名と在庫場所が含まれたQRコードを読み取ってください</p>
+                            </div>
+
+                            ${!this.cameraSupported ? `
+                                <div class="error-box">
+                                    <p class="text-red-400 font-bold mb-2">❌ カメラAPIが利用できません</p>
+                                    <p class="text-sm text-red-300">このブラウザはカメラ機能に対応していません</p>
+                                </div>
+                            ` : `
+                                <button id="startCameraBtn" class="w-full py-4 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 rounded-xl font-bold text-lg transition-all shadow-lg hover:shadow-cyan-400/25 flex items-center justify-center gap-2">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M3 5v14h4v-2H5V5h2V3H3zm18 0v14h-2v2h4V5h-4zm-8 2a4 4 0 100 8 4 4 0 000-8z"/></svg>
+                                    カメラを起動
+                                </button>
+
+                                <button id="diagnosisBtn" class="w-full py-3 bg-slate-700/50 hover:bg-slate-700 border border-slate-600 rounded-xl font-semibold transition-colors text-sm">
+                                    🔍 カメラが起動しない場合
+                                </button>
+                            `}
+
+                            <button id="changeStaffBtn" class="w-full py-3 bg-slate-700/50 hover:bg-slate-700 border border-slate-600 rounded-xl font-semibold transition-colors">
+                                👤 担当者を変更
+                            </button>
+
+                            ${this.history.length > 0 ? `
+                                <button id="viewHistoryBtn" class="w-full py-3 bg-slate-700/50 hover:bg-slate-700 border border-slate-600 rounded-xl font-semibold transition-colors">
+                                    📋 送信履歴を表示 (${this.history.length})
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+
+            getHistoryHTML() {
+                const submitted = this.history.filter(i => i.status === 'submitted').length;
+                
+                return `
+                    <div class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
+                        <div class="sticky top-0 z-50 backdrop-blur-md bg-slate-900/80 border-b border-slate-700/50">
+                            <div class="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
+                                <h1 class="text-2xl font-bold">棚卸しアプリ</h1>
+                                <div class="text-sm text-slate-400">${submitted} 件送信</div>
+                            </div>
+                        </div>
+
+                        <div class="max-w-2xl mx-auto px-4 py-6 pb-20 space-y-4">
+                            <button id="newScanBtn" class="w-full py-4 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 rounded-xl font-bold flex items-center justify-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                新規スキャン
+                            </button>
+
+                            ${this.history.length === 0 ? `
+                                <div class="text-center py-12 text-slate-400">
+                                    <p>履歴はまだありません</p>
+                                </div>
+                            ` : `
+                                <div class="space-y-3">
+                                    ${this.history.map((item, idx) => `
+                                        <div class="card-enter bg-slate-800/50 backdrop-blur border border-slate-700/50 rounded-xl p-4 hover:border-slate-600 transition-colors" style="animation-delay: ${idx * 0.05}s">
+                                            <div class="flex items-start justify-between mb-3">
+                                                <div class="flex-1">
+                                                    <h3 class="font-bold text-lg text-cyan-300">${item.productName}</h3>
+                                                    <p class="text-slate-400 text-sm">📍 ${item.location}</p>
+                                                </div>
+                                                <span class="badge ${item.status}">
+                                                    ${item.status === 'submitted' ? '送信済み' : '入力中'}
+                                                </span>
+                                            </div>
+
+                                            <div class="space-y-1 mb-3 text-xs text-slate-400">
+                                                <div>⏰ ${item.timestamp.datetime}</div>
+                                                <div>👤 ${item.staff || '(未入力)'}</div>
+                                            </div>
+
+                                            <div class="flex items-center gap-3 pt-3 border-t border-slate-700/50">
+                                                <div class="flex-1">
+                                                    <div class="text-sm text-slate-400 mb-1">数量</div>
+                                                    <div class="text-3xl font-bold text-cyan-300">${item.quantity || '-'}</div>
+                                                </div>
+                                                <button class="editBtn p-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors" data-id="${item.id}" title="編集">
+                                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/></svg>
+                                                </button>
+                                                <button class="deleteBtn p-2 bg-red-500/20 hover:bg-red-500/30 rounded-lg text-red-300 transition-colors" data-id="${item.id}" title="削除">
+                                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-9l-1 1H5v2h14V4z"/></svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            `}
+
+                            ${submitted > 0 ? `
+                                <button id="downloadBtn" class="w-full py-3 bg-slate-700/50 hover:bg-slate-700 border border-slate-600 rounded-xl font-semibold transition-colors flex items-center justify-center gap-2 mt-6">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                                    CSVでダウンロード
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+
+            getDiagnosisHTML() {
+                return `
+                    <div class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
+                        <div class="sticky top-0 z-50 backdrop-blur-md bg-slate-900/80 border-b border-slate-700/50">
+                            <div class="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
+                                <h1 class="text-2xl font-bold">🔍 カメラ診断</h1>
+                                <button id="closeDiagnosisBtn" class="text-slate-400 hover:text-white text-2xl">✕</button>
+                            </div>
+                        </div>
+
+                        <div class="max-w-2xl mx-auto px-4 py-6 pb-20">
+                            <div class="space-y-4">
+                                <div class="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
+                                    <h3 class="font-bold text-cyan-300 mb-3">接続情報</h3>
+                                    <div class="space-y-2 text-sm">
+                                        <div class="flex items-center justify-between">
+                                            <span>プロトコル</span>
+                                            <span class="${window.location.protocol === 'https:' || window.location.hostname === 'localhost' ? 'text-green-400' : 'text-red-400'} font-bold">
+                                                ${window.location.protocol === 'https:' ? 'HTTPS ✓' : window.location.hostname === 'localhost' ? 'localhost ✓' : 'HTTP (カメラ不可)'}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="bg-blue-900/20 rounded-xl p-4 border border-blue-700/30">
+                                    <h3 class="font-bold text-blue-300 mb-3">💡 対処方法</h3>
+                                    <ol class="space-y-2 text-sm text-blue-200 list-decimal list-inside">
+                                        <li><strong>HTTPS接続を使用</strong>
+                                            ${window.location.protocol !== 'https:' && window.location.hostname !== 'localhost' ? '<br><span class="text-red-300">⚠️ 現在HTTP接続です。HTTPSで開き直してください</span>' : ''}
+                                        </li>
+                                        <li><strong>またはローカルサーバーで実行</strong>
+                                            <br><code class="bg-slate-900 px-2 py-1 rounded text-xs">python -m http.server 8000</code></li>
+                                        <li><strong>ブラウザの許可を確認</strong></li>
+                                        <li><strong>カメラが接続されているか確認</strong></li>
+                                    </ol>
+                                </div>
+
+                                <button id="testCameraBtn" class="w-full py-3 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/50 rounded-xl font-bold text-cyan-300 transition-colors">
+                                    🎬 カメラをテスト
+                                </button>
+
+                                <button id="backBtn" class="w-full py-3 bg-slate-700 hover:bg-slate-600 rounded-xl font-bold transition-colors">
+                                    戻る
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            setupEventListeners() {
+                if (this.mode === 'staff') {
+                    const staffInput = document.getElementById('staffInput');
+                    const confirmBtn = document.getElementById('confirmStaffBtn');
+                    const historyBtn = document.getElementById('viewHistoryBtn');
+                    const backBtn = document.getElementById('backBtn');
+
+                    confirmBtn?.addEventListener('click', () => {
+                        const name = staffInput.value.trim();
+                        if (!name) {
+                            alert('担当者名を入力してください');
+                            return;
+                        }
+                        this.currentStaff = name;
+                        localStorage.setItem('last-staff', name);
+                        
+                        if (this.previousMode === 'input') {
+                            // 数量入力画面に戻る
+                            this.previousMode = null;
+                            this.mode = 'input';
+                        } else {
+                            // スキャン画面へ
+                            this.previousMode = null;
+                            this.mode = 'scan';
+                        }
+                        this.render();
+                    });
+
+                    staffInput?.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') confirmBtn?.click();
+                    });
+
+                    historyBtn?.addEventListener('click', () => {
+                        this.mode = 'history';
+                        this.previousMode = null;
+                        this.render();
+                    });
+
+                    backBtn?.addEventListener('click', () => {
+                        if (this.previousMode === 'input') {
+                            this.previousMode = null;
+                            this.mode = 'input';
+                        } else {
+                            this.previousMode = null;
+                            this.mode = 'scan';
+                        }
+                        this.render();
+                    });
+
+                    staffInput?.focus();
+
+                } else if (this.scanning) {
+                    document.getElementById('cancelBtn')?.addEventListener('click', () => this.stopCamera());
+                    document.getElementById('changeStaffBtn')?.addEventListener('click', () => {
+                        this.stopCamera();
+                        this.previousMode = 'scan'; // スキャン画面に戻るように設定
+                        this.mode = 'staff';
+                        this.render();
+                    });
+
+                } else if (this.mode === 'input') {
+                    const quantityInput = document.getElementById('quantityInput');
+                    const submitBtn = document.getElementById('submitBtn');
+                    const cancelBtn = document.getElementById('cancelInputBtn');
+                    const incrementBtn = document.getElementById('incrementBtn');
+                    const decrementBtn = document.getElementById('decrementBtn');
+                    const changeStaffBtn = document.getElementById('changeStaffBtn2');
+
+                    quantityInput?.addEventListener('change', () => {
+                        if (this.currentInput) this.currentInput.quantity = parseInt(quantityInput.value) || 0;
+                    });
+                    incrementBtn?.addEventListener('click', () => {
+                        const current = parseInt(quantityInput.value) || 0;
+                        quantityInput.value = current + 1;
+                        if (this.currentInput) this.currentInput.quantity = current + 1;
+                    });
+                    decrementBtn?.addEventListener('click', () => {
+                        const current = parseInt(quantityInput.value) || 0;
+                        if (current > 0) {
+                            quantityInput.value = current - 1;
+                            if (this.currentInput) this.currentInput.quantity = current - 1;
+                        }
+                    });
+                    changeStaffBtn?.addEventListener('click', () => {
+                        // 現在の数量を保存
+                        if (this.currentInput) {
+                            this.currentInput.quantity = parseInt(quantityInput.value) || 0;
+                        }
+                        this.previousMode = 'input'; // 戻り先を記憶
+                        this.mode = 'staff';
+                        this.render();
+                    });
+                    submitBtn?.addEventListener('click', () => {
+                        if (this.currentInput) {
+                            this.currentInput.quantity = parseInt(quantityInput.value) || 0;
+                            this.currentInput.staff = this.currentStaff;
+                            this.currentInput.status = 'submitted';
+                            this.history.unshift(this.currentInput);
+                            this.currentInput = null;
+                            this.saveHistory();
+                            this.mode = 'scan';
+                            this.render();
+                        }
+                    });
+                    cancelBtn?.addEventListener('click', () => {
+                        this.currentInput = null;
+                        this.mode = 'scan';
+                        this.render();
+                    });
+                    quantityInput?.focus();
+
+                } else if (this.mode === 'scan') {
+                    document.getElementById('startCameraBtn')?.addEventListener('click', () => this.startCamera());
+                    document.getElementById('changeStaffBtn')?.addEventListener('click', () => {
+                        this.previousMode = 'scan'; // スキャン画面に戻るように設定
+                        this.mode = 'staff';
+                        this.render();
+                    });
+                    document.getElementById('diagnosisBtn')?.addEventListener('click', () => {
+                        this.mode = 'diagnosis';
+                        this.render();
+                    });
+                    document.getElementById('viewHistoryBtn')?.addEventListener('click', () => {
+                        this.mode = 'history';
+                        this.render();
+                    });
+
+                } else if (this.mode === 'diagnosis') {
+                    document.getElementById('testCameraBtn')?.addEventListener('click', () => this.testCamera());
+                    document.getElementById('backBtn')?.addEventListener('click', () => {
+                        this.mode = 'scan';
+                        this.render();
+                    });
+                    document.getElementById('closeDiagnosisBtn')?.addEventListener('click', () => {
+                        this.mode = 'scan';
+                        this.render();
+                    });
+
+                } else { // history
+                    document.getElementById('newScanBtn')?.addEventListener('click', () => {
+                        this.mode = 'staff';
+                        this.render();
+                    });
+                    document.querySelectorAll('.editBtn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            const id = parseInt(e.currentTarget.dataset.id);
+                            const item = this.history.find(h => h.id === id);
+                            if (item) {
+                                this.currentInput = { ...item };
+                                this.currentStaff = item.staff;
+                                this.mode = 'input';
+                                this.render();
+                            }
+                        });
+                    });
+                    document.querySelectorAll('.deleteBtn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            const id = parseInt(e.currentTarget.dataset.id);
+                            if (confirm('この項目を削除しますか？')) {
+                                this.history = this.history.filter(item => item.id !== id);
+                                this.saveHistory();
+                                this.render();
+                            }
+                        });
+                    });
+                    document.getElementById('downloadBtn')?.addEventListener('click', () => this.downloadCSV());
+                }
+            }
+
+            async testCamera() {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({
+                        video: { facingMode: 'environment', width: { ideal: 640 }, height: { ideal: 480 } }
+                    });
+                    stream.getTracks().forEach(track => track.stop());
+                    alert('✓ カメラテスト成功！');
+                    this.mode = 'scan';
+                    this.render();
+                } catch (err) {
+                    alert('❌ カメラテスト失敗\n\nエラー: ' + err.message);
+                }
+            }
+
+            async startCamera() {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({
+                        video: { facingMode: 'environment', width: { ideal: 640 }, height: { ideal: 480 } }
+                    });
+                    this.stream = stream;
+                    this.scanning = true;
+                    this.render();
+                    setTimeout(() => {
+                        const video = document.getElementById('video');
+                        if (video) {
+                            video.srcObject = stream;
+                            this.startQRScanning();
+                        }
+                    }, 100);
+                } catch (err) {
+                    this.mode = 'diagnosis';
+                    this.render();
+                    alert('❌ カメラを起動できませんでした\n\nエラー: ' + err.message);
+                }
+            }
+
+            stopCamera() {
+                if (this.stream) {
+                    this.stream.getTracks().forEach(track => track.stop());
+                    this.stream = null;
+                }
+                if (this.scanInterval) clearInterval(this.scanInterval);
+                this.scanning = false;
+            }
+
+            startQRScanning() {
+                const video = document.getElementById('video');
+                const canvas = document.getElementById('canvas');
+                if (!video || !canvas) return;
+
+                const ctx = canvas.getContext('2d');
+                this.scanInterval = setInterval(() => {
+                    if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                        canvas.width = video.videoWidth;
+                        canvas.height = video.videoHeight;
+                        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                        const code = jsQR(imageData.data, canvas.width, canvas.height);
+                        if (code) this.handleQRDetected(code.data);
+                    }
+                }, 100);
+            }
+
+            handleQRDetected(qrData) {
+                const parts = qrData.split('|');
+                const productName = parts[0]?.trim() || 'Unknown';
+                const location = parts[1]?.trim() || 'Unknown';
+                this.stopCamera();
+
+                const now = new Date();
+                const timestamp = {
+                    full: now.toISOString(),
+                    date: now.toLocaleDateString('ja-JP'),
+                    time: now.toLocaleTimeString('ja-JP'),
+                    datetime: now.toLocaleString('ja-JP')
+                };
+
+                this.currentInput = {
+                    id: Date.now(),
+                    productName,
+                    location,
+                    quantity: 0,
+                    staff: this.currentStaff,
+                    timestamp,
+                    status: 'inputting'
+                };
+
+                this.mode = 'input';
+                this.render();
+            }
+
+            downloadCSV() {
+                const submitted = this.history.filter(item => item.status === 'submitted');
+                if (submitted.length === 0) {
+                    alert('送信済みの項目がありません');
+                    return;
+                }
+
+                const headers = ['日時', '品名', '在庫場所', '数量', '担当者'];
+                const rows = submitted.map(item => [
+                    item.timestamp.datetime,
+                    item.productName,
+                    item.location,
+                    item.quantity,
+                    item.staff || ''
+                ]);
+
+                let csv = headers.join(',') + '\n';
+                rows.forEach(row => {
+                    csv += row.map(cell => `"${cell}"`).join(',') + '\n';
+                });
+
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `inventory_${new Date().toISOString().split('T')[0]}.csv`;
+                link.click();
+            }
+
+            saveHistory() {
+                localStorage.setItem('inventory-history', JSON.stringify(this.history));
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            new InventoryApp();
+        });
+    </script>
+</body>
+</html>
