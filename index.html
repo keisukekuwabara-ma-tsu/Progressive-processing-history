@@ -32,28 +32,35 @@
   
  #globalWarningOverlay {
  position: fixed;
- top: 0; left: 0; width: 100vw; height: 100vh;
+ top: 0;
+ left: 0; width: 100vw; height: 100vh;
  background-color: rgba(220, 38, 38, 0.98);
  z-index: 100000; display: none; flex-direction: column;
- justify-content: center; align-items: center; text-align: center;
+ justify-content: center;
+ align-items: center; text-align: center;
  padding: 24px; color: #ffffff; box-sizing: border-box;
  }
- #globalWarningOverlay h1 { font-size: 2.5rem; margin-top: 0; margin-bottom: 20px; font-weight: 800; }
+ #globalWarningOverlay h1 { font-size: 2.5rem; margin-top: 0; margin-bottom: 20px;
+ font-weight: 800; }
  #globalWarningOverlay p { font-size: 1.3rem; line-height: 1.6; margin-bottom: 35px; max-width: 600px; }
  .warning-close-btn {
- padding: 16px 48px; background: #ffffff; color: #dc2626; border: none;
+ padding: 16px 48px;
+ background: #ffffff; color: #dc2626; border: none;
  border-radius: 50px; font-weight: 800; font-size: 1.2rem; cursor: pointer;
- box-shadow: 0 10px 20px rgba(0,0,0,0.3); transition: transform 0.1s ease;
+ box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+ transition: transform 0.1s ease;
  }
  .warning-close-btn:active { transform: scale(0.96); }
   
  .lang-bar {
- width: 100%; max-width: 500px; display: flex; justify-content: center;
+ width: 100%; max-width: 500px; display: flex;
+ justify-content: center;
  gap: 10px; margin-bottom: 20px;
  }
  .lang-btn {
  padding: 14px 10px; background-color: var(--card-bg); border: 2px solid var(--border-color);
- border-radius: 12px; color: #94a3b8; font-size: 1.1rem; font-weight: 700; cursor: pointer;
+ border-radius: 12px;
+ color: #94a3b8; font-size: 1.1rem; font-weight: 700; cursor: pointer;
  display: flex; align-items: center; justify-content: center; gap: 8px;
  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); flex: 1; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
  }
@@ -68,182 +75,243 @@
  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5); box-sizing: border-box; margin-bottom: 25px;
  }
   
- h2 { text-align: center; color: #ffffff; margin-top: 0; margin-bottom: 24px; font-size: 1.5rem; letter-spacing: 0.05em; position: relative; }
- h2::after { content: ''; display: block; width: 40px; height: 4px; background: var(--accent-color); margin: 8px auto 0; border-radius: 2px; }
- .form-group { margin-bottom: 20px; }
+ h2 { text-align: center;
+ color: #ffffff; margin-top: 0; margin-bottom: 24px; font-size: 1.5rem; letter-spacing: 0.05em; position: relative; }
+ h2::after { content: ''; display: block;
+ width: 40px; height: 4px; background: var(--accent-color); margin: 8px auto 0; border-radius: 2px; }
+ .form-group { margin-bottom: 20px;
+ }
  label.field-label { display: block; margin-bottom: 8px; font-size: 0.95rem; color: #94a3b8; font-weight: 600; }
  input[type="text"], input[type="number"], select {
- width: 100%; padding: 14px 16px; box-sizing: border-box; background-color: var(--input-bg);
+ width: 100%;
+ padding: 14px 16px; box-sizing: border-box; background-color: var(--input-bg);
  border: 2px solid var(--border-color); border-radius: 10px; color: #ffffff;
- font-size: 1.15rem; font-weight: 500; transition: all 0.2s ease;
+ font-size: 1.15rem; font-weight: 500;
+ transition: all 0.2s ease;
  }
- input:focus, select:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 0 4px var(--accent-glow); background-color: #242837; }
+ input:focus, select:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 0 4px var(--accent-glow); background-color: #242837;
+ }
  
  .inline-input-group { display: flex; gap: 10px; }
- .inline-input-group input { flex: 1; }
+ .inline-input-group input { flex: 1;
+ }
  
  .scan-btn {
  padding: 0 16px; background-color: #f59e0b; border: none; border-radius: 10px;
- color: white; font-size: 1.2rem; cursor: pointer; transition: background 0.2s;
+ color: white; font-size: 1.2rem; cursor: pointer;
+ transition: background 0.2s;
  }
  .scan-btn:hover { background-color: #d97706; }
  
  .confirm-btn {
- padding: 0 24px; background-color: #3b82f6; border: none; border-radius: 10px;
+ padding: 0 24px; background-color: #3b82f6; border: none;
+ border-radius: 10px;
  color: white; font-size: 1.1rem; font-weight: 700; cursor: pointer; white-space: nowrap;
- transition: background 0.2s; box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+ transition: background 0.2s;
+ box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
  }
- .confirm-btn:hover { background-color: #2563eb; }
+ .confirm-btn:hover { background-color: #2563eb;
+ }
   
  .defect-warning-box {
  margin-top: 14px; background: rgba(251, 146, 60, 0.08); border: 1px dashed #fb923c;
- border-radius: 10px; padding: 12px 14px; font-size: 0.95rem; color: #ffedd5; display: none; line-height: 1.4;
+ border-radius: 10px;
+ padding: 12px 14px; font-size: 0.95rem; color: #ffedd5; display: none; line-height: 1.4;
  }
- .defect-warning-box b { color: #fb923c; display: block; margin-bottom: 4px; font-size: 1rem; }
+ .defect-warning-box b { color: #fb923c; display: block;
+ margin-bottom: 4px; font-size: 1rem; }
   
  .judge-box {
  padding: 14px; border-radius: 10px; text-align: center; font-weight: 800; font-size: 1.6rem;
  letter-spacing: 0.05em; margin-top: 12px; display: none; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); animation: pulse 1.5s infinite alternate;
  }
- .judge-ok { background-color: rgba(16, 185, 129, 0.15); color: #34d399; border: 2px solid #10b981; }
- .judge-ng { background-color: rgba(239, 68, 68, 0.15); color: #f87171; border: 2px solid #ef4444; }
+ .judge-ok { background-color: rgba(16, 185, 129, 0.15); color: #34d399; border: 2px solid #10b981;
+ }
+ .judge-ng { background-color: rgba(239, 68, 68, 0.15); color: #f87171; border: 2px solid #ef4444;
+ }
   
  .submit-btn {
  width: 100%; padding: 16px; background: linear-gradient(135deg, #00adb5, #008087); border: none;
- border-radius: 12px; color: white; font-size: 1.2rem; font-weight: 700; cursor: pointer; margin-top: 20px; transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(0, 173, 181, 0.3);
+ border-radius: 12px; color: white;
+ font-size: 1.2rem; font-weight: 700; cursor: pointer; margin-top: 20px; transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(0, 173, 181, 0.3);
  }
  .submit-btn:active { transform: scale(0.98); }
- .submit-btn:disabled { background: #334155 !important; color: #64748b; cursor: not-allowed; box-shadow: none; }
+ .submit-btn:disabled { background: #334155 !important; color: #64748b; cursor: not-allowed; box-shadow: none;
+ }
   
- #message { margin-top: 18px; padding: 14px; border-radius: 10px; text-align: center; font-weight: 700; font-size: 1rem; display: none; }
- .success { background-color: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #10b981; }
+ #message { margin-top: 18px; padding: 14px; border-radius: 10px; text-align: center; font-weight: 700; font-size: 1rem; display: none;
+ }
+ .success { background-color: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #10b981;
+ }
  .error { background-color: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; }
- .hidden { display: none !important; }
+ .hidden { display: none !important;
+ }
  .target-val { color: #fb923c; font-size: 0.85rem; margin-left: 8px; font-weight: normal; }
   
- .history-container { width: 100%; max-width: 500px; box-sizing: border-box; }
- .history-title { font-size: 1.2rem; color: #ffffff; margin-bottom: 16px; font-weight: 700; border-left: 4px solid var(--accent-color); padding-left: 10px; letter-spacing: 0.03em; }
+ .history-container { width: 100%; max-width: 500px;
+ box-sizing: border-box; }
+ .history-title { font-size: 1.2rem; color: #ffffff; margin-bottom: 16px; font-weight: 700; border-left: 4px solid var(--accent-color); padding-left: 10px;
+ letter-spacing: 0.03em; }
  .history-list { display: flex; flex-direction: column; gap: 16px; }
- .history-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 14px; padding: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
- .history-card.is-incomplete { border: 2px solid #ef4444; background: rgba(239, 68, 68, 0.03); box-shadow: 0 0 10px rgba(239, 68, 68, 0.2); }
- .card-top { border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 12px; }
+ .history-card { background: var(--card-bg); border: 1px solid var(--border-color);
+ border-radius: 14px; padding: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+ .history-card.is-incomplete { border: 2px solid #ef4444;
+ background: rgba(239, 68, 68, 0.03); box-shadow: 0 0 10px rgba(239, 68, 68, 0.2); }
+ .card-top { border-bottom: 1px solid var(--border-color);
+ padding-bottom: 10px; margin-bottom: 12px; }
  .card-coil-title { font-size: 1.2rem; font-weight: 800; color: #ffffff; }
- .card-meta-info { font-size: 0.9rem; color: #94a3b8; margin-top: 6px; display: flex; gap: 16px; }
+ .card-meta-info { font-size: 0.9rem; color: #94a3b8;
+ margin-top: 6px; display: flex; gap: 16px; }
  .card-meta-info span b { color: var(--accent-color); }
- .timeline-container { display: flex; flex-direction: column; gap: 8px; }
- .timeline-row { background: #1e2230; border-radius: 8px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; }
- .stage-label { font-weight: 800; width: 48px; padding: 3px 0; border-radius: 6px; text-align: center; font-size: 0.8rem; }
- .lbl-始 { background-color: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
- .lbl-中 { background-color: rgba(234, 179, 8, 0.15); color: #fde047; border: 1px solid rgba(234, 179, 8, 0.4); }
- .lbl-終 { background-color: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+ .timeline-container { display: flex; flex-direction: column;
+ gap: 8px; }
+ .timeline-row { background: #1e2230; border-radius: 8px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem;
+ }
+ .stage-label { font-weight: 800; width: 48px; padding: 3px 0; border-radius: 6px; text-align: center; font-size: 0.8rem;
+ }
+ .lbl-始 { background-color: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4);
+ }
+ .lbl-中 { background-color: rgba(234, 179, 8, 0.15); color: #fde047; border: 1px solid rgba(234, 179, 8, 0.4);
+ }
+ .lbl-終 { background-color: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4);
+ }
  .stage-details { flex: 1; margin-left: 14px; display: flex; flex-wrap: wrap; gap: 8px; color: #cbd5e1; }
- .stage-time { font-size: 0.8rem; color: #64748b; text-align: right; white-space: nowrap; }
- .qty-display-box { margin-top: 12px; background: rgba(0, 173, 181, 0.08); border: 1px dashed rgba(0, 173, 181, 0.5); border-radius: 8px; padding: 10px 14px; font-size: 1.05rem; font-weight: 700; color: #ffffff; display: flex; align-items: center; gap: 8px; }
+ .stage-time { font-size: 0.8rem;
+ color: #64748b; text-align: right; white-space: nowrap; }
+ .qty-display-box { margin-top: 12px; background: rgba(0, 173, 181, 0.08);
+ border: 1px dashed rgba(0, 173, 181, 0.5); border-radius: 8px; padding: 10px 14px; font-size: 1.05rem; font-weight: 700; color: #ffffff; display: flex;
+ align-items: center; gap: 8px; }
   
- .overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(13, 14, 18, 0.9); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.25s ease; }
+ .overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+ background-color: rgba(13, 14, 18, 0.9); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; pointer-events: none;
+ transition: opacity 0.25s ease; }
  .overlay.show { opacity: 1; pointer-events: auto; }
- .spinner { width: 56px; height: 56px; border: 5px solid #1f222f; border-top: 5px solid var(--accent-color); border-radius: 50%; animation: spin 0.8s linear infinite; }
- .overlay-text { margin-top: 18px; color: var(--accent-color); font-weight: 700; font-size: 1.2rem; letter-spacing: 0.05em; }
- @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+ .spinner { width: 56px; height: 56px;
+ border: 5px solid #1f222f; border-top: 5px solid var(--accent-color); border-radius: 50%; animation: spin 0.8s linear infinite; }
+ .overlay-text { margin-top: 18px;
+ color: var(--accent-color); font-weight: 700; font-size: 1.2rem; letter-spacing: 0.05em; }
+ @keyframes spin { 0% { transform: rotate(0deg);
+ } 100% { transform: rotate(360deg); } }
 
- /* スキャナー用UI */
- #scannerOverlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 99999; display: none; flex-direction: column; box-sizing: border-box; }
- #scannerHeader { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; background: #111; color: white; border-bottom: 2px solid #333; flex-shrink: 0; }
+ /* --- カメラ起動時のレイアウト崩れ対策対策CSS --- */
+ #scannerOverlay { position: fixed; top: 0; left: 0; width: 100vw;
+ height: 100vh; background: #000; z-index: 99999; display: none; flex-direction: column; box-sizing: border-box; }
+ #scannerHeader { display: flex; justify-content: space-between;
+ align-items: center; padding: 16px 20px; background: #111; color: white; border-bottom: 2px solid #333; flex-shrink: 0;
+ }
  #scannerHeader h3 { margin: 0; color: #58a6ff; font-size: 1rem; flex: 1; }
- #scannerHeader button { background: #ef4444; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; flex-shrink: 0; }
- #preview-container { flex: 1; position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center; background: #000; width: 100%; box-sizing: border-box; }
- #preview-container video { width: 100%; height: 100%; object-fit: cover; display: block; }
- #scan-guide { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 75%; max-width: 450px; height: auto; aspect-ratio: 3 / 1.5; border: 3px dashed #00ff00; border-radius: 8px; box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.2); z-index: 5; pointer-events: none; }
- #scan-line { position: absolute; top: 50%; left: 10%; width: 80%; height: 2px; background: #ff375f; box-shadow: 0 0 15px #ff375f; z-index: 10; animation: scanMotion 1.5s ease-in-out infinite alternate; pointer-events: none; }
- @keyframes scanMotion { 0% { transform: translateY(-70px); } 100% { transform: translateY(70px); } }
- #scanStatus { padding: 16px; text-align: center; background: #111; color: #f59e0b; font-weight: bold; font-size: 0.95rem; flex-shrink: 0; border-top: 1px solid #333; width: 100%; box-sizing: border-box; }
+ #scannerHeader button { background: #ef4444; color: white;
+ border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; flex-shrink: 0; }
+ #preview-container { flex: 1;
+ position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center; background: #000; width: 100%; box-sizing: border-box;
+ }
+ #preview { width: 100%; height: 100%; position: absolute; top: 0; left: 0; overflow: hidden; }
+ #preview video { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 1; display: block; }
+ #preview canvas.drawingBuffer { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 2; pointer-events: none; }
+  
+ #scan-guide { position: absolute; top: 50%;
+ left: 50%; transform: translate(-50%, -50%); width: 75%; max-width: 450px; height: auto; aspect-ratio: 3 / 1.5; border: 3px dashed #00ff00;
+ border-radius: 8px; box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.2); z-index: 5; pointer-events: none; }
+ #scan-line { position: absolute;
+ top: 50%; left: 10%; width: 80%; height: 2px; background: #ff375f; box-shadow: 0 0 15px #ff375f; z-index: 10;
+ animation: scanMotion 1.5s ease-in-out infinite alternate; pointer-events: none; }
+ @keyframes scanMotion { 0% { transform: translateY(-70px);
+ } 100% { transform: translateY(70px); } }
+ #scanStatus { padding: 16px; text-align: center; background: #111; color: #f59e0b; font-weight: bold;
+ font-size: 0.95rem; flex-shrink: 0; border-top: 1px solid #333; width: 100%; box-sizing: border-box;
+ }
  
  /* コントロールパネル */
- #scannerControls { background: #1a1a1a; padding: 16px; border-top: 1px solid #333; color: white; display: flex; flex-direction: column; gap: 12px; max-height: 200px; overflow-y: auto; }
- .control-group { display: flex; align-items: center; gap: 12px; }
+ #scannerControls { background: #1a1a1a; padding: 16px; border-top: 1px solid #333; color: white; display: flex;
+ flex-direction: column; gap: 12px; max-height: 200px; overflow-y: auto; }
+ .control-group { display: flex; align-items: center; gap: 12px;
+ }
  .control-label { font-size: 0.9rem; font-weight: 600; min-width: 80px; color: #cbd5e1; }
- .control-slider { flex: 1; height: 6px; background: #333; border-radius: 3px; outline: none; cursor: pointer; accent-color: #00adb5; }
- .control-btn { padding: 8px 16px; background: #00adb5; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.9rem; transition: background 0.2s; white-space: nowrap; }
- .control-btn:hover { background: #008087; }
+ .control-slider { flex: 1; height: 6px; background: #333;
+ border-radius: 3px; outline: none; cursor: pointer; accent-color: #00adb5; }
+ .control-btn { padding: 8px 16px; background: #00adb5; color: white; border: none;
+ border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.9rem; transition: background 0.2s; white-space: nowrap; }
+ .control-btn:hover { background: #008087;
+ }
  .control-btn.active { background: #10b981; }
 
  /* タブレット対応（横向き・大画面） */
  @media (min-width: 768px) {
    body {
      padding: 24px;
-   }
+ }
    .container {
      max-width: 600px;
-   }
+ }
    .history-container {
      max-width: 600px;
-   }
+ }
    #scannerOverlay {
      flex-direction: row;
-   }
+ }
    #scannerHeader {
      flex-direction: column;
      width: 200px;
      padding: 20px;
      border-right: 2px solid #333;
-     border-bottom: none;
+ border-bottom: none;
      justify-content: flex-start;
      gap: 20px;
    }
    #scannerHeader h3 {
      writing-mode: vertical-lr;
      transform: rotate(180deg);
-     margin: 0;
+ margin: 0;
    }
    #scannerHeader button {
      width: 100%;
-   }
+ }
    #preview-container {
      flex: 1;
-   }
+ }
    #scannerControls {
      position: absolute;
      bottom: 0;
      right: 0;
      width: 300px;
      flex-direction: row;
-     gap: 8px;
+ gap: 8px;
      max-height: none;
      overflow-x: auto;
      padding: 12px;
    }
    .control-group {
      flex-direction: column;
-     gap: 6px;
+ gap: 6px;
      min-width: 90px;
    }
    .control-label {
      min-width: auto;
      font-size: 0.8rem;
      text-align: center;
-   }
+ }
    .control-slider {
      height: 100px;
      writing-mode: bt-lr;
      transform: rotate(90deg);
-   }
+ }
  }
 
  /* iPad Pro 等の超大型タブレット */
  @media (min-width: 1024px) {
    .container {
      max-width: 800px;
-   }
+ }
    h2 {
      font-size: 2rem;
-   }
+ }
    input[type="text"], input[type="number"], select {
      font-size: 1.3rem;
      padding: 16px 18px;
-   }
+ }
    #scannerControls {
      width: 350px;
-   }
+ }
  }
  </style>
 </head>
@@ -342,8 +410,9 @@
 </div>
   
 <div class="history-container">
- <div class="history-title" id="uiHistoryTitle">直近20件の品名別加工履歴</div>
+ <div class="history-title" id="uiHistoryTitle">直近20件性品名別加工履歴</div>
  <div id="historyList" class="history-list">
+ 
  <div style="text-align:center;color:#666;padding:20px;" id="uiHistoryLoading">履歴データを読み込み中...</div>
  </div>
 </div>
@@ -411,7 +480,7 @@
  ng: "Penilaian: NG (Di luar kisaran)",
  successSaved: "Berhasil terdaftar dan diperbarui di log hasil!",
  saveError: "Kesalahan penyimpanan: ",
- lockError: "🚨 <b>Kesalahan Input:</b> Proses untuk produk \"{prod}\" pada coil ini telah selesai sepenuhnya hingga tahap [Akhir].<br>Penginputan ulang untuk kedua kalinya tidak diperbolehkan.",
+ lockError: "🚨 <b>Kesalahan Input:</b> Proses untuk produto \"{prod}\" pada coil ini telah selesai sepenuhnya hingga tahap [Akhir].<br>Penginputan ulang untuk kedua kalinya tidak diperbolehkan.",
  defectTitle: "⚠️ Riwayat Cacat / Poin Perhatian",
  warnTitle: "⚠️ Ada Pekerjaan Belum Selesai",
  warnBody: "Ada data dalam riwayat sebelum hari ini yang belum selesai hingga tahap [Akhir].<br>Silakan periksa riwayat terlebih dahulu.",
@@ -577,40 +646,40 @@
    loadWorkerList(); 
    loadRecentHistory(); 
    refreshCoilSupportList(); 
- }; 
-  
+ };
+
  function initStaticLabels() { 
    const lang = LANG_DATA[currentLang]; 
    document.title = lang.title; 
    document.getElementById('pageTitle').textContent = lang.title; 
-   document.getElementById('uiMainHeader').textContent = lang.title; 
+   document.getElementById('uiMainHeader').textContent = lang.title;
    document.getElementById('lblWorker').textContent = lang.worker; 
    document.getElementById('lblMachine').textContent = lang.machine; 
    document.getElementById('lblCoilNo').textContent = lang.coilNo; 
    document.getElementById('btnConfirm').textContent = lang.confirm; 
-   document.getElementById('lblProductName').textContent = lang.productName; 
+   document.getElementById('lblProductName').textContent = lang.productName;
    document.getElementById('lblMeasured').childNodes[0].textContent = lang.measured + " "; 
    document.getElementById('lblQuantity').textContent = lang.quantity;
    document.getElementById('submitBtn').textContent = lang.submit;
    document.getElementById('uiHistoryTitle').textContent = lang.historyTitle; 
-   document.getElementById('coilNo').placeholder = lang.coilPlaceholder; 
+   document.getElementById('coilNo').placeholder = lang.coilPlaceholder;
    document.getElementById('quantity').placeholder = lang.qtyPlaceholder; 
    document.getElementById('uiWarningTitle').textContent = lang.warnTitle; 
    document.getElementById('uiWarningBody').innerHTML = lang.warnBody;
    document.getElementById('btnWarningClose').textContent = lang.warnClose;
-   const optMachine = document.getElementById('optMachineDefault'); 
+   const optMachine = document.getElementById('optMachineDefault');
    if (optMachine) optMachine.textContent = lang.selectPlease; 
    renderWorkerDropdown();
  } 
   
  function renderWorkerDropdown() { 
-   const select = document.getElementById('worker'); 
+   const select = document.getElementById('worker');
    if (!select) return; 
    const currentSelectedValue = select.value;
    select.innerHTML = ''; 
    const firstOpt = document.createElement('option'); 
    firstOpt.value = ""; 
-   firstOpt.textContent = LANG_DATA[currentLang].selectPlease; 
+   firstOpt.textContent = LANG_DATA[currentLang].selectPlease;
    select.appendChild(firstOpt);
    rawWorkers.forEach(name => { 
      const opt = document.createElement('option'); 
@@ -628,7 +697,7 @@
    if (targetBtn) targetBtn.classList.add('active'); 
    initStaticLabels(); 
    if(document.getElementById('productName').value) onProductChanged();
-   checkMeasuredValue(); 
+   checkMeasuredValue();
  } 
   
  async function loadWorkerList() { 
@@ -644,12 +713,8 @@
  async function refreshCoilSupportList() {
    try {
      const coilList = await callGAS('getActiveCoils');
-     
-     // 履歴から「終」未完了（スキャン途中）のコイルNo.を抽出
      const incompleteLogs = fullHistoryLogs.filter(log => !log.end);
      const incompleteCoils = [...new Set(incompleteLogs.map(log => log.coilNo))];
-     
-     // 完成済みコイルとスキャン途中のコイルを合併（重複削除）
      const allCoils = [...new Set([...(coilList || []), ...incompleteCoils])].sort();
      
      const datalist = document.getElementById('coilHistoryOptions');
@@ -680,40 +745,100 @@
      const logs = await callGAS('getHistory');
      fullHistoryLogs = logs || []; 
      const hasWarning = fullHistoryLogs.some(log => log.isWarning); 
-     if (hasWarning) document.getElementById('globalWarningOverlay').style.display = 'flex'; 
-      
+     if (hasWarning) document.getElementById('globalWarningOverlay').style.display = 'flex';
      if(fullHistoryLogs.length === 0) { 
        historyListDiv.innerHTML = `<div style="text-align:center;color:#666;padding:20px;">${LANG_DATA[currentLang].noHistory}</div>`; 
        refreshCoilSupportList();
-       return; 
+       return;
      } 
        
-     let html = ''; 
+     let html = '';
      const displayLogs = fullHistoryLogs.slice(0, 20); 
-     displayLogs.forEach(log => { 
+
+     // ドロップダウン用の文字列生成
+     const makeWorkerOptions = (current) => {
+       return rawWorkers.map(w => `<option value="${w}" ${w === current ? 'selected' : ''}>${w}</option>`).join('');
+     };
+
+     displayLogs.forEach((log, idx) => { 
        let timelineHtml = ''; 
        let finalQty = ''; 
        const isEndReached = !!(log.end); 
        const cardClass = isEndReached ? 'history-card' : 'history-card is-incomplete'; 
         
+       // --- 修正箇所: 履歴カードの各ステージに直接編集可能なインラインフォームを配置 ---
        if(log.start) { 
-         timelineHtml += `<div class="timeline-row"><span class="stage-label lbl-始">▶ 始</span><span class="stage-details">👤 ${log.start.worker} &nbsp;📐 ${log.start.measured ? parseFloat(log.start.measured).toFixed(1)+'mm' : '-'}</span><span class="stage-time">${log.start.time}</span></div>`; 
+         timelineHtml += `
+         <div class="timeline-row" id="row-${idx}-始">
+           <span class="stage-label lbl-始">▶ 始</span>
+           <div class="stage-details" id="view-${idx}-始" style="display:flex; flex:1; align-items:center;">
+             <span>👤 ${log.start.worker} &nbsp;📐 ${log.start.measured ? parseFloat(log.start.measured).toFixed(1)+'mm' : '-'}</span>
+             <button type="button" style="margin-left:auto; background:none; border:none; color:var(--accent-color); cursor:pointer; font-size:0.85rem; padding:0; font-weight:bold;" onclick="toggleInlineEdit(${idx}, '始', true)">✏️ 修正</button>
+           </div>
+           <div class="stage-edit-form" id="form-${idx}-始" style="display:none; flex:1; margin-left:14px; gap:6px; align-items:center; flex-wrap:wrap;">
+             <select id="edit-worker-${idx}-始" style="width:auto; padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color); border-radius:4px;">${makeWorkerOptions(log.start.worker)}</select>
+             <input type="number" id="edit-measured-${idx}-始" step="0.1" value="${log.start.measured || ''}" style="width:55px; padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color); border-radius:4px;">mm
+             <button type="button" class="control-btn" style="padding:2px 6px; font-size:0.75rem; background:#10b981;" onclick="submitInlineEdit(${idx}, '始', '${log.coilNo}', '${log.productName}', '${log.machine}')">保存</button>
+             <button type="button" class="control-btn" style="padding:2px 6px; font-size:0.75rem; background:#64748b;" onclick="toggleInlineEdit(${idx}, '始', false)">×</button>
+           </div>
+           <span class="stage-time" id="time-${idx}-始" style="margin-left:8px;">${log.start.time}</span>
+         </div>`; 
        } 
        if(log.middle) { 
-         timelineHtml += `<div class="timeline-row"><span class="stage-label lbl-中">🔄 中</span><span class="stage-details">👤 ${log.middle.worker} &nbsp;📐 ${log.middle.measured ? parseFloat(log.middle.measured).toFixed(1)+'mm' : '-'}</span><span class="stage-time">${log.middle.time}</span></div>`; 
+         timelineHtml += `
+         <div class="timeline-row" id="row-${idx}-中">
+           <span class="stage-label lbl-中">🔄 中</span>
+           <div class="stage-details" id="view-${idx}-中" style="display:flex; flex:1; align-items:center;">
+             <span>👤 ${log.middle.worker} &nbsp;📐 ${log.middle.measured ? parseFloat(log.middle.measured).toFixed(1)+'mm' : '-'}</span>
+             <button type="button" style="margin-left:auto; background:none; border:none; color:var(--accent-color); cursor:pointer; font-size:0.85rem; padding:0; font-weight:bold;" onclick="toggleInlineEdit(${idx}, '中', true)">✏️ 修正</button>
+           </div>
+           <div class="stage-edit-form" id="form-${idx}-中" style="display:none; flex:1; margin-left:14px; gap:6px; align-items:center; flex-wrap:wrap;">
+             <select id="edit-worker-${idx}-中" style="width:auto; padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color); border-radius:4px;">${makeWorkerOptions(log.middle.worker)}</select>
+             <input type="number" id="edit-measured-${idx}-中" step="0.1" value="${log.middle.measured || ''}" style="width:55px; padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color); border-radius:4px;">mm
+             <button type="button" class="control-btn" style="padding:2px 6px; font-size:0.75rem; background:#10b981;" onclick="submitInlineEdit(${idx}, '中', '${log.coilNo}', '${log.productName}', '${log.machine}')">保存</button>
+             <button type="button" class="control-btn" style="padding:2px 6px; font-size:0.75rem; background:#64748b;" onclick="toggleInlineEdit(${idx}, '中', false)">×</button>
+           </div>
+           <span class="stage-time" id="time-${idx}-中" style="margin-left:8px;">${log.middle.time}</span>
+         </div>`; 
        } 
        if(log.end) { 
-         timelineHtml += `<div class="timeline-row"><span class="stage-label lbl-終">■ 終</span><span class="stage-details">👤 ${log.end.worker} &nbsp;📐 ${log.end.measured ? parseFloat(log.end.measured).toFixed(1)+'mm' : '-'}</span><span class="stage-time">${log.end.time}</span></div>`; 
-         if(log.end.qty) finalQty = `<div class="qty-display-box">📦 Qty: ${log.end.qty}</div>`; 
+         timelineHtml += `
+         <div class="timeline-row" id="row-${idx}-終">
+           <span class="stage-label lbl-終">■ 終</span>
+           <div class="stage-details" id="view-${idx}-終" style="display:flex; flex:1; align-items:center;">
+             <span>👤 ${log.end.worker} &nbsp;📐 ${log.end.measured ? parseFloat(log.end.measured).toFixed(1)+'mm' : '-'}</span>
+             <button type="button" style="margin-left:auto; background:none; border:none; color:var(--accent-color); cursor:pointer; font-size:0.85rem; padding:0; font-weight:bold;" onclick="toggleInlineEdit(${idx}, '終', true)">✏️ 修正</button>
+           </div>
+           <div class="stage-edit-form" id="form-${idx}-終" style="display:none; flex:1; margin-left:14px; gap:6px; align-items:center; flex-wrap:wrap;">
+             <select id="edit-worker-${idx}-終" style="width:auto; padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color); border-radius:4px;">${makeWorkerOptions(log.end.worker)}</select>
+             <input type="number" id="edit-measured-${idx}-終" step="0.1" value="${log.end.measured || ''}" style="width:55px; padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color); border-radius:4px;">mm
+             <input type="number" id="edit-qty-${idx}-終" value="${log.end.qty || ''}" placeholder="数量" style="width:55px; padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color); border-radius:4px;">個
+             <button type="button" class="control-btn" style="padding:2px 6px; font-size:0.75rem; background:#10b981;" onclick="submitInlineEdit(${idx}, '終', '${log.coilNo}', '${log.productName}', '${log.machine}')">保存</button>
+             <button type="button" class="control-btn" style="padding:2px 6px; font-size:0.75rem; background:#64748b;" onclick="toggleInlineEdit(${idx}, '終', false)">×</button>
+           </div>
+           <span class="stage-time" id="time-${idx}-終" style="margin-left:8px;">${log.end.time}</span>
+         </div>`; 
+         if(log.end.qty) finalQty = `<div class="qty-display-box" id="qty-display-${idx}">📦 Qty: ${log.end.qty}</div>`;
        } 
-       html += `<div class="${cardClass}"><div class="card-top"><div class="card-coil-title">Coil No: ${log.coilNo}</div><div class="card-meta-info"><span>Product: <b>${log.productName}</b></span><span>Machine: <b>${log.machine}</b></span></div></div><div class="timeline-container">${timelineHtml}</div>${finalQty}</div>`; 
+
+       html += `
+       <div class="${cardClass}">
+         <div class="card-top">
+           <div class="card-coil-title">Coil No: ${log.coilNo}</div>
+           <div class="card-meta-info">
+             <span>Product: <b>${log.productName}</b></span>
+             <span>Machine: <b>${log.machine}</b></span>
+           </div>
+         </div>
+         <div class="timeline-container">${timelineHtml}</div>
+         ${finalQty}
+       </div>`;
      }); 
      historyListDiv.innerHTML = html;
      
-     // ★履歴読み込み後、ドロップダウンを更新
      refreshCoilSupportList();
    } catch(err) {
-     historyListDiv.innerHTML = `<div style="text-align:center;color:#b71c1c;padding:20px;">${LANG_DATA[currentLang].historyCommError}</div>`; 
+     historyListDiv.innerHTML = `<div style="text-align:center;color:#b71c1c;padding:20px;">${LANG_DATA[currentLang].historyCommError}</div>`;
    }
  } 
   
@@ -723,17 +848,17 @@
  } 
   
  function showOverlay(text) { 
-   document.getElementById('overlayText').textContent = text; 
+   document.getElementById('overlayText').textContent = text;
    document.getElementById('loadingOverlay').classList.add('show');
  } 
   
  function hideOverlay() { 
-   document.getElementById('loadingOverlay').classList.remove('show'); 
+   document.getElementById('loadingOverlay').classList.remove('show');
  } 
   
  async function onCoilDetermined() { 
    const coilNo = document.getElementById('coilNo').value.trim();
-   if (!coilNo) return; 
+   if (!coilNo) return;
    const dynamicArea = document.getElementById('dynamic-area'); 
    const msgDiv = document.getElementById('message'); 
    showOverlay(LANG_DATA[currentLang].checkingStock); 
@@ -741,17 +866,16 @@
    msgDiv.style.display = 'none'; 
    resetJudge(); 
    document.getElementById('quantity-field').classList.add('hidden');
-   document.getElementById('quantity').required = false; 
-  
+   document.getElementById('quantity').required = false;
    try {
      const res = await callGAS('getProducts', { coilNo: coilNo });
-     hideOverlay(); 
+     hideOverlay();
      if (res.success) { 
        currentProducts = res.products || []; 
-       const pSelect = document.getElementById('productName'); 
+       const pSelect = document.getElementById('productName');
        pSelect.innerHTML = ''; 
        if (currentProducts.length > 1) { 
-         const defaultOpt = document.createElement('option'); 
+         const defaultOpt = document.createElement('option');
          defaultOpt.value = ''; 
          defaultOpt.textContent = LANG_DATA[currentLang].selectProduct; 
          pSelect.appendChild(defaultOpt); 
@@ -761,12 +885,12 @@
          opt.value = prod.name; 
          opt.textContent = prod.name; 
          pSelect.appendChild(opt); 
-       }); 
+       });
        dynamicArea.classList.remove('hidden'); 
        if (currentProducts.length === 1) onProductChanged(); 
        else pSelect.focus(); 
      } else { 
-       msgDiv.className = 'error'; 
+       msgDiv.className = 'error';
        msgDiv.textContent = res.msg; 
        msgDiv.style.display = 'block'; 
      } 
@@ -779,32 +903,33 @@
  } 
   
  function onProductChanged() { 
-   const selectedName = document.getElementById('productName').value; 
+   const selectedName = document.getElementById('productName').value;
    const targetDisplay = document.getElementById('masterTargetDisplay');
    const coilNo = document.getElementById('coilNo').value.trim(); 
    const msgDiv = document.getElementById('message'); 
    const submitBtn = document.getElementById('submitBtn'); 
-   const defectDiv = document.getElementById('defectWarning'); 
+   const defectDiv = document.getElementById('defectWarning');
    msgDiv.style.display = 'none';
    submitBtn.disabled = false; 
    defectDiv.style.display = 'none'; 
-   defectDiv.innerHTML = ''; 
+   defectDiv.innerHTML = '';
    if (!selectedName) { 
      targetValue = null; 
      targetDisplay.textContent = ''; 
      resetJudge();
-     return; 
+     return;
    } 
-   const matched = currentProducts.find(p => p.name === selectedName); 
+   const matched = currentProducts.find(p => p.name === selectedName);
    if (matched) { 
      targetValue = parseFloat(matched.measured);
-     const minOk = (targetValue - 0.8).toFixed(1); 
+     const minOk = (targetValue - 0.8).toFixed(1);
      const maxOk = (targetValue + 0.8).toFixed(1); 
      targetDisplay.textContent = `（${LANG_DATA[currentLang].rangeText}: ${targetValue.toFixed(1)} / ${LANG_DATA[currentLang].okRange}: ${minOk}～${maxOk}）`;
      if (matched.defect) { 
-       const defectText = (typeof matched.defect === 'object') ? (matched.defect[currentLang] || matched.defect['ja'] || '') : matched.defect; 
+       const defectText = (typeof matched.defect === 'object') ?
+       (matched.defect[currentLang] || matched.defect['ja'] || '') : matched.defect; 
        if (defectText.trim() !== "") { 
-         defectDiv.innerHTML = `<b>${LANG_DATA[currentLang].defectTitle}</b>${defectText}`; 
+         defectDiv.innerHTML = `<b>${LANG_DATA[currentLang].defectTitle}</b>${defectText}`;
          defectDiv.style.display = 'block';
        } 
      } 
@@ -819,7 +944,7 @@
    });
    if (foundLog) { 
      if (foundLog.end) { 
-       let lockMsg = LANG_DATA[currentLang].lockError.replace('{prod}', selectedName); 
+       let lockMsg = LANG_DATA[currentLang].lockError.replace('{prod}', selectedName);
        msgDiv.className = 'error';
        msgDiv.innerHTML = lockMsg;
        msgDiv.style.display = 'block'; 
@@ -835,18 +960,18 @@
    const qtyInput = document.getElementById('quantity'); 
    if (nextStage === '終') { 
      qtyField.classList.remove('hidden'); 
-     qtyInput.required = true; 
+     qtyInput.required = true;
    } else { 
      qtyField.classList.add('hidden');
      qtyInput.required = false; 
    } 
    document.getElementById('measured').focus(); 
-   checkMeasuredValue(); 
+   checkMeasuredValue();
  } 
   
  function checkMeasuredValue() { 
    const inputValue = document.getElementById('measured').value.trim();
-   const judgeBox = document.getElementById('judgeResult'); 
+   const judgeBox = document.getElementById('judgeResult');
    if (inputValue === '' || targetValue === null) { 
      resetJudge(); 
      return;
@@ -855,11 +980,11 @@
    const lowerLimit = targetValue - 0.8; 
    const upperLimit = targetValue + 0.8;
    if (currentInput >= lowerLimit && currentInput <= upperLimit) { 
-     judgeBox.textContent = LANG_DATA[currentLang].ok; 
+     judgeBox.textContent = LANG_DATA[currentLang].ok;
      judgeBox.className = 'judge-box judge-ok'; 
      judgeBox.style.display = 'block';
    } else { 
-     judgeBox.textContent = LANG_DATA[currentLang].ng; 
+     judgeBox.textContent = LANG_DATA[currentLang].ng;
      judgeBox.className = 'judge-box judge-ng'; 
      judgeBox.style.display = 'block';
    } 
@@ -900,14 +1025,14 @@
    try {
      const res = await callGAS('saveLog', { logData: logData });
      hideOverlay(); 
-     submitBtn.disabled = false; 
+     submitBtn.disabled = false;
      msgDiv.className = 'success'; 
      msgDiv.textContent = `【${res.type}】 ${LANG_DATA[currentLang].successSaved}`; 
      msgDiv.style.display = 'block'; 
      document.getElementById('coilNo').value = ''; 
      document.getElementById('measured').value = ''; 
      document.getElementById('quantity').value = ''; 
-     document.getElementById('quantity-field').classList.add('hidden'); 
+     document.getElementById('quantity-field').classList.add('hidden');
      document.getElementById('quantity').required = false; 
      document.getElementById('dynamic-area').classList.add('hidden'); 
      currentProducts = []; 
@@ -917,15 +1042,77 @@
      resetJudge(); 
      loadRecentHistory(); 
      refreshCoilSupportList();
-     document.getElementById('coilNo').focus(); 
+     document.getElementById('coilNo').focus();
    } catch(err) {
      hideOverlay();
      submitBtn.disabled = false; 
      msgDiv.className = 'error'; 
-     msgDiv.textContent = LANG_DATA[currentLang].saveError + err.message; 
+     msgDiv.textContent = LANG_DATA[currentLang].saveError + err.message;
      msgDiv.style.display = 'block'; 
    }
  });
+
+ // --- 新規追加箇所: インライン直接編集用の切替および保存処理機能 ---
+ function toggleInlineEdit(idx, stage, isEdit) {
+   const viewEl = document.getElementById(`view-${idx}-${stage}`);
+   const formEl = document.getElementById(`form-${idx}-${stage}`);
+   const timeEl = document.getElementById(`time-${idx}-${stage}`);
+   if (isEdit) {
+     viewEl.style.display = 'none';
+     if(timeEl) timeEl.style.display = 'none';
+     formEl.style.display = 'flex';
+   } else {
+     viewEl.style.display = 'flex';
+     if(timeEl) timeEl.style.display = 'block';
+     formEl.style.display = 'none';
+   }
+ }
+
+ async function submitInlineEdit(idx, stage, coilNo, productName, machine) {
+   const worker = document.getElementById(`edit-worker-${idx}-${stage}`).value;
+   const measured = document.getElementById(`edit-measured-${idx}-${stage}`).value;
+   let quantity = '';
+   
+   if (stage === '終') {
+     quantity = document.getElementById(`edit-qty-${idx}-${stage}`).value;
+     if (!quantity) {
+       alert("加工数量を入力してください。");
+       return;
+     }
+   }
+   if (!worker || !measured) {
+     alert("作業者と実寸計測値を入力してください。");
+     return;
+   }
+
+   const msgDiv = document.getElementById('message');
+   showOverlay(LANG_DATA[currentLang].saving || "書き込み中...");
+
+   const logData = { 
+     coilNo: coilNo, 
+     worker: worker, 
+     machine: machine, 
+     productName: productName, 
+     measured: measured, 
+     enforcedStage: stage, 
+     quantity: quantity 
+   };
+
+   try {
+     const res = await callGAS('saveLog', { logData: logData });
+     hideOverlay(); 
+     msgDiv.className = 'success'; 
+     msgDiv.textContent = `【${res.type}】修正内容を上書き保存しました！`; 
+     msgDiv.style.display = 'block'; 
+     loadRecentHistory(); // 履歴を再読み込みして最新状態に更新
+   } catch(err) {
+     hideOverlay();
+     msgDiv.className = 'error'; 
+     msgDiv.textContent = (LANG_DATA[currentLang].saveError || "保存エラー: ") + err.message;
+     msgDiv.style.display = 'block'; 
+   }
+ }
+ // ------------------------------------------------------------------
 </script>
 </body>
 </html>
