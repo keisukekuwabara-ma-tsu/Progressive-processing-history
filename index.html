@@ -4,7 +4,7 @@
  <meta charset="UTF-8">
  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=4.0">
  <title id="pageTitle">順送プレス加工実績入力</title>
- <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js\"></script>
  <style>
  :root {
  --bg-color: #0d0e12;
@@ -30,1089 +30,1153 @@
  -webkit-font-smoothing: antialiased;
  }
   
- #globalWarningOverlay {
- position: fixed;
- top: 0;
- left: 0; width: 100vw; height: 100vh;
- background-color: rgba(220, 38, 38, 0.98);
- z-index: 100000; display: none; flex-direction: column;
- justify-content: center;
- align-items: center; text-align: center;
- padding: 24px; color: #ffffff; box-sizing: border-box;
- }
- #globalWarningOverlay h1 { font-size: 2.5rem; margin-top: 0; margin-bottom: 20px;
- font-weight: 800; }
- #globalWarningOverlay p { font-size: 1.3rem; line-height: 1.6; margin-bottom: 35px; max-width: 600px; }
- .warning-close-btn {
- padding: 16px 48px;
- background: #ffffff; color: #dc2626; border: none;
- border-radius: 50px; font-weight: 800; font-size: 1.2rem; cursor: pointer;
- box-shadow: 0 10px 20px rgba(0,0,0,0.3);
- transition: transform 0.1s ease;
- }
- .warning-close-btn:active { transform: scale(0.96); }
-  
- .lang-bar {
- width: 100%; max-width: 500px; display: flex;
- justify-content: center;
- gap: 10px; margin-bottom: 20px;
- }
- .lang-btn {
- padding: 14px 10px; background-color: var(--card-bg); border: 2px solid var(--border-color);
- border-radius: 12px;
- color: #94a3b8; font-size: 1.1rem; font-weight: 700; cursor: pointer;
- display: flex; align-items: center; justify-content: center; gap: 8px;
- transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); flex: 1; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
- }
- .lang-btn.active {
- background-color: #1e293b; color: #ffffff; border-color: var(--accent-color);
- box-shadow: 0 0 16px var(--accent-glow); transform: translateY(-2px);
- }
-  
  .container {
- width: 100%; max-width: 500px; background: var(--card-bg); padding: 24px;
- border-radius: 16px; border: 1px solid var(--border-color);
- box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5); box-sizing: border-box; margin-bottom: 25px;
- }
-  
- h2 { text-align: center;
- color: #ffffff; margin-top: 0; margin-bottom: 24px; font-size: 1.5rem; letter-spacing: 0.05em; position: relative; }
- h2::after { content: ''; display: block;
- width: 40px; height: 4px; background: var(--accent-color); margin: 8px auto 0; border-radius: 2px; }
- .form-group { margin-bottom: 20px;
- }
- label.field-label { display: block; margin-bottom: 8px; font-size: 0.95rem; color: #94a3b8; font-weight: 600; }
- input[type="text"], input[type="number"], select {
  width: 100%;
- padding: 14px 16px; box-sizing: border-box; background-color: var(--input-bg);
- border: 2px solid var(--border-color); border-radius: 10px; color: #ffffff;
- font-size: 1.15rem; font-weight: 500;
- transition: all 0.2s ease;
- }
- input:focus, select:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 0 4px var(--accent-glow); background-color: #242837;
- }
- 
- .inline-input-group { display: flex; gap: 10px; }
- .inline-input-group input { flex: 1;
- }
- 
- .scan-btn {
- padding: 0 16px; background-color: #f59e0b; border: none; border-radius: 10px;
- color: white; font-size: 1.2rem; cursor: pointer;
- transition: background 0.2s;
- }
- .scan-btn:hover { background-color: #d97706; }
- 
- .confirm-btn {
- padding: 0 24px; background-color: #3b82f6; border: none;
- border-radius: 10px;
- color: white; font-size: 1.1rem; font-weight: 700; cursor: pointer; white-space: nowrap;
- transition: background 0.2s;
- box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
- }
- .confirm-btn:hover { background-color: #2563eb;
+ max-width: 500px;
+ display: flex;
+ flex-direction: column;
+ gap: 16px;
+ margin-bottom: 80px;
  }
   
- .defect-warning-box {
- margin-top: 14px; background: rgba(251, 146, 60, 0.08); border: 1px dashed #fb923c;
- border-radius: 10px;
- padding: 12px 14px; font-size: 0.95rem; color: #ffedd5; display: none; line-height: 1.4;
+ h1 {
+ font-size: 1.25rem;
+ font-weight: 700;
+ text-align: center;
+ margin: 8px 0;
+ color: #fff;
+ letter-spacing: 0.05em;
  }
- .defect-warning-box b { color: #fb923c; display: block;
- margin-bottom: 4px; font-size: 1rem; }
   
- .judge-box {
- padding: 14px; border-radius: 10px; text-align: center; font-weight: 800; font-size: 1.6rem;
- letter-spacing: 0.05em; margin-top: 12px; display: none; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); animation: pulse 1.5s infinite alternate;
+ .lang-selector {
+ display: flex;
+ justify-content: flex-end;
+ gap: 8px;
  }
- .judge-ok { background-color: rgba(16, 185, 129, 0.15); color: #34d399; border: 2px solid #10b981;
+  
+ .lang-btn {
+ background: var(--card-bg);
+ border: 1px solid var(--border-color);
+ color: var(--text-color);
+ padding: 6px 12px;
+ font-size: 0.8rem;
+ border-radius: 20px;
+ cursor: pointer;
+ transition: all 0.2s;
  }
- .judge-ng { background-color: rgba(239, 68, 68, 0.15); color: #f87171; border: 2px solid #ef4444;
+  
+ .lang-btn.active {
+ background: var(--accent-color);
+ color: #000;
+ font-weight: bold;
+ border-color: var(--accent-color);
+ box-shadow: 0 0 10px var(--accent-glow);
+ }
+  
+ .card {
+ background-color: var(--card-bg);
+ border-radius: 12px;
+ border: 1px solid var(--border-color);
+ padding: 20px;
+ box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+ }
+  
+ .form-group {
+ display: flex;
+ flex-direction: column;
+ gap: 8px;
+ margin-bottom: 16px;
+ position: relative;
+ }
+  
+ .form-group:last-child {
+ margin-bottom: 0;
+ }
+  
+ label {
+ font-size: 0.85rem;
+ font-weight: 600;
+ color: #94a3b8;
+ }
+  
+ select, input {
+ background-color: var(--input-bg);
+ border: 1px solid var(--border-color);
+ color: var(--text-color);
+ border-radius: 8px;
+ padding: 12px;
+ font-size: 1rem;
+ transition: all 0.2s;
+ width: 100%;
+ box-sizing: border-box;
+ outline: none;
+ -webkit-appearance: none;
+ appearance: none;
+ }
+  
+ select:focus, input:focus {
+ border-color: var(--accent-color);
+ box-shadow: 0 0 0 3px var(--accent-glow);
+ }
+  
+ select {
+ background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+ background-repeat: no-repeat;
+ background-position: right 12px center;
+ background-size: 16px;
+ padding-right: 40px;
+ }
+  
+ .barcode-btn {
+ position: absolute;
+ right: 6px;
+ bottom: 6px;
+ background: var(--accent-color);
+ border: none;
+ color: #000;
+ width: 36px;
+ height: 36px;
+ border-radius: 6px;
+ cursor: pointer;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ }
+  
+ .barcode-btn svg {
+ width: 20px;
+ height: 20px;
+ fill: currentColor;
  }
   
  .submit-btn {
- width: 100%; padding: 16px; background: linear-gradient(135deg, #00adb5, #008087); border: none;
- border-radius: 12px; color: white;
- font-size: 1.2rem; font-weight: 700; cursor: pointer; margin-top: 20px; transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(0, 173, 181, 0.3);
- }
- .submit-btn:active { transform: scale(0.98); }
- .submit-btn:disabled { background: #334155 !important; color: #64748b; cursor: not-allowed; box-shadow: none;
+ background: var(--accent-color);
+ color: #000;
+ border: none;
+ border-radius: 8px;
+ padding: 14px;
+ font-size: 1rem;
+ font-weight: 700;
+ cursor: pointer;
+ width: 100%;
+ transition: all 0.2s;
+ margin-top: 8px;
+ box-shadow: 0 4px 12px var(--accent-glow);
  }
   
- #message { margin-top: 18px; padding: 14px; border-radius: 10px; text-align: center; font-weight: 700; font-size: 1rem; display: none;
+ .submit-btn:disabled {
+ background: #475569;
+ color: #1e293b;
+ box-shadow: none;
+ cursor: not-allowed;
  }
- .success { background-color: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #10b981;
- }
- .error { background-color: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; }
- .hidden { display: none !important;
- }
- .target-val { color: #fb923c; font-size: 0.85rem; margin-left: 8px; font-weight: normal; }
   
- .history-container { width: 100%; max-width: 500px;
- box-sizing: border-box; }
- .history-title { font-size: 1.2rem; color: #ffffff; margin-bottom: 16px; font-weight: 700; border-left: 4px solid var(--accent-color); padding-left: 10px;
- letter-spacing: 0.03em; }
- .history-list { display: flex; flex-direction: column; gap: 16px; }
- .history-card { background: var(--card-bg); border: 1px solid var(--border-color);
- border-radius: 14px; padding: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
- .history-card.is-incomplete { border: 2px solid #ef4444;
- background: rgba(239, 68, 68, 0.03); box-shadow: 0 0 10px rgba(239, 68, 68, 0.2); }
- .card-top { border-bottom: 1px solid var(--border-color);
- padding-bottom: 10px; margin-bottom: 12px; }
- .card-coil-title { font-size: 1.2rem; font-weight: 800; color: #ffffff; }
- .card-meta-info { font-size: 0.9rem; color: #94a3b8;
- margin-top: 6px; display: flex; gap: 16px; }
- .card-meta-info span b { color: var(--accent-color); }
- .timeline-container { display: flex; flex-direction: column;
- gap: 8px; }
- .timeline-row { background: #1e2230; border-radius: 8px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem;
+ #interactive {
+ width: 100%;
+ height: 240px;
+ background: #000;
+ border-radius: 8px;
+ overflow: hidden;
+ margin-bottom: 16px;
+ position: relative;
+ display: none;
  }
- .stage-label { font-weight: 800; width: 48px; padding: 3px 0; border-radius: 6px; text-align: center; font-size: 0.8rem;
- }
- .lbl-始 { background-color: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4);
- }
- .lbl-中 { background-color: rgba(234, 179, 8, 0.15); color: #fde047; border: 1px solid rgba(234, 179, 8, 0.4);
- }
- .lbl-終 { background-color: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4);
- }
- .stage-details { flex: 1; margin-left: 14px; display: flex; flex-wrap: wrap; gap: 8px; color: #cbd5e1; }
- .stage-time { font-size: 0.8rem;
- color: #64748b; text-align: right; white-space: nowrap; }
- .qty-display-box { margin-top: 12px; background: rgba(0, 173, 181, 0.08);
- border: 1px dashed rgba(0, 173, 181, 0.5); border-radius: 8px; padding: 10px 14px; font-size: 1.05rem; font-weight: 700; color: #ffffff; display: flex;
- align-items: center; gap: 8px; }
   
- .overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
- background-color: rgba(13, 14, 18, 0.9); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; pointer-events: none;
- transition: opacity 0.25s ease; }
- .overlay.show { opacity: 1; pointer-events: auto; }
- .spinner { width: 56px; height: 56px;
- border: 5px solid #1f222f; border-top: 5px solid var(--accent-color); border-radius: 50%; animation: spin 0.8s linear infinite; }
- .overlay-text { margin-top: 18px;
- color: var(--accent-color); font-weight: 700; font-size: 1.2rem; letter-spacing: 0.05em; }
- @keyframes spin { 0% { transform: rotate(0deg);
- } 100% { transform: rotate(360deg); } }
-
- /* --- カメラ起動時のレイアウト崩れ対策対策CSS --- */
- #scannerOverlay { position: fixed; top: 0; left: 0; width: 100vw;
- height: 100vh; background: #000; z-index: 99999; display: none; flex-direction: column; box-sizing: border-box; }
- #scannerHeader { display: flex; justify-content: space-between;
- align-items: center; padding: 16px 20px; background: #111; color: white; border-bottom: 2px solid #333; flex-shrink: 0;
+ #interactive video {
+ width: 100%;
+ height: 100%;
+ object-fit: cover;
  }
- #scannerHeader h3 { margin: 0; color: #58a6ff; font-size: 1rem; flex: 1; }
- #scannerHeader button { background: #ef4444; color: white;
- border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; flex-shrink: 0; }
- #preview-container { flex: 1;
- position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center; background: #000; width: 100%; box-sizing: border-box;
- }
- #preview { width: 100%; height: 100%; position: absolute; top: 0; left: 0; overflow: hidden; }
- #preview video { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 1; display: block; }
- #preview canvas.drawingBuffer { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 2; pointer-events: none; }
   
- #scan-guide { position: absolute; top: 50%;
- left: 50%; transform: translate(-50%, -50%); width: 75%; max-width: 450px; height: auto; aspect-ratio: 3 / 1.5; border: 3px dashed #00ff00;
- border-radius: 8px; box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.2); z-index: 5; pointer-events: none; }
- #scan-line { position: absolute;
- top: 50%; left: 10%; width: 80%; height: 2px; background: #ff375f; box-shadow: 0 0 15px #ff375f; z-index: 10;
- animation: scanMotion 1.5s ease-in-out infinite alternate; pointer-events: none; }
- @keyframes scanMotion { 0% { transform: translateY(-70px);
- } 100% { transform: translateY(70px); } }
- #scanStatus { padding: 16px; text-align: center; background: #111; color: #f59e0b; font-weight: bold;
- font-size: 0.95rem; flex-shrink: 0; border-top: 1px solid #333; width: 100%; box-sizing: border-box;
+ .scan-overlay {
+ position: absolute;
+ top: 0; left: 0; width: 100%; height: 100%;
+ border: 2px solid var(--accent-color);
+ box-sizing: border-box;
+ pointer-events: none;
+ box-shadow: inset 0 0 40px rgba(0,0,0,0.6);
+ display: flex;
+ align-items: center;
+ justify-content: center;
  }
- 
- /* コントロールパネル */
- #scannerControls { background: #1a1a1a; padding: 16px; border-top: 1px solid #333; color: white; display: flex;
- flex-direction: column; gap: 12px; max-height: 200px; overflow-y: auto; }
- .control-group { display: flex; align-items: center; gap: 12px;
+  
+ .scan-line {
+ width: 90%;
+ height: 2px;
+ background: var(--error-color);
+ position: absolute;
+ animation: scan 2s linear infinite;
+ box-shadow: 0 0 8px var(--error-color);
  }
- .control-label { font-size: 0.9rem; font-weight: 600; min-width: 80px; color: #cbd5e1; }
- .control-slider { flex: 1; height: 6px; background: #333;
- border-radius: 3px; outline: none; cursor: pointer; accent-color: #00adb5; }
- .control-btn { padding: 8px 16px; background: #00adb5; color: white; border: none;
- border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.9rem; transition: background 0.2s; white-space: nowrap; }
- .control-btn:hover { background: #008087;
+  
+ @keyframes scan {
+ 0% { top: 10%; }
+ 50% { top: 90%; }
+ 100% { top: 10%; }
  }
- .control-btn.active { background: #10b981; }
-
- /* タブレット対応（横向き・大画面） */
- @media (min-width: 768px) {
-   body {
-     padding: 24px;
+  
+ .close-scan-btn {
+ position: absolute;
+ top: 8px;
+ right: 8px;
+ background: rgba(0,0,0,0.7);
+ border: 1px solid var(--border-color);
+ color: #fff;
+ border-radius: 4px;
+ padding: 4px 8px;
+ font-size: 0.75rem;
+ cursor: pointer;
+ z-index: 10;
  }
-   .container {
-     max-width: 600px;
+  
+ #msg {
+ padding: 12px;
+ border-radius: 8px;
+ font-size: 0.9rem;
+ text-align: center;
+ display: none;
+ font-weight: 600;
  }
-   .history-container {
-     max-width: 600px;
+  
+ #msg.success {
+ background-color: rgba(16, 185, 129, 0.15);
+ border: 1px solid var(--success-color);
+ color: #34d399;
  }
-   #scannerOverlay {
-     flex-direction: row;
+  
+ #msg.error {
+ background-color: rgba(239, 68, 68, 0.15);
+ border: 1px solid var(--error-color);
+ color: #f87171;
  }
-   #scannerHeader {
-     flex-direction: column;
-     width: 200px;
-     padding: 20px;
-     border-right: 2px solid #333;
- border-bottom: none;
-     justify-content: flex-start;
-     gap: 20px;
-   }
-   #scannerHeader h3 {
-     writing-mode: vertical-lr;
-     transform: rotate(180deg);
- margin: 0;
-   }
-   #scannerHeader button {
-     width: 100%;
+  
+ .hidden { display: none !important; }
+  
+ .master-target-box {
+ background: #1f293d;
+ border-left: 4px solid var(--accent-color);
+ padding: 12px;
+ border-radius: 0 8px 8px 0;
+ margin-top: 4px;
+ font-size: 0.9rem;
  }
-   #preview-container {
-     flex: 1;
+  
+ .judge-box {
+ display: inline-block;
+ padding: 2px 8px;
+ border-radius: 4px;
+ font-weight: bold;
+ font-size: 0.85rem;
+ margin-left: 8px;
  }
-   #scannerControls {
-     position: absolute;
-     bottom: 0;
-     right: 0;
-     width: 300px;
-     flex-direction: row;
- gap: 8px;
-     max-height: none;
-     overflow-x: auto;
-     padding: 12px;
-   }
-   .control-group {
-     flex-direction: column;
+  
+ .judge-ok { background-color: #065f46; color: #34d399; }
+ .judge-ng { background-color: #991b1b; color: #f87171; }
+  
+ .defect-box {
+ margin-top: 12px;
+ background: #2a1f2d;
+ border: 1px solid #5b21b6;
+ border-radius: 8px;
+ padding: 12px;
+ }
+  
+ .defect-title {
+ color: #c084fc;
+ font-weight: bold;
+ font-size: 0.85rem;
+ margin-bottom: 6px;
+ display: flex;
+ align-items: center;
  gap: 6px;
-     min-width: 90px;
-   }
-   .control-label {
-     min-width: auto;
-     font-size: 0.8rem;
-     text-align: center;
  }
-   .control-slider {
-     height: 100px;
-     writing-mode: bt-lr;
-     transform: rotate(90deg);
+  
+ .defect-img {
+ width: 100%;
+ max-height: 180px;
+ object-fit: contain;
+ border-radius: 4px;
+ margin-top: 8px;
+ background: #111;
  }
+  
+ .section-title {
+ font-size: 0.95rem;
+ font-weight: 700;
+ color: #94a3b8;
+ margin: 24px 0 8px 0;
+ letter-spacing: 0.05em;
+ text-transform: uppercase;
  }
-
- /* iPad Pro 等の超大型タブレット */
- @media (min-width: 1024px) {
-   .container {
-     max-width: 800px;
+  
+ .history-list {
+ display: flex;
+ flex-direction: column;
+ gap: 12px;
  }
-   h2 {
-     font-size: 2rem;
+  
+ .history-card {
+ background: var(--card-bg);
+ border: 1px solid var(--border-color);
+ border-radius: 12px;
+ padding: 16px;
+ position: relative;
  }
-   input[type="text"], input[type="number"], select {
-     font-size: 1.3rem;
-     padding: 16px 18px;
+  
+ .history-card.warning-card {
+ border-color: #b45309;
+ background: linear-gradient(145deg, #161820 0%, #251c14 100%);
  }
-   #scannerControls {
-     width: 350px;
+  
+ .warning-badge {
+ position: absolute;
+ top: 12px;
+ right: 12px;
+ background: #b45309;
+ color: #fff;
+ font-size: 0.7rem;
+ font-weight: bold;
+ padding: 2px 6px;
+ border-radius: 4px;
  }
+  
+ .history-header {
+ display: flex;
+ justify-content: space-between;
+ align-items: flex-start;
+ border-bottom: 1px solid var(--border-color);
+ padding-bottom: 8px;
+ margin-bottom: 12px;
+ }
+  
+ .history-coil {
+ font-size: 1rem;
+ font-weight: 700;
+ color: #fff;
+ }
+  
+ .history-meta {
+ font-size: 0.8rem;
+ color: #64748b;
+ margin-top: 2px;
+ }
+  
+ .history-stages {
+ display: flex;
+ flex-direction: column;
+ gap: 8px;
+ }
+  
+ .stage-row {
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+ font-size: 0.85rem;
+ background: #1f222f;
+ padding: 8px 12px;
+ border-radius: 6px;
+ }
+  
+ .stage-label {
+ font-weight: bold;
+ min-width: 32px;
+ }
+  
+ .stage-label.st-start { color: #38bdf8; }
+ .stage-label.st-middle { color: #fbbf24; }
+ .stage-label.st-end { color: #34d399; }
+  
+ .stage-info {
+ flex-grow: 1;
+ margin-left: 12px;
+ color: #cbd5e1;
+ }
+  
+ .stage-edit-btn {
+ background: transparent;
+ border: 1px solid var(--accent-color);
+ color: var(--accent-color);
+ padding: 2px 8px;
+ font-size: 0.75rem;
+ border-radius: 4px;
+ cursor: pointer;
+ transition: all 0.2s;
+ }
+  
+ .stage-edit-btn:hover {
+ background: var(--accent-color);
+ color: #000;
+ }
+  
+ .coil-support-container {
+ display: flex;
+ flex-direction: column;
+ gap: 8px;
+ background: var(--card-bg);
+ border: 1px solid var(--border-color);
+ border-radius: 12px;
+ padding: 16px;
+ }
+  
+ .coil-support-title {
+ font-size: 0.85rem;
+ font-weight: bold;
+ color: #fbbf24;
+ margin-bottom: 4px;
+ }
+  
+ .coil-badge-grid {
+ display: flex;
+ flex-wrap: wrap;
+ gap: 8px;
+ }
+  
+ .coil-badge {
+ background: #1f222f;
+ border: 1px solid #334155;
+ color: #cbd5e1;
+ padding: 6px 12px;
+ font-size: 0.85rem;
+ border-radius: 6px;
+ cursor: pointer;
+ transition: all 0.2s;
+ }
+  
+ .coil-badge:hover {
+ border-color: var(--accent-color);
+ color: #fff;
+ }
+  
+ .loading-overlay {
+ position: fixed;
+ top: 0; left: 0; width: 100%; height: 100%;
+ background: rgba(13,14,18,0.8);
+ display: flex;
+ justify-content: center;
+ align-items: center;
+ z-index: 9999;
+ display: none;
+ }
+  
+ .spinner {
+ width: 40px;
+ height: 40px;
+ border: 4px solid rgba(0,173,181,0.1);
+ border-top: 4px solid var(--accent-color);
+ border-radius: 50%;
+ animation: spin 1s linear infinite;
+ }
+  
+ @keyframes spin {
+ 0% { transform: rotate(0deg); }
+ 100% { transform: rotate(360deg); }
  }
  </style>
 </head>
 <body>
   
-<div id="globalWarningOverlay">
- <h1 id="uiWarningTitle">⚠️ 未完了の作業があります</h1>
- <p id="uiWarningBody">前日以前の履歴で「終」まで完了していないデータがあります。<br>まず履歴を確認してください。</p>
- <button type="button" class="warning-close-btn" id="btnWarningClose" onclick="closeGlobalWarning()">確認しました</button>
-</div>
-  
-<div id="loadingOverlay" class="overlay">
- <div class="spinner"></div>
- <div id="overlayText" class="overlay-text">処理中...</div>
-</div>
-
-<div id="scannerOverlay">
-  <div id="scannerHeader">
-    <h3 style="margin:0; color:#58a6ff; font-size:1.1rem;">枠内にバーコードを写してください</h3>
-    <button onclick="stopBarcodeScanning()">閉じる</button>
-  </div>
-  <div id="preview-container">
-    <div id="scan-guide"></div>
-    <div id="scan-line"></div>
-    <div id="preview"></div>
-  </div>
-  <div id="scanStatus">カメラを起動中...</div>
-  <div style="text-align: center; color: #94a3b8; font-size: 0.85rem; padding: 8px; background: #111; border-top: 1px solid #333;">
-    💡 ピンチズームで拡大・縮小できます ｜ 暗い場合は照明を確保してください
-  </div>
-</div>
-  
-<div class="lang-bar">
- <button type="button" id="btn-lang-ja" class="lang-btn active" onclick="switchLanguage('ja')">🇯🇵 日本語</button>
- <button type="button" id="btn-lang-id" class="lang-btn" onclick="switchLanguage('id')">🇮🇩 Indo</button>
- <button type="button" id="btn-lang-pt" class="lang-btn" onclick="switchLanguage('pt')">🇧🇷 Port</button>
-</div>
-  
-<div class="container">
- <h2 id="uiMainHeader">順送プレス加工実績入力</h2>
-   
-<form id="pressForm" onkeydown="return event.key != 'Enter';">
- <div class="form-group">
- <label class="field-label" id="lblWorker" for="worker">作業者</label>
- <select id="worker" required onchange="moveToNextField('machine')">
- <option value="">選択してください</option>
- </select>
+ <div class="container">
+ <div class="lang-selector">
+ <button class="lang-btn active" onclick="switchLang('ja')">JP</button>
+ <button class="lang-btn" onclick="switchLang('id')">ID</button>
+ <button class="lang-btn" onclick="switchLang('pt')">PT</button>
  </div>
   
- <div class="form-group">
- <label class="field-label" id="lblMachine" for="machine">使用する機械</label>
- <select id="machine" required onchange="moveToNextField('coilNo')">
- <option value="" id="optMachineDefault">選択してください</option>
- <option value="順送【80ｔ】">順送【80ｔ】</option>
- <option value="順送【110ｔ】">順送【110ｔ】</option>
- <option value="順送【200ｔ】">順送【200ｔ】</option>
- </select>
- </div>
+ <h1 id="mainTitle">順送プレス加工実績入力</h1>
+  
+ <div id="msg"></div>
+  
+ <div class="card">
+ <form id="pressForm" onsubmit="handleSubmit(event)">
   
  <div class="form-group">
- <label class="field-label" id="lblCoilNo" for="coilNo">コイルNo</label>
- <div class="inline-input-group">
- <input type="text" id="coilNo" list="coilHistoryOptions" required onkeydown="if(event.key === 'Enter'){ onCoilDetermined(); return false; }">
- <button type="button" class="scan-btn" id="btnScan" onclick="startBarcodeScanning()" title="カメラでバーコードを読み取る">📷</button>
- <button type="button" class="confirm-btn" id="btnConfirm" onclick="onCoilDetermined()">確定</button>
+ <label id="lblCoilNo" for="coilNo">コイルNo</label>
+ <input type="text" id="coilNo" required autocomplete="off" onchange="handleCoilChange()">
+ <button type="button" class="barcode-btn" onclick="startScan()">
+ <svg viewBox="0 0 24 24"><path d="M4 4h2v16H4V4zm4 0h1v16H8V4zm2 0h3v16h-3V4zm5 0h1v16h-1V4zm3 0h2v16h-2V4z"/></svg>
+ </button>
  </div>
- <datalist id="coilHistoryOptions"></datalist>
+  
+ <div id="interactive">
+ <button type="button" class="close-scan-btn" onclick="stopScan()">Close</button>
+ <div class="scan-overlay">
+ <div class="scan-line"></div>
+ </div>
  </div>
   
  <div id="dynamic-area" class="hidden">
  <div class="form-group">
- <label class="field-label" id="lblProductName" for="productName">該当品名</label>
- <select id="productName" required onchange="onProductChanged()">
+ <label id="lblMachine" for="machine">設備・機械</label>
+ <select id="machine" required>
+ <option value="">-- 選択してください --</option>
+ <option value="Aプレス">Aプレス</option>
+ <option value="Bプレス">Bプレス</option>
+ <option value="Cプレス">Cプレス</option>
  </select>
- <div id="defectWarning" class="defect-warning-box"></div>
  </div>
   
  <div class="form-group">
- <label class="field-label" id="lblMeasured" for="measured">
- 実寸計測値 (mm) <span id="masterTargetDisplay" class="target-val"></span>
- </label>
- <input type="number" id="measured" step="0.1" required placeholder="0.0" oninput="checkMeasuredValue()">
- <div id="judgeResult" class="judge-box"></div>
+ <label id="lblProductName" for="productName">品名</label>
+ <select id="productName" required onchange="handleProductChange()">
+ </select>
  </div>
   
- <div id="quantity-field" class="form-group hidden">
- <label class="field-label" id="lblQuantity" for="quantity">加工数量 (個数) 【※今回の送信で加工終了となります】</label>
- <input type="number" id="quantity">
+ <div class="master-target-box">
+ <span id="lblMasterTarget">マスタ実寸基準値:</span> 
+ <strong id="masterTargetDisplay"></strong> 
+ <span id="judgeDisplay" class="judge-box hidden"></span>
  </div>
   
- <button type="submit" id="submitBtn" class="submit-btn">実績を送信</button>
+ <div id="defect-area" class="defect-box hidden">
+ <div class="defect-title">
+ <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+ <span id="lblDefectTitle">過去の不具合・注意点</span>
+ </div>
+ <div id="defectText" style="font-size:0.9rem; color:#e2e8f0; white-space:pre-wrap;"></div>
+ <img id="defectImg" class="defect-img hidden" src="" alt="Defect Image">
+ </div>
+  
+ <div class="form-group" style="margin-top:16px;">
+ <label id="lblWorker" for="worker">作業者</label>
+ <select id="worker" required>
+ </select>
+ </div>
+  
+ <div class="form-group">
+ <label id="lblMeasured" for="measured">測定値 (実寸)</label>
+ <input type="text" id="measured" inputmode="decimal" required oninput="evaluateValue()">
+ </div>
+  
+ <div class="form-group hidden" id="quantity-field">
+ <label id="lblQuantity" for="quantity">加工数量</label>
+ <input type="number" id="quantity" min="1">
+ </div>
+  
+ <button type="submit" id="submitBtn" class="submit-btn">登録する</button>
  </div>
  </form>
-  
- <div id="message"></div>
-</div>
-  
-<div class="history-container">
- <div class="history-title" id="uiHistoryTitle">直近20件性品名別加工履歴</div>
- <div id="historyList" class="history-list">
- 
- <div style="text-align:center;color:#666;padding:20px;" id="uiHistoryLoading">履歴データを読み込み中...</div>
  </div>
-</div>
   
-<script>
+ <div id="coilSupportArea" class="coil-support-container hidden">
+ <div class="coil-support-title" id="lblCoilSupportTitle">加工途中のコイル (タップで自動入力)</div>
+ <div class="coil-badge-grid" id="coilBadgeGrid"></div>
+ </div>
+  
+ <div class="section-title" id="lblHistoryTitle">本日の加工履歴 (直近)</div>
+ <div class="history-list" id="historyList"></div>
+ </div>
+  
+ <div class="loading-overlay" id="loadingOverlay">
+ <div class="spinner"></div>
+ </div>
+  
+ <script>
+ const GAS_URL = 'https://script.google.com/macros/s/AKfycby532f6-FofgE_gLALeXWJAtT9ZfU9M6WvLNoYhVskC2Z6wL1-uO8i-KxVofbY5Maw7/exec';
+  
  const LANG_DATA = {
  ja: {
- title: "順送プレス加工実績入力",
- selectPlease: "選択してください",
- selectProduct: "該当複数あり、品名を選択してください▼",
- worker: "作業者",
- machine: "使用する機械",
- coilNo: "コイルNo",
- coilPlaceholder: "手入力・カメラ または一覧から選択",
- confirm: "確定",
- productName: "該当品名",
- measured: "実寸計測値 (mm)",
- rangeText: "基準",
- okRange: "OK範囲",
- quantity: "加工数量 (個数) 【※今回の送信で加工終了となります】",
- qtyPlaceholder: "数量を入力",
- submit: "実績を送信",
- historyTitle: "直近20件の品名別加工履歴",
- historyLoading: "履歴データを読み込み中...",
- noHistory: "履歴データがまだありません。",
- commError: "通信エラーが発生しました。",
- historyCommError: "履歴の通信エラーが発生しました",
- checkingStock: "在庫データを照合中...",
- saving: "実績ログへ書き込み中...",
- ok: "判定：OK",
- ng: "判定：NG (許容範囲外)",
- successSaved: "実績ログに正常に登録・追記しました！",
- saveError: "保存エラー: ",
- lockError: "🚨 <b>入力エラー:</b> このコイルにおける「{prod}」の加工はすでに【終】まで完全に完了しています。<br>二周目の再加工登録は認められません。",
- defectTitle: "⚠️ 過去の不良事例・注意点",
- warnTitle: "⚠️ 未完了の作業があります",
- warnBody: "前日以前の履歴で「終」まで完了していないデータがあります。<br>まず履歴を確認してください。",
- warnClose: "確認しました",
- scanMsg: "スキャン中... 赤い線をバーコードに合わせてください"
+ pageTitle: "順送プレス加工実績入力",
+ mainTitle: "順送プレス加工実績入力",
+ lblCoilNo: "コイルNo",
+ lblMachine: "設備・機械",
+ lblProductName: "品名",
+ lblMasterTarget: "マスタ実寸基準値:",
+ lblDefectTitle: "過去の不具合・注意点",
+ lblWorker: "作業者",
+ lblMeasured: "測定値 (実寸)",
+ lblQuantity: "加工数量",
+ submitBtnStart: "【始】登録する",
+ submitBtnMiddle: "【中】登録する",
+ submitBtnEnd: "【終】登録する",
+ lblCoilSupportTitle: "加工途中のコイル (タップで自動入力)",
+ lblHistoryTitle: "加工履歴 (直近)",
+ selectPlaceholder: "-- 選択してください --",
+ loading: "通信中...",
+ successSaved: "正常に保存されました",
+ errCoilNotFound: "指定されたコイルNoは在庫にありません",
+ errMasterNotFound: "マスタに合致する品名が見つかりません",
+ warningCard: "前日以前の未完了データ",
+ labelStart: "始",
+ labelMiddle: "中",
+ labelEnd: "終",
+ labelQty: "数量:"
  },
  id: {
- title: "Input Hasil Produksi Press",
- selectPlease: "Silakan pilih",
- selectProduct: "Ada beberapa produk, silakan pilih nama produk▼",
- worker: "Operator",
- machine: "Mesin yang digunakan",
- coilNo: "No Coil",
- coilPlaceholder: "Input manual/Kamera atau pilih",
- confirm: "Konfirmasi",
- productName: "Nama Produk",
- measured: "Nilai Pengukuran Aktual (mm)",
- rangeText: "Standar",
- okRange: "Kisaran OK",
- quantity: "Jumlah Produksi (Pcs) 【*Pengiriman ini akan menyelesaikan proses】",
- qtyPlaceholder: "Masukkan jumlah kuantitas",
- submit: "Kirim Hasil",
- historyTitle: "20 Riwayat Pemrosesan Terakhir Berdasarkan Produk",
- historyLoading: "Memuat data riwayat...",
- noHistory: "Belum ada data riwayat.",
- commError: "Terjadi kesalahan komunikasi.",
- historyCommError: "Kesalahan komunikasi data riwayat",
- checkingStock: "Memeriksa data stok...",
- saving: "Menyimpan ke log hasil...",
- ok: "Penilaian: OK",
- ng: "Penilaian: NG (Di luar kisaran)",
- successSaved: "Berhasil terdaftar dan diperbarui di log hasil!",
- saveError: "Kesalahan penyimpanan: ",
- lockError: "🚨 <b>Kesalahan Input:</b> Proses untuk produto \"{prod}\" pada coil ini telah selesai sepenuhnya hingga tahap [Akhir].<br>Penginputan ulang untuk kedua kalinya tidak diperbolehkan.",
- defectTitle: "⚠️ Riwayat Cacat / Poin Perhatian",
- warnTitle: "⚠️ Ada Pekerjaan Belum Selesai",
- warnBody: "Ada data dalam riwayat sebelum hari ini yang belum selesai hingga tahap [Akhir].<br>Silakan periksa riwayat terlebih dahulu.",
- warnClose: "Saya mengerti",
- scanMsg: "Memindai... Arahkan garis merah ke barcode"
+ pageTitle: "Input Hasil Kerja Press",
+ mainTitle: "Input Hasil Kerja Press",
+ lblCoilNo: "No Koil",
+ lblMachine: "Mesin",
+ lblProductName: "Nama Produk",
+ lblMasterTarget: "Nilai Standar Master:",
+ lblDefectTitle: "Cacat/Catatan Masa Lalu",
+ lblWorker: "Operator",
+ lblMeasured: "Nilai Ukur (Ukuran Nyata)",
+ lblQuantity: "Jumlah Proses",
+ submitBtnStart: "【Awal】Daftarkan",
+ submitBtnMiddle: "【Tengah】Daftarkan",
+ submitBtnEnd: "【Akhir】Daftarkan",
+ lblCoilSupportTitle: "Koil Sedang Diproses (Ketuk untuk input)",
+ lblHistoryTitle: "Riwayat Proses (Terbaru)",
+ selectPlaceholder: "-- Silakan pilih --",
+ loading: "Memproses...",
+ successSaved: "Berhasil disimpan",
+ errCoilNotFound: "No Koil tidak ada di stok",
+ errMasterNotFound: "Nama produk tidak cocok di master",
+ warningCard: "Data belum selesai dari hari sebelumnya",
+ labelStart: "Awal",
+ labelMiddle: "Tgh",
+ labelEnd: "Akhir",
+ labelQty: "Jumlah:"
  },
  pt: {
- title: "Entrada de Resultados de Prensa",
- selectPlease: "Por favor, selecione",
- selectProduct: "Múltiplos produtos encontrados, selecione o nome▼",
- worker: "Operador",
- machine: "Máquina Utilizada",
- coilNo: "Nº da Bobina (Coil No)",
- coilPlaceholder: "Manual/Câmera ou selecione da lista",
- confirm: "Confirmar",
- productName: "Nome do Produto",
- measured: "Valor Medido Real (mm)",
- rangeText: "Padrão",
- okRange: "Faixa OK",
- quantity: "Quantidade Produzida (Pcs) 【*Este envio interrompe o processo】",
- qtyPlaceholder: "Digite a quantidade",
- submit: "Enviar Resultado",
- historyTitle: "Últimos 20 Históricos de Processamento por Produto",
- historyLoading: "Carregando dados do histórico...",
- noHistory: "Nenhum dado de histórico disponível.",
- commError: "Ocorreu um erro de comunicação.",
- historyCommError: "Erro de comunicação no histórico",
- checkingStock: "Verificando dados de estoque...",
- saving: "Gravando no log de resultados...",
- ok: "Resultado: OK",
- ng: "Resultado: NG (Fora da faixa)",
- successSaved: "Registrado e updated com sucesso no log de resultados!",
- saveError: "Erro ao salvar: ",
- lockError: "Erro de Entrada: O processamento do produto \"{prod}\" nesta bobina já foi totalmente concluído até a etapa [Fim]. Não é permitido registrar novamente.",
- defectTitle: "⚠️ Histórico de Defeitos / Pontos de Atenção",
- warnTitle: "⚠️ Existe Trabalho Inacabado",
- warnBody: "Existem dados no histórico de dias anteriores que não foram concluídos até o [Fim]. Por favor, verifique o histórico primeiro.",
- warnClose: "Entendido",
- scanMsg: "Escaneando... Alinhe a linha vermelha com o código de barras"
+ pageTitle: "Entrada de Resultados de Prensa",
+ mainTitle: "Entrada de Resultados de Prensa",
+ lblCoilNo: "Nº da Bobina",
+ lblMachine: "Máquina",
+ lblProductName: "Nome do Produto",
+ lblMasterTarget: "Valor Padrão do Master:",
+ lblDefectTitle: "Defeitos/Avisos Anteriores",
+ lblWorker: "Operador",
+ lblMeasured: "Valor Medido (Tam. Real)",
+ lblQuantity: "Quantidade Processada",
+ submitBtnStart: "【Início】Registrar",
+ submitBtnMiddle: "【Meio】Registrar",
+ submitBtnEnd: "【Fim】Registrar",
+ lblCoilSupportTitle: "Bobinas em Processo (Toque para inserir)",
+ lblHistoryTitle: "Histórico de Processo (Recente)",
+ selectPlaceholder: "-- Por favor selecione --",
+ loading: "Processando...",
+ successSaved: "Salvo com sucesso",
+ errCoilNotFound: "Nº da bobina não está no estoque",
+ errMasterNotFound: "Nome do produto não encontrado no master",
+ warningCard: "Dados incompletos do dia anterior",
+ labelStart: "Ini",
+ labelMiddle: "Meio",
+ labelEnd: "Fim",
+ labelQty: "Qtd:"
  }
  };
   
- let currentLang = 'ja'; 
- let currentProducts = []; 
- let targetValue = null; 
- let nextStage = '始'; 
- let fullHistoryLogs = []; 
- let rawWorkers = []; 
- 
- // カメラ制御用グローバル変数
- let barcodeMatchCount = 0;
- let lastBarcode = "";
- let quaggaInitialized = false;
- let currentZoom = 1;
- let currentBrightness = 0;
- let autoFocusEnabled = true;
- let videoElement = null;
+ let currentLang = 'ja';
+ let currentProducts = [];
+ let targetValue = null;
+ let nextStage = '始';
   
- // ==========================================
- // API通信
- // ==========================================
- const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyKuZhZb_aOg7Iyb2YTYHOwOMKognF57OpGuzmPJxNfo2dpa-F81j-iI5yuRVDqaidvRg/exec";
-
- async function callGAS(action, payload = {}) {
-   try {
-     const response = await fetch(GAS_API_URL, {
-       method: 'POST',
-       headers: { 'Content-Type': 'text/plain' },
-       body: JSON.stringify({ action: action, ...payload })
-     });
-     const data = await response.json();
-     if (data.error) throw new Error(data.error);
-     return data;
-   } catch (error) {
-     console.error('API Error:', error);
-     throw error;
-   }
+ window.addEventListener('DOMContentLoaded', async () => {
+ showOverlay();
+ try {
+ await loadWorkers();
+ await loadRecentHistory();
+ await refreshCoilSupportList();
+ } catch(e) {
+ alert('Initial load error: ' + e);
+ } finally {
+ hideOverlay();
  }
-
- // ==========================================
- // バーコードスキャナー
- // ==========================================
- function startBarcodeScanning() {
-   const scannerOverlay = document.getElementById('scannerOverlay');
-   const scanStatus = document.getElementById('scanStatus');
-   scannerOverlay.style.display = 'flex';
-   scanStatus.innerText = LANG_DATA[currentLang].scanMsg || "スキャン中...";
-   
-   barcodeMatchCount = 0;
-   lastBarcode = "";
-   quaggaInitialized = false;
-
-   Quagga.init({
-     inputStream: {
-       name: "Live",
-       type: "LiveStream",
-       target: document.querySelector('#preview'),
-       constraints: {
-         facingMode: "environment",
-         focusMode: "continuous"
-       }
-     },
-     locator: {
-       patchSize: "medium",
-       halfSample: false
-     },
-     frequency: 10,
-     decoder: {
-       readers: ["code_128_reader", "ean_reader", "code_39_reader"]
-     }
-   }, function(err) {
-     if (err) {
-       console.error('Quagga init error:', err);
-       scanStatus.innerText = "カメラの起動に失敗しました。権限を確認してください。";
-       return;
-     }
-     Quagga.start();
-     quaggaInitialized = true;
-     scanStatus.innerText = LANG_DATA[currentLang].scanMsg || "スキャン中...";
-   });
-
-   Quagga.onDetected(function(data) {
-     if (!quaggaInitialized || !data.codeResult) return;
-     
-     let code = data.codeResult.code;
-     if (!code) return;
-     
-     code = code.replace(/^0+(?=.)/,'') || code;
-     code = code.toUpperCase();
-     
-     if (code === lastBarcode) {
-       barcodeMatchCount++;
-     } else {
-       lastBarcode = code;
-       barcodeMatchCount = 1;
-     }
-
-     if (barcodeMatchCount >= 3) {
-       document.getElementById('coilNo').value = code;
-       stopBarcodeScanning();
-       setTimeout(() => onCoilDetermined(), 500);
-     } else {
-       document.getElementById('scanStatus').innerText = 
-         `${LANG_DATA[currentLang].scanMsg || "スキャン中..."} (${barcodeMatchCount}/3)`;
-     }
-   });
- }
-
- function stopBarcodeScanning() {
-   try {
-     Quagga.stop();
-     Quagga.offDetected();
-   } catch(e) {}
-   document.getElementById('scannerOverlay').style.display = 'none';
-   quaggaInitialized = false;
- }
-
- // ==========================================
- // アプリケーションロジック
- // ==========================================
- window.onload = async function() { 
-   initStaticLabels(); 
-   loadWorkerList(); 
-   loadRecentHistory(); 
-   refreshCoilSupportList(); 
- };
-
- function initStaticLabels() { 
-   const lang = LANG_DATA[currentLang]; 
-   document.title = lang.title; 
-   document.getElementById('pageTitle').textContent = lang.title; 
-   document.getElementById('uiMainHeader').textContent = lang.title;
-   document.getElementById('lblWorker').textContent = lang.worker; 
-   document.getElementById('lblMachine').textContent = lang.machine; 
-   document.getElementById('lblCoilNo').textContent = lang.coilNo; 
-   document.getElementById('btnConfirm').textContent = lang.confirm; 
-   document.getElementById('lblProductName').textContent = lang.productName;
-   document.getElementById('lblMeasured').childNodes[0].textContent = lang.measured + " "; 
-   document.getElementById('lblQuantity').textContent = lang.quantity;
-   document.getElementById('submitBtn').textContent = lang.submit;
-   document.getElementById('uiHistoryTitle').textContent = lang.historyTitle; 
-   document.getElementById('coilNo').placeholder = lang.coilPlaceholder;
-   document.getElementById('quantity').placeholder = lang.qtyPlaceholder; 
-   document.getElementById('uiWarningTitle').textContent = lang.warnTitle; 
-   document.getElementById('uiWarningBody').innerHTML = lang.warnBody;
-   document.getElementById('btnWarningClose').textContent = lang.warnClose;
-   const optMachine = document.getElementById('optMachineDefault');
-   if (optMachine) optMachine.textContent = lang.selectPlease; 
-   renderWorkerDropdown();
- } 
-  
- function renderWorkerDropdown() { 
-   const select = document.getElementById('worker');
-   if (!select) return; 
-   const currentSelectedValue = select.value;
-   select.innerHTML = ''; 
-   const firstOpt = document.createElement('option'); 
-   firstOpt.value = ""; 
-   firstOpt.textContent = LANG_DATA[currentLang].selectPlease;
-   select.appendChild(firstOpt);
-   rawWorkers.forEach(name => { 
-     const opt = document.createElement('option'); 
-     opt.value = name; 
-     opt.textContent = name; 
-     select.appendChild(opt); 
-   });
-   select.value = currentSelectedValue; 
- } 
-  
- function switchLanguage(langCode) { 
-   currentLang = langCode; 
-   document.querySelectorAll('.lang-bar .lang-btn').forEach(btn => btn.classList.remove('active'));
-   const targetBtn = document.getElementById('btn-lang-' + langCode); 
-   if (targetBtn) targetBtn.classList.add('active'); 
-   initStaticLabels(); 
-   if(document.getElementById('productName').value) onProductChanged();
-   checkMeasuredValue();
- } 
-  
- async function loadWorkerList() { 
-   try {
-     const workers = await callGAS('getWorkers');
-     rawWorkers = workers || []; 
-     renderWorkerDropdown(); 
-   } catch(e) {
-     console.error("Worker load error:", e);
-   }
- } 
-
- async function refreshCoilSupportList() {
-   try {
-     const coilList = await callGAS('getActiveCoils');
-     const incompleteLogs = fullHistoryLogs.filter(log => !log.end);
-     const incompleteCoils = [...new Set(incompleteLogs.map(log => log.coilNo))];
-     const allCoils = [...new Set([...(coilList || []), ...incompleteCoils])].sort();
-     
-     const datalist = document.getElementById('coilHistoryOptions');
-     if (!datalist) return;
-     datalist.innerHTML = '';
-     
-     allCoils.forEach(function(coilNo) {
-       const option = document.createElement('option');
-       option.value = coilNo;
-       option.textContent = coilNo;
-       datalist.appendChild(option);
-     });
-   } catch(e) {
-     console.error("Coil support list error:", e);
-   }
- }
-  
- function closeGlobalWarning() { 
-   document.getElementById('globalWarningOverlay').style.display = 'none';
- } 
-  
- async function loadRecentHistory() { 
-   const historyListDiv = document.getElementById('historyList'); 
-   const historyLoadingEl = document.getElementById('uiHistoryLoading');
-   if (historyLoadingEl) historyLoadingEl.textContent = LANG_DATA[currentLang].historyLoading; 
-  
-   try {
-     const logs = await callGAS('getHistory');
-     fullHistoryLogs = logs || []; 
-     const hasWarning = fullHistoryLogs.some(log => log.isWarning); 
-     if (hasWarning) document.getElementById('globalWarningOverlay').style.display = 'flex';
-     if(fullHistoryLogs.length === 0) { 
-       historyListDiv.innerHTML = `<div style="text-align:center;color:#666;padding:20px;">${LANG_DATA[currentLang].noHistory}</div>`; 
-       refreshCoilSupportList();
-       return;
-     } 
-       
-     let html = '';
-     const displayLogs = fullHistoryLogs.slice(0, 20); 
-
-     // ドロップダウン用の文字列生成
-     const makeWorkerOptions = (current) => {
-       return rawWorkers.map(w => `<option value="${w}" ${w === current ? 'selected' : ''}>${w}</option>`).join('');
-     };
-
-     displayLogs.forEach((log, idx) => { 
-       let timelineHtml = ''; 
-       let finalQty = ''; 
-       const isEndReached = !!(log.end); 
-       const cardClass = isEndReached ? 'history-card' : 'history-card is-incomplete'; 
-        
-       // --- 修正箇所: 履歴カードの各ステージに直接編集可能なインラインフォームを配置 ---
-       if(log.start) { 
-         timelineHtml += `
-         <div class="timeline-row" id="row-${idx}-始">
-           <span class="stage-label lbl-始">▶ 始</span>
-           <div class="stage-details" id="view-${idx}-始" style="display:flex; flex:1; align-items:center;">
-             <span>👤 ${log.start.worker} &nbsp;📐 ${log.start.measured ? parseFloat(log.start.measured).toFixed(1)+'mm' : '-'}</span>
-             <button type="button" style="margin-left:auto; background:none; border:none; color:var(--accent-color); cursor:pointer; font-size:0.85rem; padding:0; font-weight:bold;" onclick="toggleInlineEdit(${idx}, '始', true)">✏️ 修正</button>
-           </div>
-           <div class="stage-edit-form" id="form-${idx}-始" style="display:none; flex:1; margin-left:14px; gap:6px; align-items:center; flex-wrap:wrap;">
-             <select id="edit-worker-${idx}-始" style="width:auto; padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color); border-radius:4px;">${makeWorkerOptions(log.start.worker)}</select>
-             <input type="number" id="edit-measured-${idx}-始" step="0.1" value="${log.start.measured || ''}" style="width:55px; padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color); border-radius:4px;">mm
-             <button type="button" class="control-btn" style="padding:2px 6px; font-size:0.75rem; background:#10b981;" onclick="submitInlineEdit(${idx}, '始', '${log.coilNo}', '${log.productName}', '${log.machine}')">保存</button>
-             <button type="button" class="control-btn" style="padding:2px 6px; font-size:0.75rem; background:#64748b;" onclick="toggleInlineEdit(${idx}, '始', false)">×</button>
-           </div>
-           <span class="stage-time" id="time-${idx}-始" style="margin-left:8px;">${log.start.time}</span>
-         </div>`; 
-       } 
-       if(log.middle) { 
-         timelineHtml += `
-         <div class="timeline-row" id="row-${idx}-中">
-           <span class="stage-label lbl-中">🔄 中</span>
-           <div class="stage-details" id="view-${idx}-中" style="display:flex; flex:1; align-items:center;">
-             <span>👤 ${log.middle.worker} &nbsp;📐 ${log.middle.measured ? parseFloat(log.middle.measured).toFixed(1)+'mm' : '-'}</span>
-             <button type="button" style="margin-left:auto; background:none; border:none; color:var(--accent-color); cursor:pointer; font-size:0.85rem; padding:0; font-weight:bold;" onclick="toggleInlineEdit(${idx}, '中', true)">✏️ 修正</button>
-           </div>
-           <div class="stage-edit-form" id="form-${idx}-中" style="display:none; flex:1; margin-left:14px; gap:6px; align-items:center; flex-wrap:wrap;">
-             <select id="edit-worker-${idx}-中" style="width:auto; padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color); border-radius:4px;">${makeWorkerOptions(log.middle.worker)}</select>
-             <input type="number" id="edit-measured-${idx}-中" step="0.1" value="${log.middle.measured || ''}" style="width:55px; padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color); border-radius:4px;">mm
-             <button type="button" class="control-btn" style="padding:2px 6px; font-size:0.75rem; background:#10b981;" onclick="submitInlineEdit(${idx}, '中', '${log.coilNo}', '${log.productName}', '${log.machine}')">保存</button>
-             <button type="button" class="control-btn" style="padding:2px 6px; font-size:0.75rem; background:#64748b;" onclick="toggleInlineEdit(${idx}, '中', false)">×</button>
-           </div>
-           <span class="stage-time" id="time-${idx}-中" style="margin-left:8px;">${log.middle.time}</span>
-         </div>`; 
-       } 
-       if(log.end) { 
-         timelineHtml += `
-         <div class="timeline-row" id="row-${idx}-終">
-           <span class="stage-label lbl-終">■ 終</span>
-           <div class="stage-details" id="view-${idx}-終" style="display:flex; flex:1; align-items:center;">
-             <span>👤 ${log.end.worker} &nbsp;📐 ${log.end.measured ? parseFloat(log.end.measured).toFixed(1)+'mm' : '-'}</span>
-             <button type="button" style="margin-left:auto; background:none; border:none; color:var(--accent-color); cursor:pointer; font-size:0.85rem; padding:0; font-weight:bold;" onclick="toggleInlineEdit(${idx}, '終', true)">✏️ 修正</button>
-           </div>
-           <div class="stage-edit-form" id="form-${idx}-終" style="display:none; flex:1; margin-left:14px; gap:6px; align-items:center; flex-wrap:wrap;">
-             <select id="edit-worker-${idx}-終" style="width:auto; padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color); border-radius:4px;">${makeWorkerOptions(log.end.worker)}</select>
-             <input type="number" id="edit-measured-${idx}-終" step="0.1" value="${log.end.measured || ''}" style="width:55px; padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color); border-radius:4px;">mm
-             <input type="number" id="edit-qty-${idx}-終" value="${log.end.qty || ''}" placeholder="数量" style="width:55px; padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color); border-radius:4px;">個
-             <button type="button" class="control-btn" style="padding:2px 6px; font-size:0.75rem; background:#10b981;" onclick="submitInlineEdit(${idx}, '終', '${log.coilNo}', '${log.productName}', '${log.machine}')">保存</button>
-             <button type="button" class="control-btn" style="padding:2px 6px; font-size:0.75rem; background:#64748b;" onclick="toggleInlineEdit(${idx}, '終', false)">×</button>
-           </div>
-           <span class="stage-time" id="time-${idx}-終" style="margin-left:8px;">${log.end.time}</span>
-         </div>`; 
-         if(log.end.qty) finalQty = `<div class="qty-display-box" id="qty-display-${idx}">📦 Qty: ${log.end.qty}</div>`;
-       } 
-
-       html += `
-       <div class="${cardClass}">
-         <div class="card-top">
-           <div class="card-coil-title">Coil No: ${log.coilNo}</div>
-           <div class="card-meta-info">
-             <span>Product: <b>${log.productName}</b></span>
-             <span>Machine: <b>${log.machine}</b></span>
-           </div>
-         </div>
-         <div class="timeline-container">${timelineHtml}</div>
-         ${finalQty}
-       </div>`;
-     }); 
-     historyListDiv.innerHTML = html;
-     
-     refreshCoilSupportList();
-   } catch(err) {
-     historyListDiv.innerHTML = `<div style="text-align:center;color:#b71c1c;padding:20px;">${LANG_DATA[currentLang].historyCommError}</div>`;
-   }
- } 
-  
- function moveToNextField(nextFieldId) { 
-   const nextField = document.getElementById(nextFieldId);
-   if (nextField) setTimeout(() => { nextField.focus(); }, 100);
- } 
-  
- function showOverlay(text) { 
-   document.getElementById('overlayText').textContent = text;
-   document.getElementById('loadingOverlay').classList.add('show');
- } 
-  
- function hideOverlay() { 
-   document.getElementById('loadingOverlay').classList.remove('show');
- } 
-  
- async function onCoilDetermined() { 
-   const coilNo = document.getElementById('coilNo').value.trim();
-   if (!coilNo) return;
-   const dynamicArea = document.getElementById('dynamic-area'); 
-   const msgDiv = document.getElementById('message'); 
-   showOverlay(LANG_DATA[currentLang].checkingStock); 
-   dynamicArea.classList.add('hidden'); 
-   msgDiv.style.display = 'none'; 
-   resetJudge(); 
-   document.getElementById('quantity-field').classList.add('hidden');
-   document.getElementById('quantity').required = false;
-   try {
-     const res = await callGAS('getProducts', { coilNo: coilNo });
-     hideOverlay();
-     if (res.success) { 
-       currentProducts = res.products || []; 
-       const pSelect = document.getElementById('productName');
-       pSelect.innerHTML = ''; 
-       if (currentProducts.length > 1) { 
-         const defaultOpt = document.createElement('option');
-         defaultOpt.value = ''; 
-         defaultOpt.textContent = LANG_DATA[currentLang].selectProduct; 
-         pSelect.appendChild(defaultOpt); 
-       } 
-       currentProducts.forEach(prod => { 
-         const opt = document.createElement('option'); 
-         opt.value = prod.name; 
-         opt.textContent = prod.name; 
-         pSelect.appendChild(opt); 
-       });
-       dynamicArea.classList.remove('hidden'); 
-       if (currentProducts.length === 1) onProductChanged(); 
-       else pSelect.focus(); 
-     } else { 
-       msgDiv.className = 'error';
-       msgDiv.textContent = res.msg; 
-       msgDiv.style.display = 'block'; 
-     } 
-   } catch (err) {
-     hideOverlay();
-     msgDiv.className = 'error'; 
-     msgDiv.textContent = LANG_DATA[currentLang].commError; 
-     msgDiv.style.display = 'block'; 
-   }
- } 
-  
- function onProductChanged() { 
-   const selectedName = document.getElementById('productName').value;
-   const targetDisplay = document.getElementById('masterTargetDisplay');
-   const coilNo = document.getElementById('coilNo').value.trim(); 
-   const msgDiv = document.getElementById('message'); 
-   const submitBtn = document.getElementById('submitBtn'); 
-   const defectDiv = document.getElementById('defectWarning');
-   msgDiv.style.display = 'none';
-   submitBtn.disabled = false; 
-   defectDiv.style.display = 'none'; 
-   defectDiv.innerHTML = '';
-   if (!selectedName) { 
-     targetValue = null; 
-     targetDisplay.textContent = ''; 
-     resetJudge();
-     return;
-   } 
-   const matched = currentProducts.find(p => p.name === selectedName);
-   if (matched) { 
-     targetValue = parseFloat(matched.measured);
-     const minOk = (targetValue - 0.8).toFixed(1);
-     const maxOk = (targetValue + 0.8).toFixed(1); 
-     targetDisplay.textContent = `（${LANG_DATA[currentLang].rangeText}: ${targetValue.toFixed(1)} / ${LANG_DATA[currentLang].okRange}: ${minOk}～${maxOk}）`;
-     if (matched.defect) { 
-       const defectText = (typeof matched.defect === 'object') ?
-       (matched.defect[currentLang] || matched.defect['ja'] || '') : matched.defect; 
-       if (defectText.trim() !== "") { 
-         defectDiv.innerHTML = `<b>${LANG_DATA[currentLang].defectTitle}</b>${defectText}`;
-         defectDiv.style.display = 'block';
-       } 
-     } 
-   } 
-   const todayStr = new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/-/g, '/');
-   let foundLog = fullHistoryLogs.find(l => {
-     let logDateStr = '';
-     if (l.start && l.start.time) logDateStr = l.start.time.split(' ')[0];
-     else if (l.middle && l.middle.time) logDateStr = l.middle.time.split(' ')[0];
-     else if (l.end && l.end.time) logDateStr = l.end.time.split(' ')[0];
-     return l.coilNo === coilNo && l.productName === selectedName && logDateStr === todayStr;
-   });
-   if (foundLog) { 
-     if (foundLog.end) { 
-       let lockMsg = LANG_DATA[currentLang].lockError.replace('{prod}', selectedName);
-       msgDiv.className = 'error';
-       msgDiv.innerHTML = lockMsg;
-       msgDiv.style.display = 'block'; 
-       submitBtn.disabled = true; 
-       return; 
-     } else if (foundLog.middle) nextStage = '終';
-     else if (foundLog.start) nextStage = '中'; 
-     else nextStage = '始';
-   } else { 
-     nextStage = '始'; 
-   } 
-   const qtyField = document.getElementById('quantity-field');
-   const qtyInput = document.getElementById('quantity'); 
-   if (nextStage === '終') { 
-     qtyField.classList.remove('hidden'); 
-     qtyInput.required = true;
-   } else { 
-     qtyField.classList.add('hidden');
-     qtyInput.required = false; 
-   } 
-   document.getElementById('measured').focus(); 
-   checkMeasuredValue();
- } 
-  
- function checkMeasuredValue() { 
-   const inputValue = document.getElementById('measured').value.trim();
-   const judgeBox = document.getElementById('judgeResult');
-   if (inputValue === '' || targetValue === null) { 
-     resetJudge(); 
-     return;
-   } 
-   const currentInput = parseFloat(inputValue); 
-   const lowerLimit = targetValue - 0.8; 
-   const upperLimit = targetValue + 0.8;
-   if (currentInput >= lowerLimit && currentInput <= upperLimit) { 
-     judgeBox.textContent = LANG_DATA[currentLang].ok;
-     judgeBox.className = 'judge-box judge-ok'; 
-     judgeBox.style.display = 'block';
-   } else { 
-     judgeBox.textContent = LANG_DATA[currentLang].ng;
-     judgeBox.className = 'judge-box judge-ng'; 
-     judgeBox.style.display = 'block';
-   } 
- } 
-  
- function resetJudge() { 
-   const judgeBox = document.getElementById('judgeResult');
-   if (judgeBox) { 
-     judgeBox.style.display = 'none'; 
-     judgeBox.textContent = '';
-   } 
- } 
-  
- document.getElementById('pressForm').addEventListener('submit', async function(e) { 
-   e.preventDefault(); 
-   const judgeBox = document.getElementById('judgeResult');
-   if (judgeBox && judgeBox.classList.contains('judge-ng')) {
-       let alertMsg = "⚠️ 判定がNGのため、送信できません。\n数値を再度確認してください。";
-       if (currentLang === 'id') alertMsg = "⚠️ Penilaian NG, tidak dapat mengirim.\nSilakan periksa kembali nilainya.";
-       if (currentLang === 'pt') alertMsg = "⚠️ Resultado NG, não é possível enviar.\nPor favor, verifique o valor novamente.";
-       alert(alertMsg);
-       return; 
-   }
-   const submitBtn = document.getElementById('submitBtn'); 
-   const msgDiv = document.getElementById('message'); 
-   submitBtn.disabled = true; 
-   msgDiv.style.display = 'none'; 
-   showOverlay(LANG_DATA[currentLang].saving); 
-   const logData = { 
-     coilNo: document.getElementById('coilNo').value.trim(), 
-     worker: document.getElementById('worker').value, 
-     machine: document.getElementById('machine').value, 
-     productName: document.getElementById('productName').value, 
-     measured: document.getElementById('measured').value, 
-     enforcedStage: nextStage, 
-     quantity: document.getElementById('quantity').value 
-   };
-   try {
-     const res = await callGAS('saveLog', { logData: logData });
-     hideOverlay(); 
-     submitBtn.disabled = false;
-     msgDiv.className = 'success'; 
-     msgDiv.textContent = `【${res.type}】 ${LANG_DATA[currentLang].successSaved}`; 
-     msgDiv.style.display = 'block'; 
-     document.getElementById('coilNo').value = ''; 
-     document.getElementById('measured').value = ''; 
-     document.getElementById('quantity').value = ''; 
-     document.getElementById('quantity-field').classList.add('hidden');
-     document.getElementById('quantity').required = false; 
-     document.getElementById('dynamic-area').classList.add('hidden'); 
-     currentProducts = []; 
-     targetValue = null; 
-     nextStage = '始'; 
-     document.getElementById('masterTargetDisplay').textContent = ''; 
-     resetJudge(); 
-     loadRecentHistory(); 
-     refreshCoilSupportList();
-     document.getElementById('coilNo').focus();
-   } catch(err) {
-     hideOverlay();
-     submitBtn.disabled = false; 
-     msgDiv.className = 'error'; 
-     msgDiv.textContent = LANG_DATA[currentLang].saveError + err.message;
-     msgDiv.style.display = 'block'; 
-   }
+ document.getElementById('coilNo').focus();
  });
-
- // --- 新規追加箇所: インライン直接編集用の切替および保存処理機能 ---
- function toggleInlineEdit(idx, stage, isEdit) {
-   const viewEl = document.getElementById(`view-${idx}-${stage}`);
-   const formEl = document.getElementById(`form-${idx}-${stage}`);
-   const timeEl = document.getElementById(`time-${idx}-${stage}`);
-   if (isEdit) {
-     viewEl.style.display = 'none';
-     if(timeEl) timeEl.style.display = 'none';
-     formEl.style.display = 'flex';
-   } else {
-     viewEl.style.display = 'flex';
-     if(timeEl) timeEl.style.display = 'block';
-     formEl.style.display = 'none';
-   }
+  
+ function switchLang(lang) {
+ currentLang = lang;
+ document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+ event.target.classList.add('active');
+  
+ const dict = LANG_DATA[lang];
+ document.getElementById('pageTitle').textContent = dict.pageTitle;
+ document.getElementById('mainTitle').textContent = dict.mainTitle;
+ document.getElementById('lblCoilNo').textContent = dict.lblCoilNo;
+ document.getElementById('lblMachine').textContent = dict.lblMachine;
+ document.getElementById('lblProductName').textContent = dict.lblProductName;
+ document.getElementById('lblMasterTarget').textContent = dict.lblMasterTarget;
+ document.getElementById('lblDefectTitle').textContent = dict.lblDefectTitle;
+ document.getElementById('lblWorker').textContent = dict.lblWorker;
+ document.getElementById('lblMeasured').textContent = dict.lblMeasured;
+ document.getElementById('lblQuantity').textContent = dict.lblQuantity;
+ document.getElementById('lblCoilSupportTitle').textContent = dict.lblCoilSupportTitle;
+ document.getElementById('lblHistoryTitle').textContent = dict.lblHistoryTitle;
+  
+ updateSubmitButtonLabel();
+ renderDefectTranslation();
+  
+ const machSelect = document.getElementById('machine');
+ if (machSelect && machSelect.options[0]) {
+ machSelect.options[0].textContent = dict.selectPlaceholder;
  }
-
- async function submitInlineEdit(idx, stage, coilNo, productName, machine) {
-   const worker = document.getElementById(`edit-worker-${idx}-${stage}`).value;
-   const measured = document.getElementById(`edit-measured-${idx}-${stage}`).value;
-   let quantity = '';
-   
-   if (stage === '終') {
-     quantity = document.getElementById(`edit-qty-${idx}-${stage}`).value;
-     if (!quantity) {
-       alert("加工数量を入力してください。");
-       return;
-     }
-   }
-   if (!worker || !measured) {
-     alert("作業者と実寸計測値を入力してください。");
-     return;
-   }
-
-   const msgDiv = document.getElementById('message');
-   showOverlay(LANG_DATA[currentLang].saving || "書き込み中...");
-
-   const logData = { 
-     coilNo: coilNo, 
-     worker: worker, 
-     machine: machine, 
-     productName: productName, 
-     measured: measured, 
-     enforcedStage: stage, 
-     quantity: quantity 
-   };
-
-   try {
-     const res = await callGAS('saveLog', { logData: logData });
-     hideOverlay(); 
-     msgDiv.className = 'success'; 
-     msgDiv.textContent = `【${res.type}】修正内容を上書き保存しました！`; 
-     msgDiv.style.display = 'block'; 
-     loadRecentHistory(); // 履歴を再読み込みして最新状態に更新
-   } catch(err) {
-     hideOverlay();
-     msgDiv.className = 'error'; 
-     msgDiv.textContent = (LANG_DATA[currentLang].saveError || "保存エラー: ") + err.message;
-     msgDiv.style.display = 'block'; 
-   }
+  
+ loadRecentHistory();
+ refreshCoilSupportList();
  }
- // ------------------------------------------------------------------
-</script>
+  
+ function updateSubmitButtonLabel() {
+ const btn = document.getElementById('submitBtn');
+ if(nextStage === '始') btn.textContent = LANG_DATA[currentLang].submitBtnStart;
+ else if(nextStage === '中') btn.textContent = LANG_DATA[currentLang].submitBtnMiddle;
+ else if(nextStage === '終') btn.textContent = LANG_DATA[currentLang].submitBtnEnd;
+ }
+  
+ function showOverlay() { document.getElementById('loadingOverlay').style.display = 'flex'; }
+ function hideOverlay() { document.getElementById('loadingOverlay').style.display = 'none'; }
+  
+ async function callGAS(action, params = {}) {
+ const payload = { action: action, ...params };
+ const res = await fetch(GAS_URL, {
+ method: 'POST',
+ body: JSON.stringify(payload)
+ });
+ if (!res.ok) throw new Error('Network error');
+ const json = await res.json();
+ if (json.error) throw new Error(json.error);
+ return json;
+ }
+  
+ async function loadWorkers() {
+ try {
+ const list = await callGAS('getWorkers');
+ const select = document.getElementById('worker');
+ select.innerHTML = '';
+  
+ const dict = LANG_DATA[currentLang];
+ const opt0 = document.createElement('option');
+ opt0.value = '';
+ opt0.textContent = dict.selectPlaceholder;
+ select.appendChild(opt0);
+  
+ list.forEach(w => {
+ const opt = document.createElement('option');
+ opt.value = w;
+ opt.textContent = w;
+ select.appendChild(opt);
+ });
+ } catch(e) {
+ console.error(e);
+ }
+ }
+  
+ async function handleCoilChange() {
+ const coilNo = document.getElementById('coilNo').value.trim();
+ const msgDiv = document.getElementById('msg');
+ msgDiv.style.display = 'none';
+  
+ if (!coilNo) {
+ document.getElementById('dynamic-area').classList.add('hidden');
+ return;
+ }
+  
+ showOverlay();
+ try {
+ const res = await callGAS('getProducts', { coilNo: coilNo });
+ if (!res.success) {
+ msgDiv.className = 'error';
+ msgDiv.textContent = res.msg;
+ msgDiv.style.display = 'block';
+ document.getElementById('dynamic-area').classList.add('hidden');
+ return;
+ }
+  
+ currentProducts = res.products;
+ setupProductSelect(res.products);
+ determineNextStage(coilNo);
+ document.getElementById('dynamic-area').classList.remove('hidden');
+  
+ } catch(e) {
+ msgDiv.className = 'error';
+ msgDiv.textContent = e.message;
+ msgDiv.style.display = 'block';
+ } finally {
+ hideOverlay();
+ }
+ }
+  
+ function setupProductSelect(products) {
+ const select = document.getElementById('productName');
+ select.innerHTML = '';
+ products.forEach(p => {
+ const opt = document.createElement('option');
+ opt.value = p.name;
+ opt.textContent = p.name;
+ select.appendChild(opt);
+ });
+ handleProductChange();
+ }
+  
+ function handleProductChange() {
+ const select = document.getElementById('productName');
+ const selectedName = select.value;
+ const prod = currentProducts.find(p => p.name === selectedName);
+  
+ if (prod) {
+ targetValue = parseFloat(prod.measured);
+ document.getElementById('masterTargetDisplay').textContent = targetValue ? targetValue.toFixed(2) : '-';
+ renderDefectTranslation();
+ } else {
+ targetValue = null;
+ document.getElementById('masterTargetDisplay').textContent = '-';
+ document.getElementById('defect-area').classList.add('hidden');
+ }
+ resetJudge();
+ evaluateValue();
+ }
+  
+ function renderDefectTranslation() {
+ const select = document.getElementById('productName');
+ if(!select) return;
+ const selectedName = select.value;
+ const prod = currentProducts.find(p => p.name === selectedName);
+ const defectArea = document.getElementById('defect-area');
+  
+ if (!prod || !prod.defect || !prod.defect.ja) {
+ defectArea.classList.add('hidden');
+ return;
+ }
+  
+ let text = prod.defect[currentLang] || prod.defect['ja'];
+ document.getElementById('defectText').textContent = text;
+  
+ const img = document.getElementById('defectImg');
+ if (prod.image) {
+ img.src = prod.image;
+ img.classList.remove('hidden');
+ } else {
+ img.classList.add('hidden');
+ }
+ defectArea.classList.remove('hidden');
+ }
+  
+ async function determineNextStage(coilNo) {
+ try {
+ const activeCoils = await callGAS('getActiveCoils');
+ if (activeCoils.includes(coilNo)) {
+ nextStage = '中'; 
+ } else {
+ nextStage = '始';
+ }
+ } catch(e) {
+ nextStage = '始';
+ }
+ document.getElementById('quantity-field').classList.add('hidden');
+ document.getElementById('quantity').required = false;
+ updateSubmitButtonLabel();
+ }
+  
+ function resetJudge() {
+ const j = document.getElementById('judgeDisplay');
+ j.className = 'judge-box hidden';
+ j.textContent = '';
+ }
+  
+ function evaluateValue() {
+ const valStr = document.getElementById('measured').value.trim();
+ const j = document.getElementById('judgeDisplay');
+  
+ if (valStr === '損' || valStr === 'SON' || valStr === 'son') {
+ j.className = 'judge-box judge-ng';
+ j.textContent = '損';
+ j.classList.remove('hidden');
+  
+ if(nextStage !== '始') {
+ document.getElementById('quantity-field').classList.remove('hidden');
+ document.getElementById('quantity').required = true;
+ nextStage = '終';
+ updateSubmitButtonLabel();
+ }
+ return;
+ }
+  
+ if(nextStage === '終' && valStr !== '損' && valStr !== 'SON' && valStr !== 'son') {
+ determineNextStage(document.getElementById('coilNo').value.trim());
+ }
+  
+ const val = parseFloat(valStr);
+ if (isNaN(val) || targetValue === null) {
+ resetJudge();
+ return;
+ }
+  
+ const diff = Math.abs(val - targetValue);
+ if (diff <= 0.05) {
+ j.className = 'judge-box judge-ok';
+ j.textContent = 'OK';
+ } else {
+ j.className = 'judge-box judge-ng';
+ j.textContent = 'NG';
+ }
+ j.classList.remove('hidden');
+ }
+  
+ async function handleSubmit(e) {
+ e.preventDefault();
+ const msgDiv = document.getElementById('msg');
+ const submitBtn = document.getElementById('submitBtn');
+  
+ msgDiv.style.display = 'none';
+ submitBtn.disabled = true;
+ showOverlay();
+  
+ const logData = {
+ coilNo: document.getElementById('coilNo').value.trim(),
+ machine: document.getElementById('machine').value,
+ productName: document.getElementById('productName').value,
+ worker: document.getElementById('worker').value,
+ measured: document.getElementById('measured').value.trim(),
+ enforcedStage: nextStage,
+ quantity: document.getElementById('quantity').value
+ };
+  
+ try {
+ const res = await callGAS('saveLog', { logData: logData });
+ hideOverlay();
+ submitBtn.disabled = false;
+ msgDiv.className = 'success';
+ msgDiv.textContent = `【${res.type}】 ${LANG_DATA[currentLang].successSaved}`;
+ msgDiv.style.display = 'block';
+  
+ document.getElementById('coilNo').value = '';
+ document.getElementById('measured').value = '';
+ document.getElementById('quantity').value = '';
+ document.getElementById('quantity-field').classList.add('hidden');
+ document.getElementById('quantity').required = false;
+ document.getElementById('dynamic-area').classList.add('hidden');
+ currentProducts = [];
+ targetValue = null;
+ nextStage = '始';
+ document.getElementById('masterTargetDisplay').textContent = '';
+ resetJudge();
+  
+ await loadRecentHistory();
+ await refreshCoilSupportList();
+ document.getElementById('coilNo').focus();
+ } catch(err) {
+ hideOverlay();
+ submitBtn.disabled = false;
+ msgDiv.className = 'error';
+ msgDiv.textContent = err.message;
+ msgDiv.style.display = 'block';
+ }
+ }
+  
+ async function loadRecentHistory() {
+ try {
+ const list = await callGAS('getHistory');
+ const container = document.getElementById('historyList');
+ container.innerHTML = '';
+  
+ const dict = LANG_DATA[currentLang];
+  
+ list.forEach(item => {
+ const card = document.createElement('div');
+ card.className = 'history-card';
+ if (item.isWarning) {
+ card.classList.add('warning-card');
+ const b = document.createElement('div');
+ b.className = 'warning-badge';
+ b.textContent = dict.warningCard;
+ card.appendChild(b);
+ }
+  
+ const header = document.createElement('div');
+ header.className = 'history-header';
+ header.innerHTML = `
+ <div>
+ <div class="history-coil">${item.coilNo}</div>
+ <div class="history-meta">${item.machine} / ${item.productName}</div>
+ </div>
+ `;
+ card.appendChild(header);
+  
+ const stages = document.createElement('div');
+ stages.className = 'history-stages';
+  
+ if (item.start) {
+ stages.appendChild(createStageRow(dict.labelStart, 'st-start', item.start, item, '始'));
+ }
+ if (item.middle) {
+ stages.appendChild(createStageRow(dict.labelMiddle, 'st-middle', item.middle, item, '中'));
+ } else if (item.start && !item.end) {
+ stages.appendChild(createEmptyStageRow(dict.labelMiddle, 'st-middle', item, '中'));
+ }
+ if (item.end) {
+ let qtyStr = item.end.qty ? ` <span style="margin-left:8px; color:#fbbf24;">${dict.labelQty}${item.end.qty}</span>` : '';
+ stages.appendChild(createStageRow(dict.labelEnd, 'st-end', item.end, item, '終', qtyStr));
+ } else if (item.start) {
+ stages.appendChild(createEmptyStageRow(dict.labelEnd, 'st-end', item, '終'));
+ }
+  
+ card.appendChild(stages);
+ container.appendChild(card);
+ });
+ } catch(e) {
+ console.error(e);
+ }
+ }
+  
+ function createStageRow(label, labelClass, stageData, fullItem, stageName, extraHtml = '') {
+ const row = document.createElement('div');
+ row.className = 'stage-row';
+  
+ let judgeClass = '';
+ let judgeText = '';
+ if (stageData.measured === '損') {
+ judgeClass = 'judge-ng'; judgeText = '損';
+ } else if (stageData.measured && fullItem.baseTarget) {
+ const diff = Math.abs(parseFloat(stageData.measured) - fullItem.baseTarget);
+ if (diff <= 0.05) { judgeClass = 'judge-ok'; judgeText = 'OK'; }
+ else { judgeClass = 'judge-ng'; judgeText = 'NG'; }
+ }
+  
+ const jHtml = judgeText ? `<span class="judge-box ${judgeClass}">${judgeText}</span>` : '';
+  
+ row.innerHTML = `
+ <div class="stage-label ${labelClass}">${label}</div>
+ <div class="stage-info">
+ <span>${stageData.worker} / ${stageData.measured || '-'} ${jHtml}${extraHtml}</span>
+ <div style="font-size:0.7rem; color:#64748b; margin-top:2px;">${stageData.time}</div>
+ </div>
+ `;
+  
+ const btn = document.createElement('button');
+ btn.type = 'button';
+ btn.className = 'stage-edit-btn';
+ btn.textContent = currentLang === 'ja' ? '修正' : (currentLang === 'id' ? 'Ubah' : 'Corriger');
+ btn.onclick = () => {
+ // 【修正のコア箇所】修正用に関数を呼び出す際、履歴カードの「最新の機械名」を引き渡す
+ triggerStageEdit(fullItem.coilNo, fullItem.productName, stageName, stageData.worker, stageData.measured, stageData.qty || '', fullItem.machine);
+ };
+ row.appendChild(btn);
+  
+ return row;
+ }
+  
+ function createEmptyStageRow(label, labelClass, fullItem, stageName) {
+ const row = document.createElement('div');
+ row.className = 'stage-row';
+ row.style.opacity = '0.5';
+ row.innerHTML = `
+ <div class="stage-label ${labelClass}">${label}</div>
+ <div class="stage-info">---</div>
+ `;
+  
+ const btn = document.createElement('button');
+ btn.type = 'button';
+ btn.className = 'stage-edit-btn';
+ btn.textContent = currentLang === 'ja' ? '登録' : (currentLang === 'id' ? 'Daftar' : 'Reg');
+ btn.onclick = () => {
+ triggerStageEdit(fullItem.coilNo, fullItem.productName, stageName, '', '', '', fullItem.machine);
+ };
+ row.appendChild(btn);
+ return row;
+ }
+  
+ // 【修正箇所】引数に machineFromCard を追加し、修正時にも選択した機械が引き継がれるように変更
+ function triggerStageEdit(coilNo, productName, stageName, worker, measured, qty, machineFromCard) {
+ document.getElementById('coilNo').value = coilNo;
+  
+ handleCoilChange().then(() => {
+ document.getElementById('productName').value = productName;
+ handleProductChange();
+  
+ if (machineFromCard) {
+ document.getElementById('machine').value = machineFromCard;
+ }
+ if (worker) {
+ document.getElementById('worker').value = worker;
+ }
+  
+ document.getElementById('measured').value = measured;
+ evaluateValue();
+  
+ nextStage = stageName;
+ updateSubmitButtonLabel();
+  
+ if (stageName === '終') {
+ document.getElementById('quantity-field').classList.remove('hidden');
+ document.getElementById('quantity').required = (measured === '損' || measured === 'SON' || measured === 'son' || qty !== '');
+ document.getElementById('quantity').value = qty;
+ } else {
+ document.getElementById('quantity-field').classList.add('hidden');
+ document.getElementById('quantity').required = false;
+ document.getElementById('quantity').value = '';
+ }
+  
+ document.getElementById('measured').focus();
+ window.scrollTo({ top: 0, behavior: 'smooth' });
+ });
+ }
+  
+ async function refreshCoilSupportList() {
+ try {
+ const activeCoils = await callGAS('getActiveCoils');
+ const area = document.getElementById('coilSupportArea');
+ const grid = document.getElementById('coilBadgeGrid');
+ grid.innerHTML = '';
+  
+ if (!activeCoils || activeCoils.length === 0) {
+ area.classList.add('hidden');
+ return;
+ }
+  
+ activeCoils.forEach(coil => {
+ const b = document.createElement('button');
+ b.type = 'button';
+ b.className = 'coil-badge';
+ b.textContent = coil;
+ b.onclick = () => {
+ document.getElementById('coilNo').value = coil;
+ handleCoilChange();
+ };
+ grid.appendChild(b);
+ });
+ area.classList.remove('hidden');
+ } catch(e) {
+ console.error(e);
+ }
+ }
+  
+ let _scannerIsRunning = false;
+ function startScan() {
+ if (_scannerIsRunning) return;
+ document.getElementById('interactive').style.display = 'block';
+  
+ Quagga.init({
+ inputStream: {
+ name: "Live",
+ type: "LiveStream",
+ target: document.querySelector('#interactive'),
+ constraints: {
+ width: 640,
+ height: 480,
+ facingMode: "environment"
+ },
+ },
+ decoder: {
+ readers: ["code_128_reader", "ean_reader", "ean_8_reader", "code_39_reader"]
+ },
+ locate: true
+ }, function (err) {
+ if (err) {
+ console.error(err);
+ alert(err);
+ return;
+ }
+ Quagga.start();
+ _scannerIsRunning = true;
+ });
+  
+ Quagga.onDetected(function (data) {
+ if (data.codeResult && data.codeResult.code) {
+ const code = data.codeResult.code;
+ document.getElementById('coilNo').value = code;
+ stopScan();
+ handleCoilChange();
+ }
+ });
+ }
+  
+ function stopScan() {
+ if (!_scannerIsRunning) return;
+ Quagga.stop();
+ _scannerIsRunning = false;
+ document.getElementById('interactive').style.display = 'none';
+ }
+ </script>
 </body>
 </html>
