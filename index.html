@@ -2,9 +2,9 @@
 <html lang="ja">
 <head>
  <meta charset="UTF-8">
- <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=4.0">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
  <title id="pageTitle">順送プレス加工実績入力</title>
- <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js\"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
  <style>
  :root {
  --bg-color: #0d0e12;
@@ -171,21 +171,35 @@
  cursor: not-allowed;
  }
   
+ /* カメラ枠のCSS調整（iPad/タブレットのレイアウト崩れ対策） */
  #interactive {
  width: 100%;
- height: 240px;
+ max-width: 640px;
+ aspect-ratio: 4 / 3;
  background: #000;
  border-radius: 8px;
  overflow: hidden;
  margin-bottom: 16px;
  position: relative;
  display: none;
+ margin-left: auto;
+ margin-right: auto;
  }
   
- #interactive video {
+ #interactive video,
+ #interactive canvas.drawingBuffer {
  width: 100%;
  height: 100%;
  object-fit: cover;
+ position: absolute;
+ top: 0;
+ left: 0;
+ }
+  
+ /* Canvasのタッチ操作を無効化（Quaggaの描画レイヤー） */
+ #interactive canvas.drawingBuffer {
+ pointer-events: none;
+ z-index: 2;
  }
   
  .scan-overlay {
@@ -198,6 +212,7 @@
  display: flex;
  align-items: center;
  justify-content: center;
+ z-index: 3;
  }
   
  .scan-line {
@@ -1038,7 +1053,6 @@
  btn.className = 'stage-edit-btn';
  btn.textContent = currentLang === 'ja' ? '修正' : (currentLang === 'id' ? 'Ubah' : 'Corriger');
  btn.onclick = () => {
- // 【修正のコア箇所】修正用に関数を呼び出す際、履歴カードの「最新の機械名」を引き渡す
  triggerStageEdit(fullItem.coilNo, fullItem.productName, stageName, stageData.worker, stageData.measured, stageData.qty || '', fullItem.machine);
  };
  row.appendChild(btn);
@@ -1066,7 +1080,6 @@
  return row;
  }
   
- // 【修正箇所】引数に machineFromCard を追加し、修正時にも選択した機械が引き継がれるように変更
  function triggerStageEdit(coilNo, productName, stageName, worker, measured, qty, machineFromCard) {
  document.getElementById('coilNo').value = coilNo;
   
@@ -1142,8 +1155,8 @@
  type: "LiveStream",
  target: document.querySelector('#interactive'),
  constraints: {
- width: 640,
- height: 480,
+ width: { ideal: 640 },
+ height: { ideal: 480 },
  facingMode: "environment"
  },
  },
