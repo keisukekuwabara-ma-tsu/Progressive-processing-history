@@ -156,70 +156,94 @@
  .history-card { background: var(--card-bg); border: 1px solid var(--border-color);
  border-radius: 14px; padding: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
  .history-card.is-incomplete { border: 2px solid #ef4444;
- background: rgba(239, 68, 68, 0.03); box-shadow: 0 0 10px rgba(239, 68, 68, 0.2); }
+ background: rgba(239, 68, 68, 0.03); box-shadow: 0 0 10px rgba(239, 68, 68, 0.2);
+ }
  
  /* --- 追加箇所：チョコ停リボン用のCSS --- */
- .history-card.has-chokotei { position: relative; border: 2px solid #f59e0b; }
+ .history-card.has-chokotei { position: relative; border: 2px solid #f59e0b;
+ }
  .history-card.has-chokotei::after {
    content: "⚠️ チョコ停発生";
    position: absolute; top: 10px; right: -10px;
    background: #f59e0b; color: #000;
-   padding: 4px 12px; font-weight: bold; font-size: 0.8rem;
+ padding: 4px 12px; font-weight: bold; font-size: 0.8rem;
    border-radius: 4px 0 0 4px; z-index: 1;
  }
 
  .card-top { border-bottom: 1px solid var(--border-color);
  padding-bottom: 10px; margin-bottom: 12px; }
- .card-coil-title { font-size: 1.2rem; font-weight: 800; color: #ffffff; }
+ .card-coil-title { font-size: 1.2rem; font-weight: 800; color: #ffffff;
+ }
  .card-meta-info { font-size: 0.9rem; color: #94a3b8;
  margin-top: 6px; display: flex; gap: 16px; }
- .card-meta-info span b { color: var(--accent-color); }
+ .card-meta-info span b { color: var(--accent-color);
+ }
  .timeline-container { display: flex; flex-direction: column;
  gap: 8px; }
- .timeline-row { background: #1e2230; border-radius: 8px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem;
+ .timeline-row { background: #1e2230; border-radius: 8px; padding: 10px 14px;
+ display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem;
  }
- .stage-label { font-weight: 800; width: 48px; padding: 3px 0; border-radius: 6px; text-align: center; font-size: 0.8rem;
+ .stage-label { font-weight: 800; width: 48px; padding: 3px 0; border-radius: 6px;
+ text-align: center; font-size: 0.8rem;
  }
- .lbl-始 { background-color: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4);
+ .lbl-始 { background-color: rgba(16, 185, 129, 0.15); color: #34d399;
+ border: 1px solid rgba(16, 185, 129, 0.4);
  }
- .lbl-中 { background-color: rgba(234, 179, 8, 0.15); color: #fde047; border: 1px solid rgba(234, 179, 8, 0.4);
+ .lbl-中 { background-color: rgba(234, 179, 8, 0.15); color: #fde047;
+ border: 1px solid rgba(234, 179, 8, 0.4);
  }
- .lbl-終 { background-color: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4);
+ .lbl-終 { background-color: rgba(239, 68, 68, 0.15); color: #f87171;
+ border: 1px solid rgba(239, 68, 68, 0.4);
  }
- .stage-details { flex: 1; margin-left: 14px; display: flex; flex-wrap: wrap; gap: 8px; color: #cbd5e1; }
+ .stage-details { flex: 1; margin-left: 14px; display: flex; flex-wrap: wrap; gap: 8px;
+ color: #cbd5e1; }
  .stage-time { font-size: 0.8rem;
  color: #64748b; text-align: right; white-space: nowrap; }
- .qty-display-box { margin-top: 12px; background: rgba(0, 173, 181, 0.08);
- border: 1px dashed rgba(0, 173, 181, 0.5); border-radius: 8px; padding: 10px 14px; font-size: 1.05rem; font-weight: 700; color: #ffffff; display: flex;
+ .qty-display-box { margin-top: 12px;
+ background: rgba(0, 173, 181, 0.08);
+ border: 1px dashed rgba(0, 173, 181, 0.5); border-radius: 8px; padding: 10px 14px; font-size: 1.05rem;
+ font-weight: 700; color: #ffffff; display: flex;
  align-items: center; gap: 8px; }
   
- .overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
- background-color: rgba(13, 14, 18, 0.9); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; pointer-events: none;
+ .overlay { position: fixed; top: 0;
+ left: 0; width: 100vw; height: 100vh;
+ background-color: rgba(13, 14, 18, 0.9); z-index: 9999; display: flex; flex-direction: column; justify-content: center;
+ align-items: center; opacity: 0; pointer-events: none;
  transition: opacity 0.25s ease; }
- .overlay.show { opacity: 1; pointer-events: auto; }
+ .overlay.show { opacity: 1; pointer-events: auto;
+ }
  .spinner { width: 56px; height: 56px;
- border: 5px solid #1f222f; border-top: 5px solid var(--accent-color); border-radius: 50%; animation: spin 0.8s linear infinite; }
+ border: 5px solid #1f222f; border-top: 5px solid var(--accent-color); border-radius: 50%;
+ animation: spin 0.8s linear infinite; }
  .overlay-text { margin-top: 18px;
- color: var(--accent-color); font-weight: 700; font-size: 1.2rem; letter-spacing: 0.05em; }
+ color: var(--accent-color); font-weight: 700; font-size: 1.2rem; letter-spacing: 0.05em;
+ }
  @keyframes spin { 0% { transform: rotate(0deg);
- } 100% { transform: rotate(360deg); } }
+ } 100% { transform: rotate(360deg);
+ } }
 
  /* --- カメラ起動時のレイアウト崩れ対策対策CSS（iPad対応強化） --- */
  #scannerOverlay { position: fixed; top: 0; left: 0;
  width: 100vw;
- height: 100vh; background: #000; z-index: 99999; display: none; flex-direction: column; box-sizing: border-box; }
+ height: 100vh;
+ background: #000; z-index: 99999; display: none; flex-direction: column; box-sizing: border-box; }
  #scannerHeader { display: flex;
  justify-content: space-between;
- align-items: center; padding: 16px 20px; background: #111; color: white; border-bottom: 2px solid #333; flex-shrink: 0;
+ align-items: center;
+ padding: 16px 20px; background: #111; color: white; border-bottom: 2px solid #333; flex-shrink: 0;
  }
- #scannerHeader h3 { margin: 0; color: #58a6ff; font-size: 1rem; flex: 1; }
+ #scannerHeader h3 { margin: 0;
+ color: #58a6ff; font-size: 1rem; flex: 1; }
  #scannerHeader button { background: #ef4444; color: white;
- border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; flex-shrink: 0; }
+ border: none; padding: 10px 20px;
+ border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; flex-shrink: 0; }
  #preview-container { flex: 1;
- position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center; background: #000; width: 100%; box-sizing: border-box;
+ position: relative; overflow: hidden;
+ display: flex; justify-content: center; align-items: center; background: #000; width: 100%; box-sizing: border-box;
  }
  /* アスペクト比を固定し、コンテナ中央に配置することでズレを防止 */
- #preview { width: 100%; max-width: 640px; aspect-ratio: 4 / 3; position: absolute; top: 50%; left: 50%;
+ #preview { width: 100%;
+ max-width: 640px; aspect-ratio: 4 / 3; position: absolute; top: 50%; left: 50%;
  transform: translate(-50%, -50%); overflow: hidden;
  }
  #preview video { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0;
@@ -373,7 +397,8 @@
 </div>
   
 <div class="lang-bar">
- <button type="button" id="btn-lang-ja" class="lang-btn active" onclick="switchLanguage('ja')">🇯🇵 日本語</button>
+ <button type="button" id="btn-lang-ja" class="lang-btn active" onclick="switchLanguage('ja')">🇯🇵 
+ 日本語</button>
  <button type="button" id="btn-lang-id" class="lang-btn" onclick="switchLanguage('id')">🇮🇩 Indo</button>
  <button type="button" id="btn-lang-pt" class="lang-btn" onclick="switchLanguage('pt')">🇧🇷 Port</button>
 </div>
@@ -402,7 +427,8 @@
  <div class="form-group">
  <label class="field-label" id="lblCoilNo" for="coilNo">コイルNo</label>
  <div class="inline-input-group">
- <input type="text" id="coilNo" list="coilHistoryOptions" required onkeydown="if(event.key === 'Enter'){ onCoilDetermined(); return false; }">
+ <input type="text" id="coilNo" list="coilHistoryOptions" required onkeydown="if(event.key === 'Enter'){ onCoilDetermined();
+ return false; }">
  <button type="button" class="scan-btn" id="btnScan" onclick="startBarcodeScanning()" title="カメラでバーコードを読み取る">📷</button>
  <button type="button" class="confirm-btn" id="btnConfirm" onclick="onCoilDetermined()">確定</button>
  </div>
@@ -440,13 +466,15 @@
 <div class="history-container">
  <div class="history-title" id="uiHistoryTitle">直近20件性品名別加工履歴</div>
  <div id="historyList" class="history-list">
+ 
  <div style="text-align:center;color:#666;padding:20px;" id="uiHistoryLoading">履歴データを読み込み中...</div>
  </div>
 </div>
 
 <div id="chokoteiModal" class="overlay">
   <div class="container" style="background: #1f222f; position: relative;">
-    <h3 style="color: #f59e0b; text-align: center; margin-top: 0;">⚠️ チョコ停の記録</h3>
+    <h3 style="color: #f59e0b;
+ text-align: center; margin-top: 0;">⚠️ チョコ停の記録</h3>
     <div class="form-group">
       <label class="field-label">原因を選択</label>
       <select id="chokoReason" onchange="checkOtherReason()">
@@ -457,9 +485,12 @@
       </select>
       <input type="text" id="otherReason" placeholder="その他の内容を入力" class="hidden" style="margin-top: 10px;">
     </div>
-    <div class="form-group" style="display:flex; align-items:center; padding: 10px 0;">
-      <label style="color: #fff; font-weight: bold; display: flex; align-items: center; gap: 10px; cursor: pointer;">
-        <input type="checkbox" id="boxCheck" style="width: 24px; height: 24px; cursor: pointer;">
+    <div class="form-group" style="display:flex;
+ align-items:center; padding: 10px 0;">
+      <label style="color: #fff; font-weight: bold; display: flex; align-items: center; gap: 10px;
+ cursor: pointer;">
+        <input type="checkbox" id="boxCheck" style="width: 24px; height: 24px;
+ cursor: pointer;">
         箱チェック完了
       </label>
     </div>
@@ -467,8 +498,10 @@
       <label class="field-label">廃棄数 (個)</label>
       <input type="number" id="wasteQty" placeholder="0">
     </div>
-    <button class="submit-btn" style="background: #f59e0b; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3); margin-top: 10px;" onclick="submitChokotei()">記録する</button>
-    <button class="control-btn" style="background: #64748b; width: 100%; margin-top: 15px; padding: 16px; font-size: 1.1rem; border-radius: 12px;" onclick="closeChokoteiModal()">キャンセル</button>
+    <button class="submit-btn" style="background: #f59e0b;
+ box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3); margin-top: 10px;" onclick="submitChokotei()">記録する</button>
+    <button class="control-btn" style="background: #64748b; width: 100%;
+ margin-top: 15px; padding: 16px; font-size: 1.1rem; border-radius: 12px;" onclick="closeChokoteiModal()">キャンセル</button>
   </div>
 </div>
   
@@ -509,7 +542,8 @@
  scanMsg: "スキャン中... 赤い線をバーコードに合わせてください"
  },
  id: {
- title: "Input Hasil Produksi Press",
+ title: "Input Hasil 
+ Produksi Press",
  selectPlease: "Silakan pilih",
  selectProduct: "Ada beberapa produk, silakan pilih nama produk▼",
  worker: "Operator",
@@ -532,7 +566,8 @@
  checkingStock: "Memeriksa data stok...",
  saving: "Menyimpan ke log hasil...",
  ok: "Penilaian: OK",
- ng: "Penilaian: NG (Di luar kisaran)",
+ ng: "Penilaian: NG (Di luar 
+ kisaran)",
  successSaved: "Berhasil terdaftar dan diperbarui di log hasil!",
  saveError: "Kesalahan penyimpanan: ",
  lockError: "🚨 <b>Kesalahan Input:</b> Proses untuk produk \"{prod}\" pada coil ini telah selesai sepenuhnya hingga tahap [Akhir].<br>Penginputan ulang untuk kedua kalinya tidak diperbolehkan.",
@@ -547,7 +582,8 @@
  selectPlease: "Por favor, selecione",
  selectProduct: "Múltiplos produtos encontrados, selecione o nome▼",
  worker: "Operador",
- machine: "Máquina Utilizada",
+ machine: 
+ "Máquina Utilizada",
  coilNo: "Nº da Bobina (Coil No)",
  coilPlaceholder: "Manual/Câmera ou selecione da lista",
  confirm: "Confirmar",
@@ -567,12 +603,15 @@
  saving: "Gravando no log de resultados...",
  ok: "Resultado: OK",
  ng: "Resultado: NG (Fora da faixa)",
- successSaved: "Registrado e updated com sucesso no log de resultados!",
+ successSaved: "Registrado e 
+ updated com sucesso no log de resultados!",
  saveError: "Erro ao salvar: ",
- lockError: "Erro de Entrada: O processamento do produto \"{prod}\" nesta bobina já foi totalmente concluído até a etapa [Fim]. Não é permitido registrar novamente.",
+ lockError: "Erro de Entrada: O processamento do produto \"{prod}\" nesta bobina já foi totalmente concluído até a etapa [Fim].
+ Não é permitido registrar novamente.",
  defectTitle: "⚠️ Histórico de Defeitos / Pontos de Atenção",
  warnTitle: "⚠️ Existe Trabalho Inacabado",
- warnBody: "Existem dados no histórico de dias anteriores que não foram concluídos até o [Fim]. Por favor, verifique o histórico primeiro.",
+ warnBody: "Existem dados no histórico de dias anteriores que não foram concluídos até o [Fim].
+ Por favor, verifique o histórico primeiro.",
  warnClose: "Entendido",
  scanMsg: "Escaneando... Alinhe a linha vermelha com o código de barras"
  }
@@ -600,6 +639,7 @@
   
  // ==========================================
  // API通信
+ 
  // ==========================================
  const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyKuZhZb_aOg7Iyb2YTYHOwOMKognF57OpGuzmPJxNfo2dpa-F81j-iI5yuRVDqaidvRg/exec";
 
@@ -610,13 +650,13 @@
        headers: { 'Content-Type': 'text/plain' },
        body: JSON.stringify({ action: action, ...payload })
      });
-     const data = await response.json();
+ const data = await response.json();
      if (data.error) throw new Error(data.error);
      return data;
-   } catch (error) {
+ } catch (error) {
      console.error('API Error:', error);
      throw error;
-   }
+ }
  }
 
  // ==========================================
@@ -624,13 +664,13 @@
  // ==========================================
  function startBarcodeScanning() {
    const scannerOverlay = document.getElementById('scannerOverlay');
-   const scanStatus = document.getElementById('scanStatus');
+ const scanStatus = document.getElementById('scanStatus');
    scannerOverlay.style.display = 'flex';
    scanStatus.innerText = LANG_DATA[currentLang].scanMsg || "スキャン中...";
    
    barcodeMatchCount = 0;
    lastBarcode = "";
-   quaggaInitialized = false;
+ quaggaInitialized = false;
 
    Quagga.init({
      inputStream: {
@@ -643,7 +683,8 @@
          facingMode: "environment",
          focusMode: "continuous"
        }
-     },
+     
+ },
      locator: {
        patchSize: "medium",
        halfSample: false
@@ -659,11 +700,12 @@
        return;
      }
   
+ 
      Quagga.start();
      quaggaInitialized = true;
      scanStatus.innerText = LANG_DATA[currentLang].scanMsg || "スキャン中...";
    });
-   Quagga.onDetected(function(data) {
+ Quagga.onDetected(function(data) {
      if (!quaggaInitialized || !data.codeResult) return;
      
      let code = data.codeResult.code;
@@ -677,7 +719,8 @@
      } else {
        lastBarcode = code;
        barcodeMatchCount = 1;
-     }
+   
+   }
 
      if (barcodeMatchCount >= 3) {
        document.getElementById('coilNo').value = code;
@@ -694,7 +737,7 @@
    try {
      Quagga.stop();
      Quagga.offDetected();
-   } catch(e) {}
+ } catch(e) {}
    document.getElementById('scannerOverlay').style.display = 'none';
    quaggaInitialized = false;
  }
@@ -713,47 +756,47 @@
    document.title = lang.title; 
    document.getElementById('pageTitle').textContent = lang.title; 
    document.getElementById('uiMainHeader').textContent = lang.title;
-   document.getElementById('lblWorker').textContent = lang.worker; 
+ document.getElementById('lblWorker').textContent = lang.worker; 
    document.getElementById('lblMachine').textContent = lang.machine; 
    document.getElementById('lblCoilNo').textContent = lang.coilNo; 
    document.getElementById('btnConfirm').textContent = lang.confirm; 
    document.getElementById('lblProductName').textContent = lang.productName;
-   document.getElementById('lblMeasured').childNodes[0].textContent = lang.measured + " "; 
+ document.getElementById('lblMeasured').childNodes[0].textContent = lang.measured + " "; 
    document.getElementById('lblQuantity').textContent = lang.quantity;
    document.getElementById('submitBtn').textContent = lang.submit;
    document.getElementById('uiHistoryTitle').textContent = lang.historyTitle; 
    document.getElementById('coilNo').placeholder = lang.coilPlaceholder;
-   document.getElementById('quantity').placeholder = lang.qtyPlaceholder; 
+ document.getElementById('quantity').placeholder = lang.qtyPlaceholder; 
    document.getElementById('uiWarningTitle').textContent = lang.warnTitle; 
    document.getElementById('uiWarningBody').innerHTML = lang.warnBody;
    document.getElementById('btnWarningClose').textContent = lang.warnClose;
    const optMachine = document.getElementById('optMachineDefault');
-   if (optMachine) optMachine.textContent = lang.selectPlease; 
+ if (optMachine) optMachine.textContent = lang.selectPlease; 
    renderWorkerDropdown();
  } 
   
  function renderWorkerDropdown() { 
    const select = document.getElementById('worker');
-   if (!select) return; 
+ if (!select) return; 
    const currentSelectedValue = select.value;
    select.innerHTML = ''; 
    const firstOpt = document.createElement('option'); 
    firstOpt.value = ""; 
    firstOpt.textContent = LANG_DATA[currentLang].selectPlease;
-   select.appendChild(firstOpt);
+ select.appendChild(firstOpt);
    rawWorkers.forEach(name => { 
      const opt = document.createElement('option'); 
      opt.value = name; 
      opt.textContent = name; 
      select.appendChild(opt); 
    });
-   select.value = currentSelectedValue; 
+ select.value = currentSelectedValue; 
  } 
   
  function switchLanguage(langCode) { 
    currentLang = langCode; 
    document.querySelectorAll('.lang-bar .lang-btn').forEach(btn => btn.classList.remove('active'));
-   const targetBtn = document.getElementById('btn-lang-' + langCode); 
+ const targetBtn = document.getElementById('btn-lang-' + langCode); 
    if (targetBtn) targetBtn.classList.add('active'); 
    initStaticLabels(); 
    if(document.getElementById('productName').value) onProductChanged();
@@ -763,32 +806,32 @@
  async function loadWorkerList() { 
    try {
      const workers = await callGAS('getWorkers');
-     rawWorkers = workers || []; 
+ rawWorkers = workers || []; 
      renderWorkerDropdown(); 
    } catch(e) {
      console.error("Worker load error:", e);
-   }
+ }
  } 
 
  async function refreshCoilSupportList() {
    try {
      const coilList = await callGAS('getActiveCoils');
-     const incompleteLogs = fullHistoryLogs.filter(log => !log.end);
+ const incompleteLogs = fullHistoryLogs.filter(log => !log.end);
      const incompleteCoils = [...new Set(incompleteLogs.map(log => log.coilNo))];
-     const allCoils = [...new Set([...(coilList || []), ...incompleteCoils])].sort();
+ const allCoils = [...new Set([...(coilList || []), ...incompleteCoils])].sort();
      
      const datalist = document.getElementById('coilHistoryOptions');
      if (!datalist) return;
      datalist.innerHTML = '';
-     allCoils.forEach(function(coilNo) {
+ allCoils.forEach(function(coilNo) {
        const option = document.createElement('option');
        option.value = coilNo;
        option.textContent = coilNo;
        datalist.appendChild(option);
      });
-   } catch(e) {
+ } catch(e) {
      console.error("Coil support list error:", e);
-   }
+ }
  }
   
  function closeGlobalWarning() { 
@@ -798,33 +841,33 @@
  async function loadRecentHistory() { 
    const historyListDiv = document.getElementById('historyList'); 
    const historyLoadingEl = document.getElementById('uiHistoryLoading');
-   if (historyLoadingEl) historyLoadingEl.textContent = LANG_DATA[currentLang].historyLoading; 
+ if (historyLoadingEl) historyLoadingEl.textContent = LANG_DATA[currentLang].historyLoading; 
   
    try {
      const logs = await callGAS('getHistory');
-     fullHistoryLogs = logs || []; 
+     fullHistoryLogs = logs ||
+ []; 
      const hasWarning = fullHistoryLogs.some(log => log.isWarning); 
      if (hasWarning) document.getElementById('globalWarningOverlay').style.display = 'flex';
-     if(fullHistoryLogs.length === 0) { 
+ if(fullHistoryLogs.length === 0) { 
        historyListDiv.innerHTML = `<div style="text-align:center;color:#666;padding:20px;">${LANG_DATA[currentLang].noHistory}</div>`; 
        refreshCoilSupportList();
        return;
-     } 
+ } 
        
      let html = '';
-     const displayLogs = fullHistoryLogs.slice(0, 20); 
+ const displayLogs = fullHistoryLogs.slice(0, 20); 
 
      // ドロップダウン用の文字列生成
      const makeWorkerOptions = (current) => {
        return rawWorkers.map(w => `<option value="${w}" ${w === current ? 'selected' : ''}>${w}</option>`).join('');
-     };
+ };
      // 機械名ドロップダウン用の文字列生成
      const makeMachineOptions = (current) => {
        const machines = ["順送【80ｔ】", "順送【110ｔ】", "順送【200ｔ】"];
-       return machines.map(m => `<option value="${m}" ${m === current ? 'selected' : ''}>${m}</option>`).join('');
+ return machines.map(m => `<option value="${m}" ${m === current ? 'selected' : ''}>${m}</option>`).join('');
      };
-     
-     displayLogs.forEach((log, idx) => { 
+ displayLogs.forEach((log, idx) => { 
        let timelineHtml = ''; 
        let finalQty = ''; 
        const isEndReached = !!(log.end); 
@@ -832,7 +875,8 @@
        // --- 修正箇所: チョコ停の有無でクラスを切り替え ---
        const hasChoko = (log.chokoReason && log.chokoReason !== '');
        const cardClassBase = isEndReached ? 'history-card' : 'history-card is-incomplete'; 
-       const cardClass = hasChoko ? `${cardClassBase} has-chokotei` : cardClassBase;
+       const cardClass = hasChoko ? `${cardClassBase} has-chokotei` : 
+ cardClassBase;
         
        if(log.start) { 
          timelineHtml += `
@@ -840,14 +884,23 @@
            <span class="stage-label lbl-始">▶ 始</span>
            <div class="stage-details" id="view-${idx}-始" style="display:flex; flex:1; align-items:center;">
              <span>👤 ${log.start.worker} &nbsp;📐 ${log.start.measured ? parseFloat(log.start.measured).toFixed(1)+'mm' : '-'}</span>
-             <button type="button" style="margin-left:auto; background:none; border:none; color:var(--accent-color); cursor:pointer; font-size:0.85rem; padding:0; font-weight:bold;" onclick="toggleInlineEdit(${idx}, '始', true)">✏️ 修正</button>
+           
+  <button type="button" style="margin-left:auto; background:none; border:none; color:var(--accent-color); cursor:pointer; font-size:0.85rem; padding:0;
+ font-weight:bold;" onclick="toggleInlineEdit(${idx}, '始', true)">✏️ 修正</button>
            </div>
-           <div class="stage-edit-form" id="form-${idx}-始" style="display:none; flex:1; margin-left:14px; gap:6px; align-items:center; flex-wrap:wrap;">
-             <select id="edit-machine-${idx}-始" style="width:auto; padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color); border-radius:4px;">${makeMachineOptions(log.machine)}</select>
-             <select id="edit-worker-${idx}-始" style="width:auto; padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color); border-radius:4px;">${makeWorkerOptions(log.start.worker)}</select>
-             <input type="number" id="edit-measured-${idx}-始" step="0.1" value="${log.start.measured || ''}" style="width:55px; padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color); border-radius:4px;">mm
-             <button type="button" class="control-btn" style="padding:2px 6px; font-size:0.75rem; background:#10b981;" onclick="submitInlineEdit(${idx}, '始', '${log.coilNo}', '${log.productName}')">保存</button>
-             <button type="button" class="control-btn" style="padding:2px 6px; font-size:0.75rem; background:#64748b;" onclick="toggleInlineEdit(${idx}, '始', false)">×</button>
+           <div class="stage-edit-form" id="form-${idx}-始" style="display:none;
+ flex:1; margin-left:14px; gap:6px; align-items:center; flex-wrap:wrap;">
+             <select id="edit-machine-${idx}-始" style="width:auto;
+ padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color); border-radius:4px;">${makeMachineOptions(log.machine)}</select>
+             <select id="edit-worker-${idx}-始" style="width:auto;
+ padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color); border-radius:4px;">${makeWorkerOptions(log.start.worker)}</select>
+             <input type="number" id="edit-measured-${idx}-始" step="0.1" value="${log.start.measured ||
+ ''}" style="width:55px; padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color);
+ border-radius:4px;">mm
+             <button type="button" class="control-btn" style="padding:2px 6px; font-size:0.75rem;
+ background:#10b981;" onclick="submitInlineEdit(${idx}, '始', '${log.coilNo}', '${log.productName}')">保存</button>
+             <button type="button" class="control-btn" style="padding:2px 6px;
+ font-size:0.75rem; background:#64748b;" onclick="toggleInlineEdit(${idx}, '始', false)">×</button>
            </div>
            <span class="stage-time" id="time-${idx}-始" style="margin-left:8px;">${log.start.time}</span>
          </div>`; 
@@ -856,16 +909,25 @@
          timelineHtml += `
          <div class="timeline-row" id="row-${idx}-中">
            <span class="stage-label lbl-中">🔄 中</span>
-           <div class="stage-details" id="view-${idx}-中" style="display:flex; flex:1; align-items:center;">
+        
+    <div class="stage-details" id="view-${idx}-中" style="display:flex; flex:1; align-items:center;">
              <span>👤 ${log.middle.worker} &nbsp;📐 ${log.middle.measured ? parseFloat(log.middle.measured).toFixed(1)+'mm' : '-'}</span>
-             <button type="button" style="margin-left:auto; background:none; border:none; color:var(--accent-color); cursor:pointer; font-size:0.85rem; padding:0; font-weight:bold;" onclick="toggleInlineEdit(${idx}, '中', true)">✏️ 修正</button>
+             <button type="button" style="margin-left:auto;
+ background:none; border:none; color:var(--accent-color); cursor:pointer; font-size:0.85rem; padding:0; font-weight:bold;" onclick="toggleInlineEdit(${idx}, '中', true)">✏️ 修正</button>
            </div>
-           <div class="stage-edit-form" id="form-${idx}-中" style="display:none; flex:1; margin-left:14px; gap:6px; align-items:center; flex-wrap:wrap;">
-             <select id="edit-machine-${idx}-中" style="width:auto; padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color); border-radius:4px;">${makeMachineOptions(log.machine)}</select>
-             <select id="edit-worker-${idx}-中" style="width:auto; padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color); border-radius:4px;">${makeWorkerOptions(log.middle.worker)}</select>
-             <input type="number" id="edit-measured-${idx}-中" step="0.1" value="${log.middle.measured || ''}" style="width:55px; padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color); border-radius:4px;">mm
-             <button type="button" class="control-btn" style="padding:2px 6px; font-size:0.75rem; background:#10b981;" onclick="submitInlineEdit(${idx}, '中', '${log.coilNo}', '${log.productName}')">保存</button>
-             <button type="button" class="control-btn" style="padding:2px 6px; font-size:0.75rem; background:#64748b;" onclick="toggleInlineEdit(${idx}, '中', false)">×</button>
+           <div class="stage-edit-form" id="form-${idx}-中" style="display:none;
+ flex:1; margin-left:14px; gap:6px; align-items:center; flex-wrap:wrap;">
+             <select id="edit-machine-${idx}-中" style="width:auto;
+ padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color); border-radius:4px;">${makeMachineOptions(log.machine)}</select>
+             <select id="edit-worker-${idx}-中" style="width:auto;
+ padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color); border-radius:4px;">${makeWorkerOptions(log.middle.worker)}</select>
+             <input type="number" id="edit-measured-${idx}-中" step="0.1" value="${log.middle.measured ||
+ ''}" style="width:55px; padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color);
+ border-radius:4px;">mm
+             <button type="button" class="control-btn" style="padding:2px 6px; font-size:0.75rem;
+ background:#10b981;" onclick="submitInlineEdit(${idx}, '中', '${log.coilNo}', '${log.productName}')">保存</button>
+             <button type="button" class="control-btn" style="padding:2px 6px;
+ font-size:0.75rem; background:#64748b;" onclick="toggleInlineEdit(${idx}, '中', false)">×</button>
            </div>
            <span class="stage-time" id="time-${idx}-中" style="margin-left:8px;">${log.middle.time}</span>
          </div>`; 
@@ -874,17 +936,28 @@
          timelineHtml += `
          <div class="timeline-row" id="row-${idx}-終">
            <span class="stage-label lbl-終">■ 終</span>
-           <div class="stage-details" id="view-${idx}-終" style="display:flex; flex:1; align-items:center;">
+        
+    <div class="stage-details" id="view-${idx}-終" style="display:flex; flex:1; align-items:center;">
              <span>👤 ${log.end.worker} &nbsp;📐 ${log.end.measured ? parseFloat(log.end.measured).toFixed(1)+'mm' : '-'}</span>
-             <button type="button" style="margin-left:auto; background:none; border:none; color:var(--accent-color); cursor:pointer; font-size:0.85rem; padding:0; font-weight:bold;" onclick="toggleInlineEdit(${idx}, '終', true)">✏️ 修正</button>
+             <button type="button" style="margin-left:auto;
+ background:none; border:none; color:var(--accent-color); cursor:pointer; font-size:0.85rem; padding:0; font-weight:bold;" onclick="toggleInlineEdit(${idx}, '終', true)">✏️ 修正</button>
            </div>
-           <div class="stage-edit-form" id="form-${idx}-終" style="display:none; flex:1; margin-left:14px; gap:6px; align-items:center; flex-wrap:wrap;">
-             <select id="edit-machine-${idx}-終" style="width:auto; padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color); border-radius:4px;">${makeMachineOptions(log.machine)}</select>
-             <select id="edit-worker-${idx}-終" style="width:auto; padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color); border-radius:4px;">${makeWorkerOptions(log.end.worker)}</select>
-             <input type="number" id="edit-measured-${idx}-終" step="0.1" value="${log.end.measured || ''}" style="width:55px; padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color); border-radius:4px;">mm
-             <input type="number" id="edit-qty-${idx}-終" value="${log.end.qty || ''}" placeholder="数量" style="width:55px; padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color); border-radius:4px;">個
-             <button type="button" class="control-btn" style="padding:2px 6px; font-size:0.75rem; background:#10b981;" onclick="submitInlineEdit(${idx}, '終', '${log.coilNo}', '${log.productName}')">保存</button>
-             <button type="button" class="control-btn" style="padding:2px 6px; font-size:0.75rem; background:#64748b;" onclick="toggleInlineEdit(${idx}, '終', false)">×</button>
+           <div class="stage-edit-form" id="form-${idx}-終" style="display:none;
+ flex:1; margin-left:14px; gap:6px; align-items:center; flex-wrap:wrap;">
+             <select id="edit-machine-${idx}-終" style="width:auto;
+ padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color); border-radius:4px;">${makeMachineOptions(log.machine)}</select>
+             <select id="edit-worker-${idx}-終" style="width:auto;
+ padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color); border-radius:4px;">${makeWorkerOptions(log.end.worker)}</select>
+             <input type="number" id="edit-measured-${idx}-終" step="0.1" value="${log.end.measured ||
+ ''}" style="width:55px; padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color);
+ border-radius:4px;">mm
+             <input type="number" id="edit-qty-${idx}-終" value="${log.end.qty ||
+ ''}" placeholder="数量" style="width:55px; padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color);
+ border-radius:4px;">個
+             <button type="button" class="control-btn" style="padding:2px 6px; font-size:0.75rem;
+ background:#10b981;" onclick="submitInlineEdit(${idx}, '終', '${log.coilNo}', '${log.productName}')">保存</button>
+             <button type="button" class="control-btn" style="padding:2px 6px;
+ font-size:0.75rem; background:#64748b;" onclick="toggleInlineEdit(${idx}, '終', false)">×</button>
            </div>
            <span class="stage-time" id="time-${idx}-終" style="margin-left:8px;">${log.end.time}</span>
          </div>`; 
@@ -894,7 +967,8 @@
        html += `
        <div class="${cardClass}">
          <div class="card-top">
-           <div class="card-coil-title">Coil No: ${log.coilNo}</div>
+          
+  <div class="card-coil-title">Coil No: ${log.coilNo}</div>
            <div class="card-meta-info">
              <span>Product: <b>${log.productName}</b></span>
              <span>Machine: <b>${log.machine}</b></span>
@@ -902,7 +976,8 @@
          </div>
          <div class="timeline-container">${timelineHtml}</div>
          ${finalQty}
-         <button type="button" class="control-btn" style="width: 100%; margin-top:14px; background:#f59e0b; color: white;" onclick="openChokoteiModal('${log.coilNo}', '${log.productName}')">⚠️ チョコ停を記録</button>
+         <button type="button" class="control-btn" style="width: 100%;
+ margin-top:14px; background:#f59e0b; color: white;" onclick="openChokoteiModal('${log.coilNo}', '${log.productName}')">⚠️ チョコ停を記録</button>
        </div>`;
      }); 
     
@@ -924,6 +999,7 @@
    document.getElementById('loadingOverlay').classList.add('show');
  } 
   
+
  function hideOverlay() { 
    document.getElementById('loadingOverlay').classList.remove('show');
  } 
@@ -931,24 +1007,24 @@
  async function onCoilDetermined() { 
    const coilNo = document.getElementById('coilNo').value.trim();
    if (!coilNo) return;
-   const dynamicArea = document.getElementById('dynamic-area'); 
-   const msgDiv = document.getElementById('message'); 
+   const dynamicArea = document.getElementById('dynamic-area');
+ const msgDiv = document.getElementById('message'); 
    showOverlay(LANG_DATA[currentLang].checkingStock); 
    dynamicArea.classList.add('hidden'); 
    msgDiv.style.display = 'none'; 
    resetJudge(); 
    document.getElementById('quantity-field').classList.add('hidden');
    document.getElementById('quantity').required = false;
-   try {
+ try {
      const res = await callGAS('getProducts', { coilNo: coilNo });
      hideOverlay();
-     if (res.success) { 
+ if (res.success) { 
        currentProducts = res.products || []; 
        const pSelect = document.getElementById('productName');
-       pSelect.innerHTML = ''; 
+ pSelect.innerHTML = ''; 
        if (currentProducts.length > 1) { 
          const defaultOpt = document.createElement('option');
-         defaultOpt.value = ''; 
+ defaultOpt.value = ''; 
          defaultOpt.textContent = LANG_DATA[currentLang].selectProduct; 
          pSelect.appendChild(defaultOpt); 
        } 
@@ -958,17 +1034,17 @@
          opt.textContent = prod.name; 
          pSelect.appendChild(opt); 
        });
-       dynamicArea.classList.remove('hidden'); 
+ dynamicArea.classList.remove('hidden'); 
        if (currentProducts.length === 1) onProductChanged(); 
        else pSelect.focus(); 
      } else { 
        msgDiv.className = 'error';
-       msgDiv.textContent = res.msg; 
+ msgDiv.textContent = res.msg; 
        msgDiv.style.display = 'block'; 
      } 
    } catch (err) {
      hideOverlay();
-     msgDiv.className = 'error'; 
+ msgDiv.className = 'error'; 
      msgDiv.textContent = LANG_DATA[currentLang].commError; 
      msgDiv.style.display = 'block'; 
    }
@@ -976,64 +1052,64 @@
   
  function onProductChanged() { 
    const selectedName = document.getElementById('productName').value;
-   const targetDisplay = document.getElementById('masterTargetDisplay');
+ const targetDisplay = document.getElementById('masterTargetDisplay');
    const coilNo = document.getElementById('coilNo').value.trim(); 
    const msgDiv = document.getElementById('message'); 
    const submitBtn = document.getElementById('submitBtn'); 
    const defectDiv = document.getElementById('defectWarning');
-   msgDiv.style.display = 'none';
+ msgDiv.style.display = 'none';
    submitBtn.disabled = false; 
    defectDiv.style.display = 'none'; 
    defectDiv.innerHTML = '';
-   if (!selectedName) { 
+ if (!selectedName) { 
      targetValue = null; 
      targetDisplay.textContent = ''; 
      resetJudge();
      return;
-   } 
+ } 
    const matched = currentProducts.find(p => p.name === selectedName);
-   if (matched) { 
+ if (matched) { 
      targetValue = parseFloat(matched.measured);
      const minOk = (targetValue - 0.8).toFixed(1);
-     const maxOk = (targetValue + 0.8).toFixed(1); 
+ const maxOk = (targetValue + 0.8).toFixed(1); 
      targetDisplay.textContent = `（${LANG_DATA[currentLang].rangeText}: ${targetValue.toFixed(1)} / ${LANG_DATA[currentLang].okRange}: ${minOk}～${maxOk}）`;
-     if (matched.defect) { 
+ if (matched.defect) { 
        const defectText = (typeof matched.defect === 'object') ?
-       (matched.defect[currentLang] || matched.defect['ja'] || '') : matched.defect; 
+ (matched.defect[currentLang] || matched.defect['ja'] || '') : matched.defect; 
        if (defectText.trim() !== "") { 
          defectDiv.innerHTML = `<b>${LANG_DATA[currentLang].defectTitle}</b>${defectText}`;
-         defectDiv.style.display = 'block';
+ defectDiv.style.display = 'block';
        } 
      } 
    } 
    const todayStr = new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/-/g, '/');
-   let foundLog = fullHistoryLogs.find(l => {
+ let foundLog = fullHistoryLogs.find(l => {
      let logDateStr = '';
      if (l.start && l.start.time) logDateStr = l.start.time.split(' ')[0];
      else if (l.middle && l.middle.time) logDateStr = l.middle.time.split(' ')[0];
      else if (l.end && l.end.time) logDateStr = l.end.time.split(' ')[0];
      return l.coilNo === coilNo && l.productName === selectedName && logDateStr === todayStr;
    });
-   if (foundLog) { 
+ if (foundLog) { 
      if (foundLog.end) { 
        let lockMsg = LANG_DATA[currentLang].lockError.replace('{prod}', selectedName);
-       msgDiv.className = 'error';
+ msgDiv.className = 'error';
        msgDiv.innerHTML = lockMsg;
        msgDiv.style.display = 'block'; 
        submitBtn.disabled = true; 
        return; 
      } else if (foundLog.middle) nextStage = '終';
-     else if (foundLog.start) nextStage = '中'; 
+ else if (foundLog.start) nextStage = '中'; 
      else nextStage = '始';
-   } else { 
+ } else { 
      nextStage = '始'; 
    } 
    const qtyField = document.getElementById('quantity-field');
-   const qtyInput = document.getElementById('quantity'); 
+ const qtyInput = document.getElementById('quantity'); 
    if (nextStage === '終') { 
      qtyField.classList.remove('hidden'); 
      qtyInput.required = true;
-   } else { 
+ } else { 
      qtyField.classList.add('hidden');
      qtyInput.required = false; 
    } 
@@ -1044,30 +1120,30 @@
  function checkMeasuredValue() { 
    const inputValue = document.getElementById('measured').value.trim();
    const judgeBox = document.getElementById('judgeResult');
-   if (inputValue === '' || targetValue === null) { 
+ if (inputValue === '' || targetValue === null) { 
      resetJudge(); 
      return;
-   } 
+ } 
    const currentInput = parseFloat(inputValue); 
    const lowerLimit = targetValue - 0.8; 
    const upperLimit = targetValue + 0.8;
-   if (currentInput >= lowerLimit && currentInput <= upperLimit) { 
+ if (currentInput >= lowerLimit && currentInput <= upperLimit) { 
      judgeBox.textContent = LANG_DATA[currentLang].ok;
-     judgeBox.className = 'judge-box judge-ok'; 
+ judgeBox.className = 'judge-box judge-ok'; 
      judgeBox.style.display = 'block';
    } else { 
      judgeBox.textContent = LANG_DATA[currentLang].ng;
-     judgeBox.className = 'judge-box judge-ng'; 
+ judgeBox.className = 'judge-box judge-ng'; 
      judgeBox.style.display = 'block';
    } 
  } 
   
  function resetJudge() { 
    const judgeBox = document.getElementById('judgeResult');
-   if (judgeBox) { 
+ if (judgeBox) { 
      judgeBox.style.display = 'none'; 
      judgeBox.textContent = '';
-   } 
+ } 
  } 
   
  document.getElementById('pressForm').addEventListener('submit', async function(e) { 
@@ -1080,6 +1156,7 @@
        alert(alertMsg);
        return; 
   
+ 
    }
    const submitBtn = document.getElementById('submitBtn'); 
    const msgDiv = document.getElementById('message'); 
@@ -1095,18 +1172,18 @@
      enforcedStage: nextStage, 
      quantity: document.getElementById('quantity').value 
    };
-   try {
+ try {
      const res = await callGAS('saveLog', { logData: logData });
      hideOverlay(); 
      submitBtn.disabled = false;
-     msgDiv.className = 'success'; 
+ msgDiv.className = 'success'; 
      msgDiv.textContent = `【${res.type}】 ${LANG_DATA[currentLang].successSaved}`; 
      msgDiv.style.display = 'block'; 
      document.getElementById('coilNo').value = ''; 
      document.getElementById('measured').value = ''; 
      document.getElementById('quantity').value = ''; 
      document.getElementById('quantity-field').classList.add('hidden');
-     document.getElementById('quantity').required = false; 
+ document.getElementById('quantity').required = false; 
      document.getElementById('dynamic-area').classList.add('hidden'); 
      currentProducts = []; 
      targetValue = null; 
@@ -1116,51 +1193,51 @@
      loadRecentHistory(); 
      refreshCoilSupportList();
      document.getElementById('coilNo').focus();
-   } catch(err) {
+ } catch(err) {
      hideOverlay();
      submitBtn.disabled = false; 
      msgDiv.className = 'error'; 
      msgDiv.textContent = LANG_DATA[currentLang].saveError + err.message;
-     msgDiv.style.display = 'block'; 
+ msgDiv.style.display = 'block'; 
    }
  });
 
  // --- インライン直接編集用の切替および保存処理機能 ---
  function toggleInlineEdit(idx, stage, isEdit) {
    const viewEl = document.getElementById(`view-${idx}-${stage}`);
-   const formEl = document.getElementById(`form-${idx}-${stage}`);
+ const formEl = document.getElementById(`form-${idx}-${stage}`);
    const timeEl = document.getElementById(`time-${idx}-${stage}`);
    if (isEdit) {
      viewEl.style.display = 'none';
-     if(timeEl) timeEl.style.display = 'none';
+ if(timeEl) timeEl.style.display = 'none';
      formEl.style.display = 'flex';
    } else {
      viewEl.style.display = 'flex';
-     if(timeEl) timeEl.style.display = 'block';
+ if(timeEl) timeEl.style.display = 'block';
      formEl.style.display = 'none';
    }
  }
 
  async function submitInlineEdit(idx, stage, coilNo, productName) {
    const machine = document.getElementById(`edit-machine-${idx}-${stage}`).value;
-   const worker = document.getElementById(`edit-worker-${idx}-${stage}`).value;
+ const worker = document.getElementById(`edit-worker-${idx}-${stage}`).value;
    const measured = document.getElementById(`edit-measured-${idx}-${stage}`).value;
    let quantity = '';
-   if (stage === '終') {
+ if (stage === '終') {
      quantity = document.getElementById(`edit-qty-${idx}-${stage}`).value;
-     if (!quantity) {
+ if (!quantity) {
        alert("加工数量を入力してください。");
        return;
-     }
+ }
    }
    if (!worker || !measured) {
      alert("作業者と実寸計測値を入力してください。");
      return;
-   }
+ }
 
    const msgDiv = document.getElementById('message');
    showOverlay(LANG_DATA[currentLang].saving || "書き込み中...");
-   const logData = { 
+ const logData = { 
      coilNo: coilNo, 
      worker: worker, 
      machine: machine, 
@@ -1169,26 +1246,26 @@
      enforcedStage: stage, 
      quantity: quantity 
    };
-   try {
+ try {
      const res = await callGAS('saveLog', { logData: logData });
      hideOverlay(); 
      msgDiv.className = 'success';
-     msgDiv.textContent = `【${res.type}】修正内容を上書き保存しました！`; 
+ msgDiv.textContent = `【${res.type}】修正内容を上書き保存しました！`; 
      msgDiv.style.display = 'block'; 
      loadRecentHistory(); 
    } catch(err) {
      hideOverlay();
-     msgDiv.className = 'error'; 
-     msgDiv.textContent = (LANG_DATA[currentLang].saveError || "保存エラー: ") + err.message;
-     msgDiv.style.display = 'block'; 
-   }
+     msgDiv.className = 'error';
+ msgDiv.textContent = (LANG_DATA[currentLang].saveError || "保存エラー: ") + err.message;
+     msgDiv.style.display = 'block';
+ }
  }
  
  // --- 追加箇所：チョコ停用のモーダルおよび送信処理 ---
  function openChokoteiModal(coilNo, productName) {
    currentChokoCoilNo = coilNo;
    currentChokoProductName = productName;
-   document.getElementById('chokoReason').value = 'ミスフィード';
+ document.getElementById('chokoReason').value = 'ミスフィード';
    document.getElementById('otherReason').value = '';
    document.getElementById('otherReason').classList.add('hidden');
    document.getElementById('wasteQty').value = '';
@@ -1202,11 +1279,11 @@
 
  function checkOtherReason() {
    const reason = document.getElementById('chokoReason').value;
-   if (reason === 'その他') {
+ if (reason === 'その他') {
      document.getElementById('otherReason').classList.remove('hidden');
    } else {
      document.getElementById('otherReason').classList.add('hidden');
-   }
+ }
  }
 
  async function submitChokotei() {
@@ -1217,8 +1294,17 @@
    
    const finalReason = (reasonSelect === 'その他') ? otherReason : reasonSelect;
    
+   // ▼ 追加：未入力・未チェックを防ぐバリデーション
    if (reasonSelect === 'その他' && !finalReason.trim()) {
      alert("その他の理由を入力してください。");
+     return;
+   }
+   if (wasteQty === '') {
+     alert("廃棄数を入力してください。");
+     return;
+   }
+   if (!boxCheck) {
+     alert("箱チェック完了にチェックを入れてください。");
      return;
    }
 
@@ -1226,13 +1312,12 @@
      coilNo: currentChokoCoilNo,
      productName: currentChokoProductName,
      reason: finalReason,
-     wasteQty: wasteQty ? parseInt(wasteQty, 10) : 0,
+     wasteQty: parseInt(wasteQty, 10),
      boxCheck: boxCheck
    };
 
    closeChokoteiModal();
    showOverlay("チョコ停記録を送信中...");
-
    try {
      const res = await callGAS('saveChokotei', { logData: logData });
      hideOverlay();
