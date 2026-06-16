@@ -1294,39 +1294,41 @@
    
    const finalReason = (reasonSelect === 'その他') ? otherReason : reasonSelect;
    
-   // ▼ 追加：未入力・未チェックを防ぐバリデーション
+   // ▼ここから追加：未入力・未チェックを防ぐバリデーション
    if (reasonSelect === 'その他' && !finalReason.trim()) {
-     alert("その他の理由を入力してください。");
-     return;
+       alert("その他の理由を入力してください。");
+       return;
    }
    if (wasteQty === '') {
-     alert("廃棄数を入力してください。");
-     return;
+       alert("廃棄数を入力してください。");
+       return;
    }
    if (!boxCheck) {
-     alert("箱チェック完了にチェックを入れてください。");
-     return;
+       alert("箱チェック完了にチェックを入れてください。");
+       return;
    }
+   // ▲ここまで追加
 
    const logData = {
      coilNo: currentChokoCoilNo,
      productName: currentChokoProductName,
      reason: finalReason,
-     wasteQty: parseInt(wasteQty, 10),
+     wasteQty: wasteQty ?
+ parseInt(wasteQty, 10) : 0,
      boxCheck: boxCheck
    };
 
    closeChokoteiModal();
    showOverlay("チョコ停記録を送信中...");
-   try {
+ try {
      const res = await callGAS('saveChokotei', { logData: logData });
      hideOverlay();
-     if (res.error) throw new Error(res.error);
+ if (res.error) throw new Error(res.error);
      alert("チョコ停を記録しました");
      loadRecentHistory(); 
    } catch (e) {
      hideOverlay();
-     alert("エラーが発生しました: " + (e.message || "通信エラー"));
+ alert("エラーが発生しました: " + (e.message || "通信エラー"));
    }
  }
 </script>
