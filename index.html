@@ -157,6 +157,14 @@
  border-radius: 14px; padding: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
  .history-card.is-incomplete { border: 2px solid #ef4444;
  background: rgba(239, 68, 68, 0.03); box-shadow: 0 0 10px rgba(239, 68, 68, 0.2); }
+ 
+ /* === チョコ停バッジ === */
+ .chocostop-badge {
+ display: inline-block; background: #dc2626; color: #ffffff; padding: 4px 10px;
+ border-radius: 6px; font-size: 0.75rem; font-weight: 800; margin-bottom: 10px;
+ letter-spacing: 0.05em;
+ }
+ 
  .card-top { border-bottom: 1px solid var(--border-color);
  padding-bottom: 10px; margin-bottom: 12px; }
  .card-coil-title { font-size: 1.2rem; font-weight: 800; color: #ffffff; }
@@ -246,12 +254,28 @@
  }
  .control-btn.active { background: #10b981; }
 
+ /* === チョコ停セクション === */
+ .chocostop-section {
+ width: 100%; max-width: 500px; background: var(--card-bg); padding: 24px;
+ border-radius: 16px; border: 2px solid #dc2626;
+ box-shadow: 0 10px 25px -5px rgba(220, 38, 38, 0.3); box-sizing: border-box; margin-bottom: 25px;
+ }
+ .chocostop-section h2 {
+ color: #f87171;
+ }
+ .chocostop-section h2::after {
+ background: #dc2626;
+ }
+
  /* タブレット対応（横向き・大画面） */
  @media (min-width: 768px) {
    body {
      padding: 24px;
  }
    .container {
+     max-width: 600px;
+ }
+   .chocostop-section {
      max-width: 600px;
  }
    .history-container {
@@ -311,6 +335,9 @@
  /* iPad Pro 等の超大型タブレット */
  @media (min-width: 1024px) {
    .container {
+     max-width: 800px;
+ }
+   .chocostop-section {
      max-width: 800px;
  }
    h2 {
@@ -419,6 +446,22 @@
   
  <div id="message"></div>
 </div>
+
+<!-- === チョコ停記録セクション === -->
+<div class="chocostop-section">
+ <h2 id="uiChocostopTitle">🔴 チョコ停記録</h2>
+ <form id="chocostopForm" onkeydown="return event.key != 'Enter';">
+ <div class="form-group">
+ <label class="field-label" id="lblChocostopCoil" for="chocostopCoil">コイルNo</label>
+ <div class="inline-input-group">
+ <input type="text" id="chocostopCoil" list="coilHistoryOptions" placeholder="スキャンまたは手入力" onkeydown="if(event.key === 'Enter'){ saveChocostop(); return false; }">
+ <button type="button" class="scan-btn" id="btnChocostopScan" onclick="startChocostopScanning()" title="カメラでバーコードを読み取る">📷</button>
+ <button type="button" class="confirm-btn" id="btnChocostopSubmit" onclick="saveChocostop()">記録</button>
+ </div>
+ </div>
+ <div id="chocostopMessage" style="margin-top: 14px; padding: 12px; border-radius: 10px; text-align: center; font-weight: 700; font-size: 0.9rem; display: none;"></div>
+ </form>
+</div>
   
 <div class="history-container">
  <div class="history-title" id="uiHistoryTitle">直近20件性品名別加工履歴</div>
@@ -462,7 +505,13 @@
  warnTitle: "⚠️ 未完了の作業があります",
  warnBody: "前日以前の履歴で「終」まで完了していないデータがあります。<br>まず履歴を確認してください。",
  warnClose: "確認しました",
- scanMsg: "スキャン中... 赤い線をバーコードに合わせてください"
+ scanMsg: "スキャン中... 赤い線をバーコードに合わせてください",
+ chocostopTitle: "🔴 チョコ停記録",
+ chocostopCoil: "コイルNo",
+ chocostopSubmit: "記録",
+ chocostopSuccess: "チョコ停を記録しました！",
+ chocostopError: "エラー: コイルNoを入力してください。",
+ chocostopBadge: "チョコ停あり"
  },
  id: {
  title: "Input Hasil Produksi Press",
@@ -496,7 +545,13 @@
  warnTitle: "⚠️ Ada Pekerjaan Belum Selesai",
  warnBody: "Ada data dalam riwayat sebelum hari ini yang belum selesai hingga tahap [Akhir].<br>Silakan periksa riwayat terlebih dahulu.",
  warnClose: "Saya mengerti",
- scanMsg: "Memindai... Arahkan garis merah ke barcode"
+ scanMsg: "Memindai... Arahkan garis merah ke barcode",
+ chocostopTitle: "🔴 Catat Penghentian Sementara",
+ chocostopCoil: "No Coil",
+ chocostopSubmit: "Catat",
+ chocostopSuccess: "Penghentian sementara dicatat!",
+ chocostopError: "Error: Silakan masukkan No Coil.",
+ chocostopBadge: "Ada penghentian"
  },
  pt: {
  title: "Entrada de Resultados de Prensa",
@@ -530,7 +585,13 @@
  warnTitle: "⚠️ Existe Trabalho Inacabado",
  warnBody: "Existem dados no histórico de dias anteriores que não foram concluídos até o [Fim]. Por favor, verifique o histórico primeiro.",
  warnClose: "Entendido",
- scanMsg: "Escaneando... Alinhe a linha vermelha com o código de barras"
+ scanMsg: "Escaneando... Alinhe a linha vermelha com o código de barras",
+ chocostopTitle: "🔴 Registrar Parada",
+ chocostopCoil: "Nº da Bobina",
+ chocostopSubmit: "Registrar",
+ chocostopSuccess: "Parada registrada com sucesso!",
+ chocostopError: "Erro: Insira o Nº da Bobina.",
+ chocostopBadge: "Parada registrada"
  }
  };
   
@@ -545,6 +606,7 @@
  let barcodeMatchCount = 0;
  let lastBarcode = "";
  let quaggaInitialized = false;
+ let chocostopScanMode = false;
  let currentZoom = 1;
  let currentBrightness = 0;
  let autoFocusEnabled = true;
@@ -572,9 +634,10 @@
  }
 
  // ==========================================
- // バーコードスキャナー
+ // バーコードスキャナー（既存 + チョコ停用改良）
  // ==========================================
  function startBarcodeScanning() {
+   chocostopScanMode = false;
    const scannerOverlay = document.getElementById('scannerOverlay');
    const scanStatus = document.getElementById('scanStatus');
    scannerOverlay.style.display = 'flex';
@@ -590,7 +653,7 @@
        type: "LiveStream",
        target: document.querySelector('#preview'),
        constraints: {
-         width: { ideal: 640 }, // iPad等のために解像度を指定
+         width: { ideal: 640 },
          height: { ideal: 480 },
          facingMode: "environment",
          focusMode: "continuous"
@@ -632,14 +695,27 @@
      }
 
      if (barcodeMatchCount >= 3) {
-       document.getElementById('coilNo').value = code;
+       if (chocostopScanMode) {
+         document.getElementById('chocostopCoil').value = code;
+       } else {
+         document.getElementById('coilNo').value = code;
+       }
        stopBarcodeScanning();
-       setTimeout(() => onCoilDetermined(), 500);
+       if (chocostopScanMode) {
+         setTimeout(() => saveChocostop(), 500);
+       } else {
+         setTimeout(() => onCoilDetermined(), 500);
+       }
      } else {
        document.getElementById('scanStatus').innerText = 
          `${LANG_DATA[currentLang].scanMsg || "スキャン中..."} (${barcodeMatchCount}/3)`;
      }
    });
+ }
+
+ function startChocostopScanning() {
+   chocostopScanMode = true;
+   startBarcodeScanning();
  }
 
  function stopBarcodeScanning() {
@@ -649,6 +725,41 @@
    } catch(e) {}
    document.getElementById('scannerOverlay').style.display = 'none';
    quaggaInitialized = false;
+   chocostopScanMode = false;
+ }
+
+ // ==========================================
+ // チョコ停記録機能
+ // ==========================================
+ async function saveChocostop() {
+   const coilNo = document.getElementById('chocostopCoil').value.trim();
+   const msgDiv = document.getElementById('chocostopMessage');
+   msgDiv.style.display = 'none';
+   
+   if (!coilNo) {
+     msgDiv.className = 'error';
+     msgDiv.textContent = LANG_DATA[currentLang].chocostopError || "エラー: コイルNoを入力してください。";
+     msgDiv.style.display = 'block';
+     return;
+   }
+
+   showOverlay(LANG_DATA[currentLang].saving || "記録中...");
+   
+   try {
+     const res = await callGAS('saveChocostop', { coilNo: coilNo });
+     hideOverlay();
+     msgDiv.className = 'success';
+     msgDiv.textContent = LANG_DATA[currentLang].chocostopSuccess || "チョコ停を記録しました！";
+     msgDiv.style.display = 'block';
+     document.getElementById('chocostopCoil').value = '';
+     loadRecentHistory();
+     refreshCoilSupportList();
+   } catch(err) {
+     hideOverlay();
+     msgDiv.className = 'error';
+     msgDiv.textContent = (LANG_DATA[currentLang].saveError || "エラー: ") + err.message;
+     msgDiv.style.display = 'block';
+   }
  }
 
  // ==========================================
@@ -680,6 +791,10 @@
    document.getElementById('uiWarningTitle').textContent = lang.warnTitle; 
    document.getElementById('uiWarningBody').innerHTML = lang.warnBody;
    document.getElementById('btnWarningClose').textContent = lang.warnClose;
+   // === チョコ停ラベル更新 ===
+   document.getElementById('uiChocostopTitle').textContent = lang.chocostopTitle;
+   document.getElementById('lblChocostopCoil').textContent = lang.chocostopCoil;
+   document.getElementById('btnChocostopSubmit').textContent = lang.chocostopSubmit;
    const optMachine = document.getElementById('optMachineDefault');
    if (optMachine) optMachine.textContent = lang.selectPlease; 
    renderWorkerDropdown();
@@ -768,11 +883,9 @@
      let html = '';
      const displayLogs = fullHistoryLogs.slice(0, 20); 
 
-     // ドロップダウン用の文字列生成
      const makeWorkerOptions = (current) => {
        return rawWorkers.map(w => `<option value="${w}" ${w === current ? 'selected' : ''}>${w}</option>`).join('');
      };
-     // 機械名ドロップダウン用の文字列生成
      const makeMachineOptions = (current) => {
        const machines = ["順送【80ｔ】", "順送【110ｔ】", "順送【200ｔ】"];
        return machines.map(m => `<option value="${m}" ${m === current ? 'selected' : ''}>${m}</option>`).join('');
@@ -783,8 +896,13 @@
        let finalQty = ''; 
        const isEndReached = !!(log.end); 
        const cardClass = isEndReached ? 'history-card' : 'history-card is-incomplete'; 
+       
+       // === チョコ停バッジ表示 ===
+       let chocostopBadgeHtml = '';
+       if (log.chocostop && log.chocostop.length > 0) {
+         chocostopBadgeHtml = `<div class="chocostop-badge">⚠️ ${LANG_DATA[currentLang].chocostopBadge} (${log.chocostop.length}回)</div>`;
+       }
         
-       // --- 修正箇所: 履歴カードの各ステージに直接編集可能なインラインフォームを配置 ---
        if(log.start) { 
          timelineHtml += `
          <div class="timeline-row" id="row-${idx}-始">
@@ -844,6 +962,7 @@
 
        html += `
        <div class="${cardClass}">
+         ${chocostopBadgeHtml}
          <div class="card-top">
            <div class="card-coil-title">Coil No: ${log.coilNo}</div>
            <div class="card-meta-info">
@@ -1073,7 +1192,6 @@
    }
  });
 
- // --- 新規追加箇所: インライン直接編集用の切替および保存処理機能 ---
  function toggleInlineEdit(idx, stage, isEdit) {
    const viewEl = document.getElementById(`view-${idx}-${stage}`);
    const formEl = document.getElementById(`form-${idx}-${stage}`);
@@ -1090,7 +1208,7 @@
  }
 
  async function submitInlineEdit(idx, stage, coilNo, productName) {
-   const machine = document.getElementById(`edit-machine-${idx}-${stage}`).value; // ここで新しく選択した機械名を取得
+   const machine = document.getElementById(`edit-machine-${idx}-${stage}`).value;
    const worker = document.getElementById(`edit-worker-${idx}-${stage}`).value;
    const measured = document.getElementById(`edit-measured-${idx}-${stage}`).value;
    let quantity = '';
@@ -1113,7 +1231,7 @@
    const logData = { 
      coilNo: coilNo, 
      worker: worker, 
-     machine: machine, // 修正された機械名をGASへ送る
+     machine: machine,
      productName: productName, 
      measured: measured, 
      enforcedStage: stage, 
@@ -1126,7 +1244,7 @@
      msgDiv.className = 'success'; 
      msgDiv.textContent = `【${res.type}】修正内容を上書き保存しました！`; 
      msgDiv.style.display = 'block'; 
-     loadRecentHistory(); // 履歴を再読み込みして最新状態に更新
+     loadRecentHistory();
    } catch(err) {
      hideOverlay();
      msgDiv.className = 'error'; 
@@ -1134,7 +1252,6 @@
      msgDiv.style.display = 'block'; 
    }
  }
- // ------------------------------------------------------------------
 </script>
 </body>
 </html>
