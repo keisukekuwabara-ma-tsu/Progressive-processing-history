@@ -17,7 +17,7 @@
  --success-color: #10b981;
  --error-color: #ef4444;
  }
-  
+
  body {
  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
  background-color: var(--bg-color);
@@ -29,38 +29,27 @@
  align-items: center;
  -webkit-font-smoothing: antialiased;
  }
-  
+
  #globalWarningOverlay {
- position: fixed;
- top: 0;
- left: 0; width: 100vw; height: 100vh;
+ position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
  background-color: rgba(220, 38, 38, 0.98);
  z-index: 100000; display: none; flex-direction: column;
- justify-content: center;
- align-items: center; text-align: center;
+ justify-content: center; align-items: center; text-align: center;
  padding: 24px; color: #ffffff; box-sizing: border-box;
  }
- #globalWarningOverlay h1 { font-size: 2.5rem; margin-top: 0; margin-bottom: 20px;
- font-weight: 800; }
+ #globalWarningOverlay h1 { font-size: 2.5rem; margin-top: 0; margin-bottom: 20px; font-weight: 800; }
  #globalWarningOverlay p { font-size: 1.3rem; line-height: 1.6; margin-bottom: 35px; max-width: 600px; }
  .warning-close-btn {
- padding: 16px 48px;
- background: #ffffff; color: #dc2626; border: none;
+ padding: 16px 48px; background: #ffffff; color: #dc2626; border: none;
  border-radius: 50px; font-weight: 800; font-size: 1.2rem; cursor: pointer;
- box-shadow: 0 10px 20px rgba(0,0,0,0.3);
- transition: transform 0.1s ease;
+ box-shadow: 0 10px 20px rgba(0,0,0,0.3); transition: transform 0.1s ease;
  }
  .warning-close-btn:active { transform: scale(0.96); }
-  
- .lang-bar {
- width: 100%; max-width: 500px; display: flex;
- justify-content: center;
- gap: 10px; margin-bottom: 20px;
- }
+
+ .lang-bar { width: 100%; max-width: 500px; display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
  .lang-btn {
  padding: 14px 10px; background-color: var(--card-bg); border: 2px solid var(--border-color);
- border-radius: 12px;
- color: #94a3b8; font-size: 1.1rem; font-weight: 700; cursor: pointer;
+ border-radius: 12px; color: #94a3b8; font-size: 1.1rem; font-weight: 700; cursor: pointer;
  display: flex; align-items: center; justify-content: center; gap: 8px;
  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); flex: 1; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
  }
@@ -68,97 +57,71 @@
  background-color: #1e293b; color: #ffffff; border-color: var(--accent-color);
  box-shadow: 0 0 16px var(--accent-glow); transform: translateY(-2px);
  }
-  
+
  .container {
  width: 100%; max-width: 500px; background: var(--card-bg); padding: 24px;
  border-radius: 16px; border: 1px solid var(--border-color);
  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5); box-sizing: border-box; margin-bottom: 25px;
  }
-  
- h2 { text-align: center;
- color: #ffffff; margin-top: 0; margin-bottom: 24px; font-size: 1.5rem; letter-spacing: 0.05em; position: relative; }
- h2::after { content: ''; display: block;
- width: 40px; height: 4px; background: var(--accent-color); margin: 8px auto 0; border-radius: 2px; }
- .form-group { margin-bottom: 20px;
- }
+
+ h2 { text-align: center; color: #ffffff; margin-top: 0; margin-bottom: 24px; font-size: 1.5rem; letter-spacing: 0.05em; position: relative; }
+ h2::after { content: ''; display: block; width: 40px; height: 4px; background: var(--accent-color); margin: 8px auto 0; border-radius: 2px; }
+ .form-group { margin-bottom: 20px; }
  label.field-label { display: block; margin-bottom: 8px; font-size: 0.95rem; color: #94a3b8; font-weight: 600; }
  input[type="text"], input[type="number"], select {
- width: 100%;
- padding: 14px 16px; box-sizing: border-box; background-color: var(--input-bg);
+ width: 100%; padding: 14px 16px; box-sizing: border-box; background-color: var(--input-bg);
  border: 2px solid var(--border-color); border-radius: 10px; color: #ffffff;
- font-size: 1.15rem; font-weight: 500;
- transition: all 0.2s ease;
+ font-size: 1.15rem; font-weight: 500; transition: all 0.2s ease;
  }
- input:focus, select:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 0 4px var(--accent-glow); background-color: #242837;
- }
- 
+ input:focus, select:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 0 4px var(--accent-glow); background-color: #242837; }
+
  .inline-input-group { display: flex; gap: 10px; }
- .inline-input-group input { flex: 1;
- }
- 
- .scan-btn {
- padding: 0 16px; background-color: #f59e0b; border: none; border-radius: 10px;
- color: white; font-size: 1.2rem; cursor: pointer;
- transition: background 0.2s;
- }
+ .inline-input-group input { flex: 1; }
+
+ .scan-btn { padding: 0 16px; background-color: #f59e0b; border: none; border-radius: 10px; color: white; font-size: 1.2rem; cursor: pointer; transition: background 0.2s; }
  .scan-btn:hover { background-color: #d97706; }
- 
+
  .confirm-btn {
- padding: 0 24px; background-color: #3b82f6; border: none;
- border-radius: 10px;
+ padding: 0 24px; background-color: #3b82f6; border: none; border-radius: 10px;
  color: white; font-size: 1.1rem; font-weight: 700; cursor: pointer; white-space: nowrap;
- transition: background 0.2s;
- box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+ transition: background 0.2s; box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
  }
- .confirm-btn:hover { background-color: #2563eb;
- }
-  
+ .confirm-btn:hover { background-color: #2563eb; }
+
  .defect-warning-box {
  margin-top: 14px; background: rgba(251, 146, 60, 0.08); border: 1px dashed #fb923c;
- border-radius: 10px;
- padding: 12px 14px; font-size: 0.95rem; color: #ffedd5; display: none; line-height: 1.4;
+ border-radius: 10px; padding: 12px 14px; font-size: 0.95rem; color: #ffedd5; display: none; line-height: 1.4;
  }
- .defect-warning-box b { color: #fb923c; display: block;
- margin-bottom: 4px; font-size: 1rem; }
-  
+ .defect-warning-box b { color: #fb923c; display: block; margin-bottom: 4px; font-size: 1rem; }
+
  .judge-box {
  padding: 14px; border-radius: 10px; text-align: center; font-weight: 800; font-size: 1.6rem;
  letter-spacing: 0.05em; margin-top: 12px; display: none; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); animation: pulse 1.5s infinite alternate;
  }
- .judge-ok { background-color: rgba(16, 185, 129, 0.15); color: #34d399; border: 2px solid #10b981;
- }
- .judge-ng { background-color: rgba(239, 68, 68, 0.15); color: #f87171; border: 2px solid #ef4444;
- }
-  
+ .judge-ok { background-color: rgba(16, 185, 129, 0.15); color: #34d399; border: 2px solid #10b981; }
+ .judge-ng { background-color: rgba(239, 68, 68, 0.15); color: #f87171; border: 2px solid #ef4444; }
+
  .submit-btn {
  width: 100%; padding: 16px; background: linear-gradient(135deg, #00adb5, #008087); border: none;
- border-radius: 12px; color: white;
- font-size: 1.2rem; font-weight: 700; cursor: pointer; margin-top: 20px; transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(0, 173, 181, 0.3);
+ border-radius: 12px; color: white; font-size: 1.2rem; font-weight: 700; cursor: pointer; margin-top: 20px;
+ transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(0, 173, 181, 0.3);
  }
  .submit-btn:active { transform: scale(0.98); }
- .submit-btn:disabled { background: #334155 !important; color: #64748b; cursor: not-allowed; box-shadow: none;
- }
-  
- #message { margin-top: 18px; padding: 14px; border-radius: 10px; text-align: center; font-weight: 700; font-size: 1rem; display: none;
- }
- .success { background-color: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #10b981;
- }
+ .submit-btn:disabled { background: #334155 !important; color: #64748b; cursor: not-allowed; box-shadow: none; }
+
+ #message { margin-top: 18px; padding: 14px; border-radius: 10px; text-align: center; font-weight: 700; font-size: 1rem; display: none; }
+ .success { background-color: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #10b981; }
  .error { background-color: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; }
- .hidden { display: none !important;
- }
+ .hidden { display: none !important; }
  .target-val { color: #fb923c; font-size: 0.85rem; margin-left: 8px; font-weight: normal; }
-  
- .history-container { width: 100%; max-width: 500px;
- box-sizing: border-box; }
- .history-title { font-size: 1.2rem; color: #ffffff; margin-bottom: 16px; font-weight: 700; border-left: 4px solid var(--accent-color); padding-left: 10px;
- letter-spacing: 0.03em; }
+
+ .history-container { width: 100%; max-width: 500px; box-sizing: border-box; }
+ .history-title { font-size: 1.2rem; color: #ffffff; margin-bottom: 16px; font-weight: 700; border-left: 4px solid var(--accent-color); padding-left: 10px; letter-spacing: 0.03em; }
  .history-list { display: flex; flex-direction: column; gap: 16px; }
- .history-card { background: var(--card-bg); border: 1px solid var(--border-color);
- border-radius: 14px; padding: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
- .history-card.is-incomplete { border: 2px solid #ef4444;
- background: rgba(239, 68, 68, 0.03); box-shadow: 0 0 10px rgba(239, 68, 68, 0.2); }
- 
- /* --- 追加箇所：チョコ停リボン用のCSS --- */
+ .history-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 14px; padding: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+ .history-card.is-incomplete { border: 2px solid #ef4444; background: rgba(239, 68, 68, 0.03); box-shadow: 0 0 10px rgba(239, 68, 68, 0.2); }
+
+ /* チョコ停リボン */
  .history-card.has-chokotei { position: relative; border: 2px solid #f59e0b; }
  .history-card.has-chokotei::after {
    content: "⚠️ チョコ停発生";
@@ -167,190 +130,76 @@
    padding: 4px 12px; font-weight: bold; font-size: 0.8rem;
    border-radius: 4px 0 0 4px; z-index: 1;
  }
+ .choko-info { margin-top: 10px; font-size: 0.85rem; color: #fde68a; background: rgba(245,158,11,0.08); border: 1px dashed #f59e0b; border-radius: 8px; padding: 8px 12px; line-height: 1.5; }
 
- .card-top { border-bottom: 1px solid var(--border-color);
- padding-bottom: 10px; margin-bottom: 12px; }
+ .card-top { border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 12px; }
  .card-coil-title { font-size: 1.2rem; font-weight: 800; color: #ffffff; }
- .card-meta-info { font-size: 0.9rem; color: #94a3b8;
- margin-top: 6px; display: flex; gap: 16px; }
+ .card-meta-info { font-size: 0.9rem; color: #94a3b8; margin-top: 6px; display: flex; gap: 16px; flex-wrap: wrap; }
  .card-meta-info span b { color: var(--accent-color); }
- .timeline-container { display: flex; flex-direction: column;
- gap: 8px; }
- .timeline-row { background: #1e2230; border-radius: 8px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem;
- }
- .stage-label { font-weight: 800; width: 48px; padding: 3px 0; border-radius: 6px; text-align: center; font-size: 0.8rem;
- }
- .lbl-始 { background-color: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4);
- }
- .lbl-中 { background-color: rgba(234, 179, 8, 0.15); color: #fde047; border: 1px solid rgba(234, 179, 8, 0.4);
- }
- .lbl-終 { background-color: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4);
- }
+ .timeline-container { display: flex; flex-direction: column; gap: 8px; }
+ .timeline-row { background: #1e2230; border-radius: 8px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; }
+ .stage-label { font-weight: 800; width: 48px; padding: 3px 0; border-radius: 6px; text-align: center; font-size: 0.8rem; }
+ .lbl-始 { background-color: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+ .lbl-中 { background-color: rgba(234, 179, 8, 0.15); color: #fde047; border: 1px solid rgba(234, 179, 8, 0.4); }
+ .lbl-終 { background-color: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
  .stage-details { flex: 1; margin-left: 14px; display: flex; flex-wrap: wrap; gap: 8px; color: #cbd5e1; }
- .stage-time { font-size: 0.8rem;
- color: #64748b; text-align: right; white-space: nowrap; }
- .qty-display-box { margin-top: 12px; background: rgba(0, 173, 181, 0.08);
- border: 1px dashed rgba(0, 173, 181, 0.5); border-radius: 8px; padding: 10px 14px; font-size: 1.05rem; font-weight: 700; color: #ffffff; display: flex;
- align-items: center; gap: 8px; }
-  
- .overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
- background-color: rgba(13, 14, 18, 0.9); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; pointer-events: none;
- transition: opacity 0.25s ease; }
+ .stage-time { font-size: 0.8rem; color: #64748b; text-align: right; white-space: nowrap; }
+ .edit-link { margin-left: auto; background: none; border: none; color: var(--accent-color); cursor: pointer; font-size: 0.85rem; padding: 0; font-weight: bold; }
+ .stage-edit-form { display: none; flex: 1; margin-left: 14px; gap: 6px; align-items: center; flex-wrap: wrap; }
+ .stage-edit-form select, .stage-edit-form input { width: auto; padding: 2px 4px; font-size: 0.85rem; background: var(--input-bg); color: #fff; border: 1px solid var(--border-color); border-radius: 4px; }
+ .stage-edit-form input[type="number"] { width: 55px; }
+ .qty-display-box { margin-top: 12px; background: rgba(0, 173, 181, 0.08); border: 1px dashed rgba(0, 173, 181, 0.5); border-radius: 8px; padding: 10px 14px; font-size: 1.05rem; font-weight: 700; color: #ffffff; display: flex; align-items: center; gap: 8px; }
+
+ .overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(13, 14, 18, 0.9); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.25s ease; }
  .overlay.show { opacity: 1; pointer-events: auto; }
- .spinner { width: 56px; height: 56px;
- border: 5px solid #1f222f; border-top: 5px solid var(--accent-color); border-radius: 50%; animation: spin 0.8s linear infinite; }
- .overlay-text { margin-top: 18px;
- color: var(--accent-color); font-weight: 700; font-size: 1.2rem; letter-spacing: 0.05em; }
- @keyframes spin { 0% { transform: rotate(0deg);
- } 100% { transform: rotate(360deg); } }
+ .spinner { width: 56px; height: 56px; border: 5px solid #1f222f; border-top: 5px solid var(--accent-color); border-radius: 50%; animation: spin 0.8s linear infinite; }
+ .overlay-text { margin-top: 18px; color: var(--accent-color); font-weight: 700; font-size: 1.2rem; letter-spacing: 0.05em; }
+ @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+ @keyframes pulse { 0% { opacity: 0.85; } 100% { opacity: 1; } }
 
- /* --- カメラ起動時のレイアウト崩れ対策対策CSS（iPad対応強化） --- */
- #scannerOverlay { position: fixed; top: 0; left: 0;
- width: 100vw;
- height: 100vh; background: #000; z-index: 99999; display: none; flex-direction: column; box-sizing: border-box; }
- #scannerHeader { display: flex;
- justify-content: space-between;
- align-items: center; padding: 16px 20px; background: #111; color: white; border-bottom: 2px solid #333; flex-shrink: 0;
- }
+ /* カメラ（iPad対応） */
+ #scannerOverlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 99999; display: none; flex-direction: column; box-sizing: border-box; }
+ #scannerHeader { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; background: #111; color: white; border-bottom: 2px solid #333; flex-shrink: 0; }
  #scannerHeader h3 { margin: 0; color: #58a6ff; font-size: 1rem; flex: 1; }
- #scannerHeader button { background: #ef4444; color: white;
- border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; flex-shrink: 0; }
- #preview-container { flex: 1;
- position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center; background: #000; width: 100%; box-sizing: border-box;
- }
- /* アスペクト比を固定し、コンテナ中央に配置することでズレを防止 */
- #preview { width: 100%; max-width: 640px; aspect-ratio: 4 / 3; position: absolute; top: 50%; left: 50%;
- transform: translate(-50%, -50%); overflow: hidden;
- }
- #preview video { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0;
- left: 0; z-index: 1; display: block;
- }
- #preview canvas.drawingBuffer { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0;
- left: 0; z-index: 2; pointer-events: none;
- }
-  
- #scan-guide { position: absolute; top: 50%;
- left: 50%; transform: translate(-50%, -50%);
- width: 75%; max-width: 450px; height: auto;
- aspect-ratio: 3 / 1.5; border: 3px dashed #00ff00;
- border-radius: 8px;
- box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.2);
- z-index: 5; pointer-events: none; }
- #scan-line { position: absolute;
- top: 50%;
- left: 10%; width: 80%; height: 2px; background: #ff375f;
- box-shadow: 0 0 15px #ff375f; z-index: 10;
- animation: scanMotion 1.5s ease-in-out infinite alternate; pointer-events: none;
- }
- @keyframes scanMotion { 0% { transform: translateY(-70px);
- } 100% { transform: translateY(70px); } }
- #scanStatus { padding: 16px;
- text-align: center; background: #111; color: #f59e0b; font-weight: bold;
- font-size: 0.95rem; flex-shrink: 0; border-top: 1px solid #333; width: 100%; box-sizing: border-box;
- }
- 
- /* コントロールパネル */
- #scannerControls { background: #1a1a1a; padding: 16px; border-top: 1px solid #333; color: white; display: flex;
- flex-direction: column; gap: 12px; max-height: 200px; overflow-y: auto; }
- .control-group { display: flex; align-items: center; gap: 12px;
- }
- .control-label { font-size: 0.9rem; font-weight: 600; min-width: 80px; color: #cbd5e1; }
- .control-slider { flex: 1; height: 6px; background: #333;
- border-radius: 3px; outline: none; cursor: pointer; accent-color: #00adb5; }
- .control-btn { padding: 8px 16px; background: #00adb5; color: white; border: none;
- border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.9rem; transition: background 0.2s; white-space: nowrap; }
- .control-btn:hover { background: #008087;
- }
- .control-btn.active { background: #10b981; }
+ #scannerHeader button { background: #ef4444; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; flex-shrink: 0; }
+ #preview-container { flex: 1; position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center; background: #000; width: 100%; box-sizing: border-box; }
+ #preview { width: 100%; max-width: 640px; aspect-ratio: 4 / 3; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); overflow: hidden; }
+ #preview video { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 1; display: block; }
+ #preview canvas.drawingBuffer { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 2; pointer-events: none; }
 
- /* タブレット対応（横向き・大画面） */
+ #scan-guide { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 75%; max-width: 450px; height: auto; aspect-ratio: 3 / 1.5; border: 3px dashed #00ff00; border-radius: 8px; box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.2); z-index: 5; pointer-events: none; }
+ #scan-line { position: absolute; top: 50%; left: 10%; width: 80%; height: 2px; background: #ff375f; box-shadow: 0 0 15px #ff375f; z-index: 10; animation: scanMotion 1.5s ease-in-out infinite alternate; pointer-events: none; }
+ @keyframes scanMotion { 0% { transform: translateY(-70px); } 100% { transform: translateY(70px); } }
+ #scanStatus { padding: 16px; text-align: center; background: #111; color: #f59e0b; font-weight: bold; font-size: 0.95rem; flex-shrink: 0; border-top: 1px solid #333; width: 100%; box-sizing: border-box; }
+
+ .control-btn { padding: 8px 16px; background: #00adb5; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.9rem; transition: background 0.2s; white-space: nowrap; }
+ .control-btn:hover { background: #008087; }
+
  @media (min-width: 768px) {
-   body {
-     padding: 24px;
-   }
-   .container {
-     max-width: 600px;
-   }
-   .history-container {
-     max-width: 600px;
-   }
-   #scannerOverlay {
-     flex-direction: row;
-   }
-   #scannerHeader {
-     flex-direction: column;
-     width: 200px;
-     padding: 20px;
-     border-right: 2px solid #333;
-     border-bottom: none;
-     justify-content: flex-start;
-     gap: 20px;
-   }
-   #scannerHeader h3 {
-     writing-mode: vertical-lr;
-     transform: rotate(180deg);
-     margin: 0;
-   }
-   #scannerHeader button {
-     width: 100%;
-   }
-   #preview-container {
-     flex: 1;
-   }
-   #scannerControls {
-     position: absolute;
-     bottom: 0;
-     right: 0;
-     width: 300px;
-     flex-direction: row;
-     gap: 8px;
-     max-height: none;
-     overflow-x: auto;
-     padding: 12px;
-   }
-   .control-group {
-     flex-direction: column;
-     gap: 6px;
-     min-width: 90px;
-   }
-   .control-label {
-     min-width: auto;
-     font-size: 0.8rem;
-     text-align: center;
-   }
-   .control-slider {
-     height: 100px;
-     writing-mode: bt-lr;
-     transform: rotate(90deg);
-   }
+   body { padding: 24px; }
+   .container { max-width: 600px; }
+   .history-container { max-width: 600px; }
+   #scannerOverlay { flex-direction: row; }
+   #scannerHeader { flex-direction: column; width: 200px; padding: 20px; border-right: 2px solid #333; border-bottom: none; justify-content: flex-start; gap: 20px; }
+   #scannerHeader h3 { writing-mode: vertical-lr; transform: rotate(180deg); margin: 0; }
+   #scannerHeader button { width: 100%; }
+   #preview-container { flex: 1; }
  }
-
- /* iPad Pro 等の超大型タブレット */
  @media (min-width: 1024px) {
-   .container {
-     max-width: 800px;
-   }
-   h2 {
-     font-size: 2rem;
-   }
-   input[type="text"], input[type="number"], select {
-     font-size: 1.3rem;
-     padding: 16px 18px;
-   }
-   #scannerControls {
-     width: 350px;
-   }
+   .container { max-width: 800px; }
+   h2 { font-size: 2rem; }
+   input[type="text"], input[type="number"], select { font-size: 1.3rem; padding: 16px 18px; }
  }
  </style>
 </head>
 <body>
-  
+
 <div id="globalWarningOverlay">
  <h1 id="uiWarningTitle">⚠️ 未完了の作業があります</h1>
  <p id="uiWarningBody">前日以前の履歴で「終」まで完了していないデータがあります。<br>まず履歴を確認してください。</p>
  <button type="button" class="warning-close-btn" id="btnWarningClose" onclick="closeGlobalWarning()">確認しました</button>
 </div>
-  
+
 <div id="loadingOverlay" class="overlay">
  <div class="spinner"></div>
  <div id="overlayText" class="overlay-text">処理中...</div>
@@ -359,6 +208,7 @@
 <div id="scannerOverlay">
   <div id="scannerHeader">
     <h3 style="margin:0; color:#58a6ff; font-size:1.1rem;">枠内にバーコードを写してください</h3>
+    <button id="torchBtn" onclick="toggleTorch()" style="display:none; background:#f59e0b;">💡 ライトON</button>
     <button onclick="stopBarcodeScanning()">閉じる</button>
   </div>
   <div id="preview-container">
@@ -371,16 +221,16 @@
     💡 ピンチズームで拡大・縮小できます ｜ 暗い場合は照明を確保してください
   </div>
 </div>
-  
+
 <div class="lang-bar">
  <button type="button" id="btn-lang-ja" class="lang-btn active" onclick="switchLanguage('ja')">🇯🇵 日本語</button>
  <button type="button" id="btn-lang-id" class="lang-btn" onclick="switchLanguage('id')">🇮🇩 Indo</button>
  <button type="button" id="btn-lang-pt" class="lang-btn" onclick="switchLanguage('pt')">🇧🇷 Port</button>
 </div>
-  
+
 <div class="container">
  <h2 id="uiMainHeader">順送プレス加工実績入力</h2>
-   
+
 <form id="pressForm" onkeydown="return event.key != 'Enter';">
  <div class="form-group">
  <label class="field-label" id="lblWorker" for="worker">作業者</label>
@@ -388,7 +238,7 @@
  <option value="">選択してください</option>
  </select>
  </div>
-  
+
  <div class="form-group">
  <label class="field-label" id="lblMachine" for="machine">使用する機械</label>
  <select id="machine" required onchange="moveToNextField('coilNo')">
@@ -398,7 +248,7 @@
  <option value="順送【200ｔ】">順送【200ｔ】</option>
  </select>
  </div>
-  
+
  <div class="form-group">
  <label class="field-label" id="lblCoilNo" for="coilNo">コイルNo</label>
  <div class="inline-input-group">
@@ -408,7 +258,7 @@
  </div>
  <datalist id="coilHistoryOptions"></datalist>
  </div>
-  
+
  <div id="dynamic-area" class="hidden">
  <div class="form-group">
  <label class="field-label" id="lblProductName" for="productName">該当品名</label>
@@ -416,7 +266,7 @@
  </select>
  <div id="defectWarning" class="defect-warning-box"></div>
  </div>
-  
+
  <div class="form-group">
  <label class="field-label" id="lblMeasured" for="measured">
  実寸計測値 (mm) <span id="masterTargetDisplay" class="target-val"></span>
@@ -424,21 +274,21 @@
  <input type="number" id="measured" step="0.1" required placeholder="0.0" oninput="checkMeasuredValue()">
  <div id="judgeResult" class="judge-box"></div>
  </div>
-  
+
  <div id="quantity-field" class="form-group hidden">
  <label class="field-label" id="lblQuantity" for="quantity">加工数量 (個数) 【※今回の送信で加工終了となります】</label>
  <input type="number" id="quantity">
  </div>
-  
+
  <button type="submit" id="submitBtn" class="submit-btn">実績を送信</button>
  </div>
  </form>
-  
+
  <div id="message"></div>
 </div>
-  
+
 <div class="history-container">
- <div class="history-title" id="uiHistoryTitle">直近20件性品名別加工履歴</div>
+ <div class="history-title" id="uiHistoryTitle">直近20件の品名別加工履歴</div>
  <div id="historyList" class="history-list">
  <div style="text-align:center;color:#666;padding:20px;" id="uiHistoryLoading">履歴データを読み込み中...</div>
  </div>
@@ -472,7 +322,7 @@
     <button class="control-btn" style="background: #64748b; width: 100%; margin-top: 15px; padding: 16px; font-size: 1.1rem; border-radius: 12px;" onclick="closeChokoteiModal()">キャンセル</button>
   </div>
 </div>
-  
+
 <script>
  const LANG_DATA = {
  ja: {
@@ -495,7 +345,7 @@
  historyLoading: "履歴データを読み込み中...",
  noHistory: "履歴データがまだありません。",
  commError: "通信エラーが発生しました。",
- historyCommError: "履歴の通信エラーが発生しました",
+ historyCommError: "履歴の読み込みでエラーが発生しました",
  checkingStock: "在庫データを照合中...",
  saving: "実績ログへ書き込み中...",
  ok: "判定：OK",
@@ -529,7 +379,7 @@
  historyLoading: "Memuat data riwayat...",
  noHistory: "Belum ada data riwayat.",
  commError: "Terjadi kesalahan komunikasi.",
- historyCommError: "Kesalahan komunikasi data riwayat",
+ historyCommError: "Terjadi kesalahan saat memuat riwayat",
  checkingStock: "Memeriksa data stok...",
  saving: "Menyimpan ke log hasil...",
  ok: "Penilaian: OK",
@@ -563,12 +413,12 @@
  historyLoading: "Carregando dados do histórico...",
  noHistory: "Nenhum dado de histórico disponível.",
  commError: "Ocorreu um erro de comunicação.",
- historyCommError: "Erro de comunicação no histórico",
+ historyCommError: "Erro ao carregar o histórico",
  checkingStock: "Verificando dados de estoque...",
  saving: "Gravando no log de resultados...",
  ok: "Resultado: OK",
  ng: "Resultado: NG (Fora da faixa)",
- successSaved: "Registrado e updated com sucesso no log de resultados!",
+ successSaved: "Registrado e atualizado com sucesso no log de resultados!",
  saveError: "Erro ao salvar: ",
  lockError: "Erro de Entrada: O processamento do produto \"{prod}\" nesta bobina já foi totalmente concluído até a etapa [Fim]. Não é permitido registrar novamente.",
  defectTitle: "⚠️ Histórico de Defeitos / Pontos de Atenção",
@@ -578,27 +428,40 @@
  scanMsg: "Escaneando... Alinhe a linha vermelha com o código de barras"
  }
  };
-  
- let currentLang = 'ja'; 
- let currentProducts = []; 
- let targetValue = null; 
- let nextStage = '始'; 
- let fullHistoryLogs = []; 
- let rawWorkers = []; 
- 
- // カメラ制御用グローバル変数
+
+ let currentLang = 'ja';
+ let currentProducts = [];
+ let targetValue = null;
+ let nextStage = '始';
+ let fullHistoryLogs = [];
+ let rawWorkers = [];
+
+ // カメラ制御用
  let barcodeMatchCount = 0;
  let lastBarcode = "";
  let quaggaInitialized = false;
- let currentZoom = 1;
- let currentBrightness = 0;
- let autoFocusEnabled = true;
- let videoElement = null;
+ let nativeStream = null;
+ let nativeTimer = null;
+ let scanSession = 0;
+ let torchOn = false;
+ const REQUIRED_MATCHES = 2; // 同じ値を連続で読めたら確定
 
- // チョコ停モーダル用変数
+ // チョコ停モーダル用
  let currentChokoCoilNo = '';
  let currentChokoProductName = '';
-  
+
+ const MACHINES = ["順送【80ｔ】", "順送【110ｔ】", "順送【200ｔ】"];
+
+ // ==========================================
+ // エスケープ関数（onclick内の文字列・HTML表示用）
+ // ==========================================
+ // HTMLの表示用
+ const escHtml = s => String(s ?? '')
+   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+   .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+ // onclick="fn('...')" 内のJS文字列用（JSエスケープ後にHTMLエスケープ）
+ const escJs = s => escHtml(String(s ?? '').replace(/\\/g, '\\\\').replace(/'/g, "\\'"));
+
  // ==========================================
  // API通信
  // ==========================================
@@ -612,10 +475,10 @@
        body: JSON.stringify({ action: action, ...payload })
      });
      const data = await response.json();
-     if (data.error) throw new Error(data.error);
+     if (data && data.error) throw new Error(data.error);
      return data;
    } catch (error) {
-     console.error('API Error:', error);
+     console.error('API Error [' + action + ']:', error);
      throw error;
    }
  }
@@ -628,74 +491,181 @@
    const scanStatus = document.getElementById('scanStatus');
    scannerOverlay.style.display = 'flex';
    scanStatus.innerText = LANG_DATA[currentLang].scanMsg || "スキャン中...";
-   
+   document.getElementById('torchBtn').style.display = 'none';
+   torchOn = false;
+   scanSession++;
    barcodeMatchCount = 0;
    lastBarcode = "";
    quaggaInitialized = false;
 
+   if ('BarcodeDetector' in window) {
+     startNativeScan(scanSession);
+   } else {
+     startQuaggaScan();
+   }
+ }
+
+ // 読み取り確定時の共通処理
+ function handleBarcodeFound(raw) {
+   let code = String(raw || '').trim();
+   if (!code) return;
+   code = (code.replace(/^0+(?=.)/, '') || code).toUpperCase();
+   if (code === lastBarcode) barcodeMatchCount++;
+   else { lastBarcode = code; barcodeMatchCount = 1; }
+
+   if (barcodeMatchCount >= REQUIRED_MATCHES) {
+     if (navigator.vibrate) navigator.vibrate(60);
+     document.getElementById('coilNo').value = code;
+     stopBarcodeScanning();
+     setTimeout(() => onCoilDetermined(), 200);
+   } else {
+     document.getElementById('scanStatus').innerText =
+       `${LANG_DATA[currentLang].scanMsg || "スキャン中..."} (${barcodeMatchCount}/${REQUIRED_MATCHES})`;
+   }
+ }
+
+ // --- 高速版：ブラウザ標準のBarcodeDetector（Android Chrome等） ---
+ async function startNativeScan(session) {
+   const scanStatus = document.getElementById('scanStatus');
+   try {
+     let formats = ['code_128', 'code_39', 'ean_13', 'ean_8', 'itf'];
+     if (BarcodeDetector.getSupportedFormats) {
+       const sup = await BarcodeDetector.getSupportedFormats();
+       formats = formats.filter(f => sup.includes(f));
+     }
+     if (formats.length === 0) throw new Error('no formats');
+     const detector = new BarcodeDetector({ formats });
+
+     nativeStream = await navigator.mediaDevices.getUserMedia({
+       video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1080 } },
+       audio: false
+     });
+     if (session !== scanSession) { stopNativeStream(); return; }
+
+     const video = document.createElement('video');
+     video.setAttribute('playsinline', '');
+     video.muted = true;
+     video.srcObject = nativeStream;
+     const preview = document.getElementById('preview');
+     preview.innerHTML = '';
+     preview.appendChild(video);
+     await video.play();
+     setupTrackExtras();
+
+     const loop = async () => {
+       if (session !== scanSession) return;
+       try {
+         if (video.readyState >= 2) {
+           const results = await detector.detect(video);
+           if (results.length > 0 && session === scanSession) handleBarcodeFound(results[0].rawValue);
+         }
+       } catch (e) { /* フレーム単位のエラーは無視 */ }
+       if (session === scanSession) nativeTimer = setTimeout(loop, 50);
+     };
+     loop();
+   } catch (err) {
+     console.warn('Native scan failed, fallback to Quagga:', err);
+     stopNativeStream();
+     if (session === scanSession) startQuaggaScan();
+   }
+ }
+
+ function stopNativeStream() {
+   if (nativeTimer) { clearTimeout(nativeTimer); nativeTimer = null; }
+   if (nativeStream) { nativeStream.getTracks().forEach(t => t.stop()); nativeStream = null; }
+ }
+
+ // --- 互換版：Quagga（iPad/iPhone Safari等）精度・速度を調整 ---
+ function startQuaggaScan() {
+   const scanStatus = document.getElementById('scanStatus');
+   document.getElementById('preview').innerHTML = '';
    Quagga.init({
      inputStream: {
        name: "Live",
        type: "LiveStream",
        target: document.querySelector('#preview'),
        constraints: {
-         width: { ideal: 640 }, 
-         height: { ideal: 480 },
-         facingMode: "environment",
-         focusMode: "continuous"
-       }
+         width: { ideal: 1280 },
+         height: { ideal: 720 },
+         facingMode: "environment"
+       },
+       // ガイド枠付近だけを解析して高速化
+       area: { top: "20%", right: "5%", left: "5%", bottom: "20%" }
      },
-     locator: {
-       patchSize: "medium",
-       halfSample: false
-     },
-     frequency: 10,
+     locator: { patchSize: "medium", halfSample: true },
+     numOfWorkers: Math.min(navigator.hardwareConcurrency || 2, 4),
+     frequency: 30,
      decoder: {
-       readers: ["code_128_reader", "ean_reader", "code_39_reader"]
-     }
+       readers: ["code_128_reader", "ean_reader", "code_39_reader"],
+       multiple: false
+     },
+     locate: true
    }, function(err) {
      if (err) {
        console.error('Quagga init error:', err);
        scanStatus.innerText = "カメラの起動に失敗しました。権限を確認してください。";
        return;
      }
-  
      Quagga.start();
      quaggaInitialized = true;
+     setupTrackExtras();
      scanStatus.innerText = LANG_DATA[currentLang].scanMsg || "スキャン中...";
    });
-   Quagga.onDetected(function(data) {
-     if (!quaggaInitialized || !data.codeResult) return;
-     
-     let code = data.codeResult.code;
-     if (!code) return;
-     
-     code = code.replace(/^0+(?=.)/,'') || code;
-     code = code.toUpperCase();
-     
-     if (code === lastBarcode) {
-       barcodeMatchCount++;
-     } else {
-       lastBarcode = code;
-       barcodeMatchCount = 1;
-     }
 
-     if (barcodeMatchCount >= 3) {
-       document.getElementById('coilNo').value = code;
-       stopBarcodeScanning();
-       setTimeout(() => onCoilDetermined(), 500);
-     } else {
-       document.getElementById('scanStatus').innerText = 
-         `${LANG_DATA[currentLang].scanMsg || "スキャン中..."} (${barcodeMatchCount}/3)`;
+   Quagga.offDetected();
+   Quagga.onDetected(function(data) {
+     if (!quaggaInitialized || !data.codeResult || !data.codeResult.code) return;
+     // 読み取り誤差が大きい結果は捨てる（誤読防止）
+     const errs = (data.codeResult.decodedCodes || [])
+       .filter(c => c.error !== undefined).map(c => c.error);
+     if (errs.length) {
+       const avg = errs.reduce((a, b) => a + b, 0) / errs.length;
+       if (avg > 0.12) return;
      }
+     handleBarcodeFound(data.codeResult.code);
    });
  }
 
+ // --- ピント連続AF・ライト（対応端末のみ） ---
+ function getActiveTrack() {
+   try {
+     if (nativeStream) return nativeStream.getVideoTracks()[0];
+     return Quagga.CameraAccess.getActiveTrack();
+   } catch (e) { return null; }
+ }
+
+ async function setupTrackExtras() {
+   const track = getActiveTrack();
+   if (!track || !track.getCapabilities) return;
+   const caps = track.getCapabilities();
+   try {
+     if (caps.focusMode && caps.focusMode.includes('continuous')) {
+       await track.applyConstraints({ advanced: [{ focusMode: 'continuous' }] });
+     }
+   } catch (e) {}
+   if (caps.torch) document.getElementById('torchBtn').style.display = 'block';
+ }
+
+ async function toggleTorch() {
+   const track = getActiveTrack();
+   if (!track) return;
+   try {
+     torchOn = !torchOn;
+     await track.applyConstraints({ advanced: [{ torch: torchOn }] });
+     document.getElementById('torchBtn').textContent = torchOn ? '💡 ライトOFF' : '💡 ライトON';
+   } catch (e) { torchOn = !torchOn; }
+ }
+
  function stopBarcodeScanning() {
+   scanSession++;
+   stopNativeStream();
    try {
      Quagga.stop();
      Quagga.offDetected();
-   } catch(e) {}
+   } catch (e) {}
+   document.getElementById('preview').innerHTML = '';
+   document.getElementById('torchBtn').style.display = 'none';
+   document.getElementById('torchBtn').textContent = '💡 ライトON';
    document.getElementById('scannerOverlay').style.display = 'none';
    quaggaInitialized = false;
  }
@@ -703,81 +673,82 @@
  // ==========================================
  // アプリケーションロジック
  // ==========================================
- window.onload = async function() { 
-   initStaticLabels(); 
-   loadWorkerList(); 
-   loadRecentHistory(); 
-   refreshCoilSupportList(); 
+ window.onload = async function() {
+   initStaticLabels();
+   loadWorkerList();
+   loadRecentHistory();
+   refreshCoilSupportList();
  };
- function initStaticLabels() { 
-   const lang = LANG_DATA[currentLang]; 
-   document.title = lang.title; 
-   document.getElementById('pageTitle').textContent = lang.title; 
+
+ function initStaticLabels() {
+   const lang = LANG_DATA[currentLang];
+   document.title = lang.title;
+   document.getElementById('pageTitle').textContent = lang.title;
    document.getElementById('uiMainHeader').textContent = lang.title;
-   document.getElementById('lblWorker').textContent = lang.worker; 
-   document.getElementById('lblMachine').textContent = lang.machine; 
-   document.getElementById('lblCoilNo').textContent = lang.coilNo; 
-   document.getElementById('btnConfirm').textContent = lang.confirm; 
+   document.getElementById('lblWorker').textContent = lang.worker;
+   document.getElementById('lblMachine').textContent = lang.machine;
+   document.getElementById('lblCoilNo').textContent = lang.coilNo;
+   document.getElementById('btnConfirm').textContent = lang.confirm;
    document.getElementById('lblProductName').textContent = lang.productName;
-   document.getElementById('lblMeasured').childNodes[0].textContent = lang.measured + " "; 
+   document.getElementById('lblMeasured').childNodes[0].textContent = lang.measured + " ";
    document.getElementById('lblQuantity').textContent = lang.quantity;
    document.getElementById('submitBtn').textContent = lang.submit;
-   document.getElementById('uiHistoryTitle').textContent = lang.historyTitle; 
+   document.getElementById('uiHistoryTitle').textContent = lang.historyTitle;
    document.getElementById('coilNo').placeholder = lang.coilPlaceholder;
-   document.getElementById('quantity').placeholder = lang.qtyPlaceholder; 
-   document.getElementById('uiWarningTitle').textContent = lang.warnTitle; 
+   document.getElementById('quantity').placeholder = lang.qtyPlaceholder;
+   document.getElementById('uiWarningTitle').textContent = lang.warnTitle;
    document.getElementById('uiWarningBody').innerHTML = lang.warnBody;
    document.getElementById('btnWarningClose').textContent = lang.warnClose;
    const optMachine = document.getElementById('optMachineDefault');
-   if (optMachine) optMachine.textContent = lang.selectPlease; 
+   if (optMachine) optMachine.textContent = lang.selectPlease;
    renderWorkerDropdown();
- } 
-  
- function renderWorkerDropdown() { 
+ }
+
+ function renderWorkerDropdown() {
    const select = document.getElementById('worker');
-   if (!select) return; 
+   if (!select) return;
    const currentSelectedValue = select.value;
-   select.innerHTML = ''; 
-   const firstOpt = document.createElement('option'); 
-   firstOpt.value = ""; 
+   select.innerHTML = '';
+   const firstOpt = document.createElement('option');
+   firstOpt.value = "";
    firstOpt.textContent = LANG_DATA[currentLang].selectPlease;
    select.appendChild(firstOpt);
-   rawWorkers.forEach(name => { 
-     const opt = document.createElement('option'); 
-     opt.value = name; 
-     opt.textContent = name; 
-     select.appendChild(opt); 
+   rawWorkers.forEach(name => {
+     const opt = document.createElement('option');
+     opt.value = name;
+     opt.textContent = name;
+     select.appendChild(opt);
    });
-   select.value = currentSelectedValue; 
- } 
-  
- function switchLanguage(langCode) { 
-   currentLang = langCode; 
+   select.value = currentSelectedValue;
+ }
+
+ function switchLanguage(langCode) {
+   currentLang = langCode;
    document.querySelectorAll('.lang-bar .lang-btn').forEach(btn => btn.classList.remove('active'));
-   const targetBtn = document.getElementById('btn-lang-' + langCode); 
-   if (targetBtn) targetBtn.classList.add('active'); 
-   initStaticLabels(); 
-   if(document.getElementById('productName').value) onProductChanged();
+   const targetBtn = document.getElementById('btn-lang-' + langCode);
+   if (targetBtn) targetBtn.classList.add('active');
+   initStaticLabels();
+   if (document.getElementById('productName').value) onProductChanged();
    checkMeasuredValue();
- } 
-  
- async function loadWorkerList() { 
+ }
+
+ async function loadWorkerList() {
    try {
      const workers = await callGAS('getWorkers');
-     rawWorkers = workers || []; 
-     renderWorkerDropdown(); 
-   } catch(e) {
+     rawWorkers = Array.isArray(workers) ? workers : [];
+     renderWorkerDropdown();
+   } catch (e) {
      console.error("Worker load error:", e);
    }
- } 
+ }
 
  async function refreshCoilSupportList() {
    try {
      const coilList = await callGAS('getActiveCoils');
      const incompleteLogs = fullHistoryLogs.filter(log => !log.end);
      const incompleteCoils = [...new Set(incompleteLogs.map(log => log.coilNo))];
-     const allCoils = [...new Set([...(coilList || []), ...incompleteCoils])].sort();
-     
+     const allCoils = [...new Set([...(Array.isArray(coilList) ? coilList : []), ...incompleteCoils])].sort();
+
      const datalist = document.getElementById('coilHistoryOptions');
      if (!datalist) return;
      datalist.innerHTML = '';
@@ -787,226 +758,208 @@
        option.textContent = coilNo;
        datalist.appendChild(option);
      });
-   } catch(e) {
+   } catch (e) {
      console.error("Coil support list error:", e);
    }
  }
-  
- function closeGlobalWarning() { 
+
+ function closeGlobalWarning() {
    document.getElementById('globalWarningOverlay').style.display = 'none';
- } 
-  
- async function loadRecentHistory() { 
-   const historyListDiv = document.getElementById('historyList'); 
+ }
+
+ // ------------------------------------------
+ // 履歴：1ステージ分の行HTMLを生成
+ // ------------------------------------------
+ function renderStageRow(idx, stage, icon, d, log, withQty) {
+   const workerOpts = rawWorkers.map(w =>
+     `<option value="${escHtml(w)}" ${w === d.worker ? 'selected' : ''}>${escHtml(w)}</option>`).join('');
+   const machineOpts = MACHINES.map(m =>
+     `<option value="${escHtml(m)}" ${m === log.machine ? 'selected' : ''}>${escHtml(m)}</option>`).join('');
+   const measuredNum = parseFloat(d.measured);
+   const measuredLabel = isNaN(measuredNum) ? '-' : measuredNum.toFixed(1) + 'mm';
+   const coilArg = escJs(log.coilNo);
+   const prodArg = escJs(log.productName);
+
+   return `
+   <div class="timeline-row" id="row-${idx}-${stage}">
+     <span class="stage-label lbl-${stage}">${icon} ${stage}</span>
+     <div class="stage-details" id="view-${idx}-${stage}" style="display:flex; flex:1; align-items:center;">
+       <span>👤 ${escHtml(d.worker)} &nbsp;📐 ${measuredLabel}</span>
+       <button type="button" class="edit-link" onclick="toggleInlineEdit(${idx}, '${stage}', true)">✏️ 修正</button>
+     </div>
+     <div class="stage-edit-form" id="form-${idx}-${stage}">
+       <select id="edit-machine-${idx}-${stage}">${machineOpts}</select>
+       <select id="edit-worker-${idx}-${stage}">${workerOpts}</select>
+       <input type="number" id="edit-measured-${idx}-${stage}" step="0.1" value="${escHtml(d.measured || '')}">mm
+       ${withQty ? `<input type="number" id="edit-qty-${idx}-${stage}" value="${escHtml(d.qty || '')}" placeholder="数量">個` : ''}
+       <button type="button" class="control-btn" style="padding:2px 6px; font-size:0.75rem; background:#10b981;" onclick="submitInlineEdit(${idx}, '${stage}', '${coilArg}', '${prodArg}')">保存</button>
+       <button type="button" class="control-btn" style="padding:2px 6px; font-size:0.75rem; background:#64748b;" onclick="toggleInlineEdit(${idx}, '${stage}', false)">×</button>
+     </div>
+     <span class="stage-time" id="time-${idx}-${stage}" style="margin-left:8px;">${escHtml(d.time)}</span>
+   </div>`;
+ }
+
+ async function loadRecentHistory() {
+   const historyListDiv = document.getElementById('historyList');
    const historyLoadingEl = document.getElementById('uiHistoryLoading');
-   if (historyLoadingEl) historyLoadingEl.textContent = LANG_DATA[currentLang].historyLoading; 
-  
+   if (historyLoadingEl) historyLoadingEl.textContent = LANG_DATA[currentLang].historyLoading;
+
    try {
      const logs = await callGAS('getHistory');
-     fullHistoryLogs = logs || []; 
-     const hasWarning = fullHistoryLogs.some(log => log.isWarning); 
+     fullHistoryLogs = Array.isArray(logs) ? logs : [];
+     const hasWarning = fullHistoryLogs.some(log => log.isWarning);
      if (hasWarning) document.getElementById('globalWarningOverlay').style.display = 'flex';
-     if(fullHistoryLogs.length === 0) { 
-       historyListDiv.innerHTML = `<div style="text-align:center;color:#666;padding:20px;">${LANG_DATA[currentLang].noHistory}</div>`; 
+
+     if (fullHistoryLogs.length === 0) {
+       historyListDiv.innerHTML = `<div style="text-align:center;color:#666;padding:20px;">${LANG_DATA[currentLang].noHistory}</div>`;
        refreshCoilSupportList();
        return;
-     } 
-       
+     }
+
      let html = '';
-     const displayLogs = fullHistoryLogs.slice(0, 20); 
+     const displayLogs = fullHistoryLogs.slice(0, 20);
 
-     // ドロップダウン用の文字列生成
-     const makeWorkerOptions = (current) => {
-       return rawWorkers.map(w => `<option value="${w}" ${w === current ? 'selected' : ''}>${w}</option>`).join('');
-     };
-     // 機械名ドロップダウン用の文字列生成
-     const makeMachineOptions = (current) => {
-       const machines = ["順送【80ｔ】", "順送【110ｔ】", "順送【200ｔ】"];
-       return machines.map(m => `<option value="${m}" ${m === current ? 'selected' : ''}>${m}</option>`).join('');
-     };
-     
-     displayLogs.forEach((log, idx) => { 
-       let timelineHtml = ''; 
-       let finalQty = ''; 
-       const isEndReached = !!(log.end); 
-       
-       // --- 修正箇所: チョコ停の有無でクラスを切り替え ---
-       const hasChoko = (log.chokoReason && log.chokoReason !== '');
-       const cardClassBase = isEndReached ? 'history-card' : 'history-card is-incomplete'; 
-       const cardClass = hasChoko ? `${cardClassBase} has-chokotei` : cardClassBase;
-        
-       if(log.start) { 
-         timelineHtml += `
-         <div class="timeline-row" id="row-${idx}-始">
-           <span class="stage-label lbl-始">▶ 始</span>
-           <div class="stage-details" id="view-${idx}-始" style="display:flex; flex:1; align-items:center;">
-             <span>👤 ${log.start.worker} &nbsp;📐 ${log.start.measured ? parseFloat(log.start.measured).toFixed(1)+'mm' : '-'}</span>
-             <button type="button" style="margin-left:auto; background:none; border:none; color:var(--accent-color); cursor:pointer; font-size:0.85rem; padding:0; font-weight:bold;" onclick="toggleInlineEdit(${idx}, '始', true)">✏️ 修正</button>
-           </div>
-           <div class="stage-edit-form" id="form-${idx}-始" style="display:none; flex:1; margin-left:14px; gap:6px; align-items:center; flex-wrap:wrap;">
-             <select id="edit-machine-${idx}-始" style="width:auto; padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color); border-radius:4px;">${makeMachineOptions(log.machine)}</select>
-             <select id="edit-worker-${idx}-始" style="width:auto; padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color); border-radius:4px;">${makeWorkerOptions(log.start.worker)}</select>
-             <input type="number" id="edit-measured-${idx}-始" step="0.1" value="${log.start.measured || ''}" style="width:55px; padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color); border-radius:4px;">mm
-             <button type="button" class="control-btn" style="padding:2px 6px; font-size:0.75rem; background:#10b981;" onclick="submitInlineEdit(${idx}, '始', '${log.coilNo}', '${log.productName}')">保存</button>
-             <button type="button" class="control-btn" style="padding:2px 6px; font-size:0.75rem; background:#64748b;" onclick="toggleInlineEdit(${idx}, '始', false)">×</button>
-           </div>
-           <span class="stage-time" id="time-${idx}-始" style="margin-left:8px;">${log.start.time}</span>
-         </div>`; 
-       } 
-       if(log.middle) { 
-         timelineHtml += `
-         <div class="timeline-row" id="row-${idx}-中">
-           <span class="stage-label lbl-中">🔄 中</span>
-           <div class="stage-details" id="view-${idx}-中" style="display:flex; flex:1; align-items:center;">
-             <span>👤 ${log.middle.worker} &nbsp;📐 ${log.middle.measured ? parseFloat(log.middle.measured).toFixed(1)+'mm' : '-'}</span>
-             <button type="button" style="margin-left:auto; background:none; border:none; color:var(--accent-color); cursor:pointer; font-size:0.85rem; padding:0; font-weight:bold;" onclick="toggleInlineEdit(${idx}, '中', true)">✏️ 修正</button>
-           </div>
-           <div class="stage-edit-form" id="form-${idx}-中" style="display:none; flex:1; margin-left:14px; gap:6px; align-items:center; flex-wrap:wrap;">
-             <select id="edit-machine-${idx}-中" style="width:auto; padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color); border-radius:4px;">${makeMachineOptions(log.machine)}</select>
-             <select id="edit-worker-${idx}-中" style="width:auto; padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color); border-radius:4px;">${makeWorkerOptions(log.middle.worker)}</select>
-             <input type="number" id="edit-measured-${idx}-中" step="0.1" value="${log.middle.measured || ''}" style="width:55px; padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color); border-radius:4px;">mm
-             <button type="button" class="control-btn" style="padding:2px 6px; font-size:0.75rem; background:#10b981;" onclick="submitInlineEdit(${idx}, '中', '${log.coilNo}', '${log.productName}')">保存</button>
-             <button type="button" class="control-btn" style="padding:2px 6px; font-size:0.75rem; background:#64748b;" onclick="toggleInlineEdit(${idx}, '中', false)">×</button>
-           </div>
-           <span class="stage-time" id="time-${idx}-中" style="margin-left:8px;">${log.middle.time}</span>
-         </div>`; 
-       } 
-       if(log.end) { 
-         timelineHtml += `
-         <div class="timeline-row" id="row-${idx}-終">
-           <span class="stage-label lbl-終">■ 終</span>
-           <div class="stage-details" id="view-${idx}-終" style="display:flex; flex:1; align-items:center;">
-             <span>👤 ${log.end.worker} &nbsp;📐 ${log.end.measured ? parseFloat(log.end.measured).toFixed(1)+'mm' : '-'}</span>
-             <button type="button" style="margin-left:auto; background:none; border:none; color:var(--accent-color); cursor:pointer; font-size:0.85rem; padding:0; font-weight:bold;" onclick="toggleInlineEdit(${idx}, '終', true)">✏️ 修正</button>
-           </div>
-           <div class="stage-edit-form" id="form-${idx}-終" style="display:none; flex:1; margin-left:14px; gap:6px; align-items:center; flex-wrap:wrap;">
-             <select id="edit-machine-${idx}-終" style="width:auto; padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color); border-radius:4px;">${makeMachineOptions(log.machine)}</select>
-             <select id="edit-worker-${idx}-終" style="width:auto; padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color); border-radius:4px;">${makeWorkerOptions(log.end.worker)}</select>
-             <input type="number" id="edit-measured-${idx}-終" step="0.1" value="${log.end.measured || ''}" style="width:55px; padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color); border-radius:4px;">mm
-             <input type="number" id="edit-qty-${idx}-終" value="${log.end.qty || ''}" placeholder="数量" style="width:55px; padding:2px 4px; font-size:0.85rem; background:var(--input-bg); color:#fff; border:1px solid var(--border-color); border-radius:4px;">個
-             <button type="button" class="control-btn" style="padding:2px 6px; font-size:0.75rem; background:#10b981;" onclick="submitInlineEdit(${idx}, '終', '${log.coilNo}', '${log.productName}')">保存</button>
-             <button type="button" class="control-btn" style="padding:2px 6px; font-size:0.75rem; background:#64748b;" onclick="toggleInlineEdit(${idx}, '終', false)">×</button>
-           </div>
-           <span class="stage-time" id="time-${idx}-終" style="margin-left:8px;">${log.end.time}</span>
-         </div>`; 
-         if(log.end.qty) finalQty = `<div class="qty-display-box" id="qty-display-${idx}">📦 Qty: ${log.end.qty}</div>`;
-       } 
+     displayLogs.forEach((log, idx) => {
+       try {
+         let timelineHtml = '';
+         let finalQty = '';
+         const isEndReached = !!(log.end);
+         const hasChoko = !!(log.chokoReason && log.chokoReason !== '');
+         const cardClassBase = isEndReached ? 'history-card' : 'history-card is-incomplete';
+         const cardClass = hasChoko ? `${cardClassBase} has-chokotei` : cardClassBase;
 
-       html += `
-       <div class="${cardClass}">
-         <div class="card-top">
-           <div class="card-coil-title">Coil No: ${log.coilNo}</div>
-           <div class="card-meta-info">
-             <span>Product: <b>${log.productName}</b></span>
-             <span>Machine: <b>${log.machine}</b></span>
+         if (log.start) timelineHtml += renderStageRow(idx, '始', '▶', log.start, log, false);
+         if (log.middle) timelineHtml += renderStageRow(idx, '中', '🔄', log.middle, log, false);
+         if (log.end) {
+           timelineHtml += renderStageRow(idx, '終', '■', log.end, log, true);
+           if (log.end.qty) finalQty = `<div class="qty-display-box" id="qty-display-${idx}">📦 Qty: ${escHtml(log.end.qty)}</div>`;
+         }
+
+         let chokoHtml = '';
+         if (hasChoko) {
+           chokoHtml = `<div class="choko-info">⚠️ ${escHtml(log.chokoReason)} ／ 廃棄: ${escHtml(log.wasteQty || 0)}個 ／ 箱チェック: ${log.boxCheck ? '完了' : '未'}${log.chokoTime ? ' ／ ' + escHtml(log.chokoTime) : ''}</div>`;
+         }
+
+         html += `
+         <div class="${cardClass}">
+           <div class="card-top">
+             <div class="card-coil-title">Coil No: ${escHtml(log.coilNo)}</div>
+             <div class="card-meta-info">
+               <span>Product: <b>${escHtml(log.productName)}</b></span>
+               <span>Machine: <b>${escHtml(log.machine)}</b></span>
+             </div>
            </div>
-         </div>
-         <div class="timeline-container">${timelineHtml}</div>
-         ${finalQty}
-         <button type="button" class="control-btn" style="width: 100%; margin-top:14px; background:#f59e0b; color: white;" onclick="openChokoteiModal('${log.coilNo}', '${log.productName}')">⚠️ チョコ停を記録</button>
-       </div>`;
-     }); 
-    
+           <div class="timeline-container">${timelineHtml}</div>
+           ${finalQty}
+           ${chokoHtml}
+           <button type="button" class="control-btn" style="width: 100%; margin-top:14px; background:#f59e0b; color: white;" onclick="openChokoteiModal('${escJs(log.coilNo)}', '${escJs(log.productName)}')">⚠️ チョコ停を記録</button>
+         </div>`;
+       } catch (cardErr) {
+         // 1件の描画エラーで全体が落ちないようにする
+         console.error('History card render error (idx=' + idx + '):', cardErr, log);
+       }
+     });
+
      historyListDiv.innerHTML = html;
-     
      refreshCoilSupportList();
-   } catch(err) {
-     historyListDiv.innerHTML = `<div style="text-align:center;color:#b71c1c;padding:20px;">${LANG_DATA[currentLang].historyCommError}</div>`;
+   } catch (err) {
+     console.error('loadRecentHistory error:', err);
+     historyListDiv.innerHTML = `<div style="text-align:center;color:#f87171;padding:20px;">${LANG_DATA[currentLang].historyCommError}<br><small style="color:#94a3b8;">${escHtml(err && err.message ? err.message : err)}</small></div>`;
    }
- } 
-  
- function moveToNextField(nextFieldId) { 
+ }
+
+ function moveToNextField(nextFieldId) {
    const nextField = document.getElementById(nextFieldId);
    if (nextField) setTimeout(() => { nextField.focus(); }, 100);
- } 
-  
- function showOverlay(text) { 
+ }
+
+ function showOverlay(text) {
    document.getElementById('overlayText').textContent = text;
    document.getElementById('loadingOverlay').classList.add('show');
- } 
-  
- function hideOverlay() { 
+ }
+
+ function hideOverlay() {
    document.getElementById('loadingOverlay').classList.remove('show');
- } 
-  
- async function onCoilDetermined() { 
+ }
+
+ async function onCoilDetermined() {
    const coilNo = document.getElementById('coilNo').value.trim();
    if (!coilNo) return;
-   const dynamicArea = document.getElementById('dynamic-area'); 
-   const msgDiv = document.getElementById('message'); 
-   showOverlay(LANG_DATA[currentLang].checkingStock); 
-   dynamicArea.classList.add('hidden'); 
-   msgDiv.style.display = 'none'; 
-   resetJudge(); 
+   const dynamicArea = document.getElementById('dynamic-area');
+   const msgDiv = document.getElementById('message');
+   showOverlay(LANG_DATA[currentLang].checkingStock);
+   dynamicArea.classList.add('hidden');
+   msgDiv.style.display = 'none';
+   resetJudge();
    document.getElementById('quantity-field').classList.add('hidden');
    document.getElementById('quantity').required = false;
    try {
      const res = await callGAS('getProducts', { coilNo: coilNo });
      hideOverlay();
-     if (res.success) { 
-       currentProducts = res.products || []; 
+     if (res.success) {
+       currentProducts = res.products || [];
        const pSelect = document.getElementById('productName');
-       pSelect.innerHTML = ''; 
-       if (currentProducts.length > 1) { 
+       pSelect.innerHTML = '';
+       if (currentProducts.length > 1) {
          const defaultOpt = document.createElement('option');
-         defaultOpt.value = ''; 
-         defaultOpt.textContent = LANG_DATA[currentLang].selectProduct; 
-         pSelect.appendChild(defaultOpt); 
-       } 
-       currentProducts.forEach(prod => { 
-         const opt = document.createElement('option'); 
-         opt.value = prod.name; 
-         opt.textContent = prod.name; 
-         pSelect.appendChild(opt); 
+         defaultOpt.value = '';
+         defaultOpt.textContent = LANG_DATA[currentLang].selectProduct;
+         pSelect.appendChild(defaultOpt);
+       }
+       currentProducts.forEach(prod => {
+         const opt = document.createElement('option');
+         opt.value = prod.name;
+         opt.textContent = prod.name;
+         pSelect.appendChild(opt);
        });
-       dynamicArea.classList.remove('hidden'); 
-       if (currentProducts.length === 1) onProductChanged(); 
-       else pSelect.focus(); 
-     } else { 
+       dynamicArea.classList.remove('hidden');
+       if (currentProducts.length === 1) onProductChanged();
+       else pSelect.focus();
+     } else {
        msgDiv.className = 'error';
-       msgDiv.textContent = res.msg; 
-       msgDiv.style.display = 'block'; 
-     } 
+       msgDiv.textContent = res.msg;
+       msgDiv.style.display = 'block';
+     }
    } catch (err) {
      hideOverlay();
-     msgDiv.className = 'error'; 
-     msgDiv.textContent = LANG_DATA[currentLang].commError; 
-     msgDiv.style.display = 'block'; 
+     msgDiv.className = 'error';
+     msgDiv.textContent = LANG_DATA[currentLang].commError;
+     msgDiv.style.display = 'block';
    }
- } 
-  
- function onProductChanged() { 
+ }
+
+ function onProductChanged() {
    const selectedName = document.getElementById('productName').value;
    const targetDisplay = document.getElementById('masterTargetDisplay');
-   const coilNo = document.getElementById('coilNo').value.trim(); 
-   const msgDiv = document.getElementById('message'); 
-   const submitBtn = document.getElementById('submitBtn'); 
+   const coilNo = document.getElementById('coilNo').value.trim();
+   const msgDiv = document.getElementById('message');
+   const submitBtn = document.getElementById('submitBtn');
    const defectDiv = document.getElementById('defectWarning');
    msgDiv.style.display = 'none';
-   submitBtn.disabled = false; 
-   defectDiv.style.display = 'none'; 
+   submitBtn.disabled = false;
+   defectDiv.style.display = 'none';
    defectDiv.innerHTML = '';
-   if (!selectedName) { 
-     targetValue = null; 
-     targetDisplay.textContent = ''; 
+   if (!selectedName) {
+     targetValue = null;
+     targetDisplay.textContent = '';
      resetJudge();
      return;
-   } 
+   }
    const matched = currentProducts.find(p => p.name === selectedName);
-   if (matched) { 
+   if (matched) {
      targetValue = parseFloat(matched.measured);
      const minOk = (targetValue - 0.8).toFixed(1);
-     const maxOk = (targetValue + 0.8).toFixed(1); 
+     const maxOk = (targetValue + 0.8).toFixed(1);
      targetDisplay.textContent = `（${LANG_DATA[currentLang].rangeText}: ${targetValue.toFixed(1)} / ${LANG_DATA[currentLang].okRange}: ${minOk}～${maxOk}）`;
-     if (matched.defect) { 
+     if (matched.defect) {
        const defectText = (typeof matched.defect === 'object') ?
-       (matched.defect[currentLang] || matched.defect['ja'] || '') : matched.defect; 
-       if (defectText.trim() !== "") { 
-         defectDiv.innerHTML = `<b>${LANG_DATA[currentLang].defectTitle}</b>${defectText}`;
+         (matched.defect[currentLang] || matched.defect['ja'] || '') : String(matched.defect);
+       if (defectText.trim() !== "") {
+         defectDiv.innerHTML = `<b>${LANG_DATA[currentLang].defectTitle}</b>${escHtml(defectText)}`;
          defectDiv.style.display = 'block';
-       } 
-     } 
-   } 
+       }
+     }
+   }
    const todayStr = new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/-/g, '/');
    let foundLog = fullHistoryLogs.find(l => {
      let logDateStr = '';
@@ -1015,129 +968,128 @@
      else if (l.end && l.end.time) logDateStr = l.end.time.split(' ')[0];
      return l.coilNo === coilNo && l.productName === selectedName && logDateStr === todayStr;
    });
-   if (foundLog) { 
-     if (foundLog.end) { 
+   if (foundLog) {
+     if (foundLog.end) {
        let lockMsg = LANG_DATA[currentLang].lockError.replace('{prod}', selectedName);
        msgDiv.className = 'error';
        msgDiv.innerHTML = lockMsg;
-       msgDiv.style.display = 'block'; 
-       submitBtn.disabled = true; 
-       return; 
+       msgDiv.style.display = 'block';
+       submitBtn.disabled = true;
+       return;
      } else if (foundLog.middle) nextStage = '終';
-     else if (foundLog.start) nextStage = '中'; 
+     else if (foundLog.start) nextStage = '中';
      else nextStage = '始';
-   } else { 
-     nextStage = '始'; 
-   } 
+   } else {
+     nextStage = '始';
+   }
    const qtyField = document.getElementById('quantity-field');
-   const qtyInput = document.getElementById('quantity'); 
-   if (nextStage === '終') { 
-     qtyField.classList.remove('hidden'); 
+   const qtyInput = document.getElementById('quantity');
+   if (nextStage === '終') {
+     qtyField.classList.remove('hidden');
      qtyInput.required = true;
-   } else { 
+   } else {
      qtyField.classList.add('hidden');
-     qtyInput.required = false; 
-   } 
-   document.getElementById('measured').focus(); 
+     qtyInput.required = false;
+   }
+   document.getElementById('measured').focus();
    checkMeasuredValue();
- } 
-  
- function checkMeasuredValue() { 
+ }
+
+ function checkMeasuredValue() {
    const inputValue = document.getElementById('measured').value.trim();
    const judgeBox = document.getElementById('judgeResult');
-   if (inputValue === '' || targetValue === null) { 
-     resetJudge(); 
+   if (inputValue === '' || targetValue === null) {
+     resetJudge();
      return;
-   } 
-   const currentInput = parseFloat(inputValue); 
-   const lowerLimit = targetValue - 0.8; 
+   }
+   const currentInput = parseFloat(inputValue);
+   const lowerLimit = targetValue - 0.8;
    const upperLimit = targetValue + 0.8;
-   if (currentInput >= lowerLimit && currentInput <= upperLimit) { 
+   if (currentInput >= lowerLimit && currentInput <= upperLimit) {
      judgeBox.textContent = LANG_DATA[currentLang].ok;
-     judgeBox.className = 'judge-box judge-ok'; 
+     judgeBox.className = 'judge-box judge-ok';
      judgeBox.style.display = 'block';
-   } else { 
+   } else {
      judgeBox.textContent = LANG_DATA[currentLang].ng;
-     judgeBox.className = 'judge-box judge-ng'; 
+     judgeBox.className = 'judge-box judge-ng';
      judgeBox.style.display = 'block';
-   } 
- } 
-  
- function resetJudge() { 
+   }
+ }
+
+ function resetJudge() {
    const judgeBox = document.getElementById('judgeResult');
-   if (judgeBox) { 
-     judgeBox.style.display = 'none'; 
+   if (judgeBox) {
+     judgeBox.style.display = 'none';
      judgeBox.textContent = '';
-   } 
- } 
-  
- document.getElementById('pressForm').addEventListener('submit', async function(e) { 
-   e.preventDefault(); 
+   }
+ }
+
+ document.getElementById('pressForm').addEventListener('submit', async function(e) {
+   e.preventDefault();
    const judgeBox = document.getElementById('judgeResult');
    if (judgeBox && judgeBox.classList.contains('judge-ng')) {
-       let alertMsg = "⚠️ 判定がNGのため、送信できません。\n数値を再度確認してください。";
-       if (currentLang === 'id') alertMsg = "⚠️ Penilaian NG, tidak dapat mengirim.\nSilakan periksa kembali nilainya.";
-       if (currentLang === 'pt') alertMsg = "⚠️ Resultado NG, não é possível enviar.\nPor favor, verifique o valor novamente.";
-       alert(alertMsg);
-       return; 
-  
+     let alertMsg = "⚠️ 判定がNGのため、送信できません。\n数値を再度確認してください。";
+     if (currentLang === 'id') alertMsg = "⚠️ Penilaian NG, tidak dapat mengirim.\nSilakan periksa kembali nilainya.";
+     if (currentLang === 'pt') alertMsg = "⚠️ Resultado NG, não é possível enviar.\nPor favor, verifique o valor novamente.";
+     alert(alertMsg);
+     return;
    }
-   const submitBtn = document.getElementById('submitBtn'); 
-   const msgDiv = document.getElementById('message'); 
-   submitBtn.disabled = true; 
-   msgDiv.style.display = 'none'; 
-   showOverlay(LANG_DATA[currentLang].saving); 
-   const logData = { 
-     coilNo: document.getElementById('coilNo').value.trim(), 
-     worker: document.getElementById('worker').value, 
-     machine: document.getElementById('machine').value, 
-     productName: document.getElementById('productName').value, 
-     measured: document.getElementById('measured').value, 
-     enforcedStage: nextStage, 
-     quantity: document.getElementById('quantity').value 
+   const submitBtn = document.getElementById('submitBtn');
+   const msgDiv = document.getElementById('message');
+   submitBtn.disabled = true;
+   msgDiv.style.display = 'none';
+   showOverlay(LANG_DATA[currentLang].saving);
+   const logData = {
+     coilNo: document.getElementById('coilNo').value.trim(),
+     worker: document.getElementById('worker').value,
+     machine: document.getElementById('machine').value,
+     productName: document.getElementById('productName').value,
+     measured: document.getElementById('measured').value,
+     enforcedStage: nextStage,
+     quantity: document.getElementById('quantity').value
    };
    try {
      const res = await callGAS('saveLog', { logData: logData });
-     hideOverlay(); 
+     hideOverlay();
      submitBtn.disabled = false;
-     msgDiv.className = 'success'; 
-     msgDiv.textContent = `【${res.type}】 ${LANG_DATA[currentLang].successSaved}`; 
-     msgDiv.style.display = 'block'; 
-     document.getElementById('coilNo').value = ''; 
-     document.getElementById('measured').value = ''; 
-     document.getElementById('quantity').value = ''; 
+     msgDiv.className = 'success';
+     msgDiv.textContent = `【${res.type}】 ${LANG_DATA[currentLang].successSaved}`;
+     msgDiv.style.display = 'block';
+     document.getElementById('coilNo').value = '';
+     document.getElementById('measured').value = '';
+     document.getElementById('quantity').value = '';
      document.getElementById('quantity-field').classList.add('hidden');
-     document.getElementById('quantity').required = false; 
-     document.getElementById('dynamic-area').classList.add('hidden'); 
-     currentProducts = []; 
-     targetValue = null; 
-     nextStage = '始'; 
-     document.getElementById('masterTargetDisplay').textContent = ''; 
-     resetJudge(); 
-     loadRecentHistory(); 
+     document.getElementById('quantity').required = false;
+     document.getElementById('dynamic-area').classList.add('hidden');
+     currentProducts = [];
+     targetValue = null;
+     nextStage = '始';
+     document.getElementById('masterTargetDisplay').textContent = '';
+     resetJudge();
+     loadRecentHistory();
      refreshCoilSupportList();
      document.getElementById('coilNo').focus();
-   } catch(err) {
+   } catch (err) {
      hideOverlay();
-     submitBtn.disabled = false; 
-     msgDiv.className = 'error'; 
+     submitBtn.disabled = false;
+     msgDiv.className = 'error';
      msgDiv.textContent = LANG_DATA[currentLang].saveError + err.message;
-     msgDiv.style.display = 'block'; 
+     msgDiv.style.display = 'block';
    }
  });
 
- // --- インライン直接編集用の切替および保存処理機能 ---
+ // --- インライン直接編集 ---
  function toggleInlineEdit(idx, stage, isEdit) {
    const viewEl = document.getElementById(`view-${idx}-${stage}`);
    const formEl = document.getElementById(`form-${idx}-${stage}`);
    const timeEl = document.getElementById(`time-${idx}-${stage}`);
    if (isEdit) {
      viewEl.style.display = 'none';
-     if(timeEl) timeEl.style.display = 'none';
+     if (timeEl) timeEl.style.display = 'none';
      formEl.style.display = 'flex';
    } else {
      viewEl.style.display = 'flex';
-     if(timeEl) timeEl.style.display = 'block';
+     if (timeEl) timeEl.style.display = 'block';
      formEl.style.display = 'none';
    }
  }
@@ -1161,31 +1113,31 @@
 
    const msgDiv = document.getElementById('message');
    showOverlay(LANG_DATA[currentLang].saving || "書き込み中...");
-   const logData = { 
-     coilNo: coilNo, 
-     worker: worker, 
-     machine: machine, 
-     productName: productName, 
-     measured: measured, 
-     enforcedStage: stage, 
-     quantity: quantity 
+   const logData = {
+     coilNo: coilNo,
+     worker: worker,
+     machine: machine,
+     productName: productName,
+     measured: measured,
+     enforcedStage: stage,
+     quantity: quantity
    };
    try {
      const res = await callGAS('saveLog', { logData: logData });
-     hideOverlay(); 
-     msgDiv.className = 'success';
-     msgDiv.textContent = `【${res.type}】修正内容を上書き保存しました！`; 
-     msgDiv.style.display = 'block'; 
-     loadRecentHistory(); 
-   } catch(err) {
      hideOverlay();
-     msgDiv.className = 'error'; 
+     msgDiv.className = 'success';
+     msgDiv.textContent = `【${res.type}】修正内容を上書き保存しました！`;
+     msgDiv.style.display = 'block';
+     loadRecentHistory();
+   } catch (err) {
+     hideOverlay();
+     msgDiv.className = 'error';
      msgDiv.textContent = (LANG_DATA[currentLang].saveError || "保存エラー: ") + err.message;
-     msgDiv.style.display = 'block'; 
+     msgDiv.style.display = 'block';
    }
  }
- 
- // --- 追加箇所：チョコ停用のモーダルおよび送信処理 ---
+
+ // --- チョコ停モーダルおよび送信処理 ---
  function openChokoteiModal(coilNo, productName) {
    currentChokoCoilNo = coilNo;
    currentChokoProductName = productName;
@@ -1215,9 +1167,9 @@
    const otherReason = document.getElementById('otherReason').value;
    const wasteQty = document.getElementById('wasteQty').value;
    const boxCheck = document.getElementById('boxCheck').checked;
-   
+
    const finalReason = (reasonSelect === 'その他') ? otherReason : reasonSelect;
-   
+
    if (reasonSelect === 'その他' && !finalReason.trim()) {
      alert("その他の理由を入力してください。");
      return;
@@ -1237,9 +1189,11 @@
    try {
      const res = await callGAS('saveChokotei', { logData: logData });
      hideOverlay();
-     if (res.error) throw new Error(res.error);
-     alert("チョコ停を記録しました");
-     loadRecentHistory(); 
+     // GAS側は { status, message } を返すので status で判定する
+     if (res && res.status === 'error') throw new Error(res.message || '保存に失敗しました');
+     if (res && res.status === 'mail_error') alert(res.message);
+     else alert("チョコ停を記録しました");
+     loadRecentHistory();
    } catch (e) {
      hideOverlay();
      alert("エラーが発生しました: " + (e.message || "通信エラー"));
