@@ -157,20 +157,22 @@
  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
  @keyframes pulse { 0% { opacity: 0.85; } 100% { opacity: 1; } }
 
- /* カメラ（iPad対応） */
- #scannerOverlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 99999; display: none; flex-direction: column; box-sizing: border-box; }
- #scannerHeader { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; background: #111; color: white; border-bottom: 2px solid #333; flex-shrink: 0; }
- #scannerHeader h3 { margin: 0; color: #58a6ff; font-size: 1rem; flex: 1; }
- #scannerHeader button { background: #ef4444; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; flex-shrink: 0; }
- #preview-container { flex: 1; position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center; background: #000; width: 100%; box-sizing: border-box; }
- #preview { width: 100%; max-width: 640px; aspect-ratio: 4 / 3; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); overflow: hidden; }
- #preview video { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 1; display: block; }
- #preview canvas.drawingBuffer { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 2; pointer-events: none; }
-
- #scan-guide { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 75%; max-width: 450px; height: auto; aspect-ratio: 3 / 1.5; border: 3px dashed #00ff00; border-radius: 8px; box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.2); z-index: 5; pointer-events: none; }
- #scan-line { position: absolute; top: 50%; left: 10%; width: 80%; height: 2px; background: #ff375f; box-shadow: 0 0 15px #ff375f; z-index: 10; animation: scanMotion 1.5s ease-in-out infinite alternate; pointer-events: none; }
- @keyframes scanMotion { 0% { transform: translateY(-70px); } 100% { transform: translateY(70px); } }
- #scanStatus { padding: 16px; text-align: center; background: #111; color: #f59e0b; font-weight: bold; font-size: 0.95rem; flex-shrink: 0; border-top: 1px solid #333; width: 100%; box-sizing: border-box; }
+ /* カメラ：全画面・縦積み固定（端末の向き/サイズによらず崩れない構造） */
+ body.scanner-open { overflow: hidden; }
+ #scannerOverlay { position: fixed; inset: 0; width: 100%; height: 100vh; height: 100dvh; background: #000; z-index: 99999; display: none; flex-direction: column; box-sizing: border-box; overflow: hidden; }
+ #scannerHeader { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top)); background: #111; color: white; border-bottom: 2px solid #333; flex: 0 0 auto; }
+ #scannerHeader h3 { margin: 0; color: #58a6ff; font-size: 1rem; flex: 1; min-width: 0; }
+ #scannerHeader button { background: #ef4444; color: white; border: none; padding: 10px 18px; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; flex: 0 0 auto; white-space: nowrap; }
+ #preview-container { flex: 1 1 auto; min-height: 0; position: relative; overflow: hidden; background: #000; width: 100%; }
+ #preview { position: absolute; inset: 0; width: 100%; height: 100%; overflow: hidden; }
+ #preview video { position: absolute !important; top: 0; left: 0; width: 100% !important; height: 100% !important; object-fit: cover; z-index: 1; display: block; transform: none !important; }
+ #preview canvas { display: none !important; }
+ #scan-guide { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80%; max-width: 480px; aspect-ratio: 2 / 1; max-height: 60%; border: 3px dashed #00ff00; border-radius: 8px; box-shadow: 0 0 0 9999px rgba(0,0,0,0.35), inset 0 0 10px rgba(0, 255, 0, 0.2); z-index: 5; pointer-events: none; overflow: hidden; }
+ #scan-line { position: absolute; left: 0; width: 100%; height: 2px; top: 10%; background: #ff375f; box-shadow: 0 0 15px #ff375f; animation: scanMotion 1.5s ease-in-out infinite alternate; }
+ @keyframes scanMotion { 0% { top: 8%; } 100% { top: 92%; } }
+ #scannerFooter { flex: 0 0 auto; background: #111; border-top: 1px solid #333; padding-bottom: env(safe-area-inset-bottom); }
+ #scanStatus { padding: 12px 16px; text-align: center; color: #f59e0b; font-weight: bold; font-size: 0.95rem; }
+ #scannerHint { text-align: center; color: #94a3b8; font-size: 0.8rem; padding: 0 12px 8px; }
 
  .control-btn { padding: 8px 16px; background: #00adb5; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.9rem; transition: background 0.2s; white-space: nowrap; }
  .control-btn:hover { background: #008087; }
@@ -179,11 +181,6 @@
    body { padding: 24px; }
    .container { max-width: 600px; }
    .history-container { max-width: 600px; }
-   #scannerOverlay { flex-direction: row; }
-   #scannerHeader { flex-direction: column; width: 200px; padding: 20px; border-right: 2px solid #333; border-bottom: none; justify-content: flex-start; gap: 20px; }
-   #scannerHeader h3 { writing-mode: vertical-lr; transform: rotate(180deg); margin: 0; }
-   #scannerHeader button { width: 100%; }
-   #preview-container { flex: 1; }
  }
  @media (min-width: 1024px) {
    .container { max-width: 800px; }
@@ -207,18 +204,17 @@
 
 <div id="scannerOverlay">
   <div id="scannerHeader">
-    <h3 style="margin:0; color:#58a6ff; font-size:1.1rem;">枠内にバーコードを写してください</h3>
+    <h3>枠内にバーコードを写してください</h3>
     <button id="torchBtn" onclick="toggleTorch()" style="display:none; background:#f59e0b;">💡 ライトON</button>
-    <button onclick="stopBarcodeScanning()">閉じる</button>
+    <button type="button" onclick="stopBarcodeScanning()">閉じる</button>
   </div>
   <div id="preview-container">
-    <div id="scan-guide"></div>
-    <div id="scan-line"></div>
     <div id="preview"></div>
+    <div id="scan-guide"><div id="scan-line"></div></div>
   </div>
-  <div id="scanStatus">カメラを起動中...</div>
-  <div style="text-align: center; color: #94a3b8; font-size: 0.85rem; padding: 8px; background: #111; border-top: 1px solid #333;">
-    💡 ピンチズームで拡大・縮小できます ｜ 暗い場合は照明を確保してください
+  <div id="scannerFooter">
+    <div id="scanStatus">カメラを起動中...</div>
+    <div id="scannerHint">💡 暗い場合は照明を確保してください ｜ バーコードを枠いっぱいに写すと速く読めます</div>
   </div>
 </div>
 
@@ -444,6 +440,7 @@
  let nativeTimer = null;
  let scanSession = 0;
  let torchOn = false;
+ let scanStarting = false;
  const REQUIRED_MATCHES = 2; // 同じ値を連続で読めたら確定
 
  // チョコ停モーダル用
@@ -487,6 +484,13 @@
  // バーコードスキャナー
  // ==========================================
  function startBarcodeScanning() {
+   // 多重起動で画面が崩れるのを防ぐ：既に動作中なら一度完全に止めてから起動
+   if (scanStarting) return;
+   scanStarting = true;
+   setTimeout(() => { scanStarting = false; }, 800);
+   try { Quagga.stop(); Quagga.offDetected(); } catch (e) {}
+   stopNativeStream();
+   document.body.classList.add('scanner-open');
    const scannerOverlay = document.getElementById('scannerOverlay');
    const scanStatus = document.getElementById('scanStatus');
    scannerOverlay.style.display = 'flex';
@@ -667,6 +671,7 @@
    document.getElementById('torchBtn').style.display = 'none';
    document.getElementById('torchBtn').textContent = '💡 ライトON';
    document.getElementById('scannerOverlay').style.display = 'none';
+   document.body.classList.remove('scanner-open');
    quaggaInitialized = false;
  }
 
