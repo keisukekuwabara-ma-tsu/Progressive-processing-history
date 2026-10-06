@@ -4,7 +4,9 @@
  <meta charset="UTF-8">
  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
  <title id="pageTitle">順送プレス加工実績入力</title>
- <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+ <link rel="preconnect" href="https://script.google.com">
+ <link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
+ <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
  <style>
  :root {
  --bg-color: #0d0e12;
@@ -431,6 +433,26 @@
  let nextStage = '始';
  let fullHistoryLogs = [];
  let rawWorkers = [];
+ let activeCoilsServer = [];
+ let warningDismissed = false;
+ const productCache = {};
+ const CACHE_KEY = 'ppInitV1';
+
+ // Quaggaは必要なときだけ読み込む（初期表示を軽くする）
+ let quaggaPromise = null;
+ function loadQuagga() {
+   if (window.Quagga) return Promise.resolve();
+   if (!quaggaPromise) {
+     quaggaPromise = new Promise((resolve, reject) => {
+       const sc = document.createElement('script');
+       sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js';
+       sc.onload = resolve;
+       sc.onerror = () => { quaggaPromise = null; reject(new Error('quagga load failed')); };
+       document.head.appendChild(sc);
+     });
+   }
+   return quaggaPromise;
+ }
 
  // カメラ制御用
  let barcodeMatchCount = 0;
@@ -588,8 +610,13 @@
  }
 
  // --- 互換版：Quagga（iPad/iPhone Safari等）精度・速度を調整 ---
- function startQuaggaScan() {
+ async function startQuaggaScan() {
    const scanStatus = document.getElementById('scanStatus');
+   try { await loadQuagga(); } catch (e) {
+     scanStatus.innerText = 'スキャナの読み込みに失敗しました。通信を確認してください。';
+     return;
+   }
+   if (!document.body.classList.contains('scanner-open')) return;
    document.getElementById('preview').innerHTML = '';
    Quagga.init({
      inputStream: {
@@ -686,12 +713,23 @@
  // ==========================================
  // アプリケーションロジック
  // ==========================================
- window.onload = async function() {
+ document.addEventListener('DOMContentLoaded', function() {
    initStaticLabels();
-   loadWorkerList();
-   loadRecentHistory();
-   refreshCoilSupportList();
- };
+   // 1) 前回のデータを即表示（待ち時間ゼロ）
+   try {
+     const c = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
+     if (c && Array.isArray(c.history)) {
+       if (Array.isArray(c.workers)) { rawWorkers = c.workers; renderWorkerDropdown(); }
+       loadRecentHistory({ cached: c });
+     }
+   } catch (e) {}
+   // 2) 作業者・履歴・コイル候補を1回の通信でまとめて最新化
+   loadRecentHistory({ includeWorkers: true });
+   // 3) カメラ非対応(標準API無し)端末は、アイドル時にQuaggaを先読み
+   if (!('BarcodeDetector' in window)) {
+     (window.requestIdleCallback || (f => setTimeout(f, 1500)))(() => loadQuagga().catch(() => {}));
+   }
+ });
 
  function initStaticLabels() {
    const lang = LANG_DATA[currentLang];
@@ -755,9 +793,9 @@
    }
  }
 
- async function refreshCoilSupportList() {
+ function refreshCoilSupportList() {
    try {
-     const coilList = await callGAS('getActiveCoils');
+     const coilList = activeCoilsServer;
      const incompleteLogs = fullHistoryLogs.filter(log => !log.end);
      const incompleteCoils = [...new Set(incompleteLogs.map(log => log.coilNo))];
      const allCoils = [...new Set([...(Array.isArray(coilList) ? coilList : []), ...incompleteCoils])].sort();
@@ -777,6 +815,7 @@
  }
 
  function closeGlobalWarning() {
+   warningDismissed = true;
    document.getElementById('globalWarningOverlay').style.display = 'none';
  }
 
@@ -812,16 +851,28 @@
    </div>`;
  }
 
- async function loadRecentHistory() {
+ async function loadRecentHistory(opts) {
+   opts = opts || {};
    const historyListDiv = document.getElementById('historyList');
    const historyLoadingEl = document.getElementById('uiHistoryLoading');
-   if (historyLoadingEl) historyLoadingEl.textContent = LANG_DATA[currentLang].historyLoading;
+   if (historyLoadingEl && !fullHistoryLogs.length) historyLoadingEl.textContent = LANG_DATA[currentLang].historyLoading;
 
    try {
-     const logs = await callGAS('getHistory');
-     fullHistoryLogs = Array.isArray(logs) ? logs : [];
+     let data = opts.cached;
+     if (!data) {
+       data = await callGAS('getInit', { includeWorkers: !!opts.includeWorkers });
+       if (data.historyError) throw new Error(data.historyError);
+       if (Array.isArray(data.workers)) { rawWorkers = data.workers; renderWorkerDropdown(); }
+       try {
+         localStorage.setItem(CACHE_KEY, JSON.stringify({
+           workers: rawWorkers, history: data.history || [], coils: data.coils || []
+         }));
+       } catch (e) {}
+     }
+     fullHistoryLogs = Array.isArray(data.history) ? data.history : [];
+     activeCoilsServer = Array.isArray(data.coils) ? data.coils : [];
      const hasWarning = fullHistoryLogs.some(log => log.isWarning);
-     if (hasWarning) document.getElementById('globalWarningOverlay').style.display = 'flex';
+     if (hasWarning && !warningDismissed && !opts.cached) document.getElementById('globalWarningOverlay').style.display = 'flex';
 
      if (fullHistoryLogs.length === 0) {
        historyListDiv.innerHTML = `<div style="text-align:center;color:#666;padding:20px;">${LANG_DATA[currentLang].noHistory}</div>`;
@@ -877,6 +928,7 @@
      refreshCoilSupportList();
    } catch (err) {
      console.error('loadRecentHistory error:', err);
+     if (fullHistoryLogs.length) return; // 表示済みのデータは消さない
      historyListDiv.innerHTML = `<div style="text-align:center;color:#f87171;padding:20px;">${LANG_DATA[currentLang].historyCommError}<br><small style="color:#94a3b8;">${escHtml(err && err.message ? err.message : err)}</small></div>`;
    }
  }
@@ -907,7 +959,14 @@
    document.getElementById('quantity-field').classList.add('hidden');
    document.getElementById('quantity').required = false;
    try {
-     const res = await callGAS('getProducts', { coilNo: coilNo });
+     let res;
+     const pc = productCache[coilNo];
+     if (pc && Date.now() - pc.t < 300000) {
+       res = pc.res;
+     } else {
+       res = await callGAS('getProducts', { coilNo: coilNo });
+       if (res && res.success) productCache[coilNo] = { t: Date.now(), res: res };
+     }
      hideOverlay();
      if (res.success) {
        currentProducts = res.products || [];
