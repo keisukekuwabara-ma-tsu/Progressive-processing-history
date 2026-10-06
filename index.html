@@ -159,7 +159,7 @@
  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
  @keyframes pulse { 0% { opacity: 0.85; } 100% { opacity: 1; } }
 
- /* カメラ：全画面・縦積み固定（端末の向き/サイズによらず崩れない構造） */
+ /* カメラ：全画面・縦積み固定 */
  body.scanner-open { overflow: hidden; }
  #scannerOverlay { position: fixed; inset: 0; width: 100%; height: 100vh; height: 100dvh; background: #000; z-index: 99999; display: none; flex-direction: column; box-sizing: border-box; overflow: hidden; }
  #scannerHeader { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top)); background: #111; color: white; border-bottom: 2px solid #333; flex: 0 0 auto; }
@@ -286,7 +286,10 @@
 </div>
 
 <div class="history-container">
- <div class="history-title" id="uiHistoryTitle">直近20件の品名別加工履歴</div>
+ <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+   <div class="history-title" id="uiHistoryTitle" style="margin-bottom:0;">直近20件の品名別加工履歴</div>
+   <button type="button" class="control-btn" style="padding:4px 10px; font-size:0.8rem; background:#262936; border:1px solid #334155;" onclick="loadRecentHistory({ includeWorkers: true })" title="履歴を再取得">🔄 更新</button>
+ </div>
  <div id="historyList" class="history-list">
  <div style="text-align:center;color:#666;padding:20px;" id="uiHistoryLoading">履歴データを読み込み中...</div>
  </div>
@@ -438,7 +441,6 @@
  const productCache = {};
  const CACHE_KEY = 'ppInitV1';
 
- // Quaggaは必要なときだけ読み込む（初期表示を軽くする）
  let quaggaPromise = null;
  function loadQuagga() {
    if (window.Quagga) return Promise.resolve();
@@ -454,7 +456,6 @@
    return quaggaPromise;
  }
 
- // カメラ制御用
  let barcodeMatchCount = 0;
  let lastBarcode = "";
  let quaggaInitialized = false;
@@ -463,22 +464,16 @@
  let scanSession = 0;
  let torchOn = false;
  let scanStarting = false;
- const REQUIRED_MATCHES = 2; // 同じ値を連続で読めたら確定
+ const REQUIRED_MATCHES = 2;
 
- // チョコ停モーダル用
  let currentChokoCoilNo = '';
  let currentChokoProductName = '';
 
  const MACHINES = ["順送【80ｔ】", "順送【110ｔ】", "順送【200ｔ】"];
 
- // ==========================================
- // エスケープ関数（onclick内の文字列・HTML表示用）
- // ==========================================
- // HTMLの表示用
  const escHtml = s => String(s ?? '')
    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
- // onclick="fn('...')" 内のJS文字列用（JSエスケープ後にHTMLエスケープ）
  const escJs = s => escHtml(String(s ?? '').replace(/\\/g, '\\\\').replace(/'/g, "\\'"));
 
  // ==========================================
@@ -486,35 +481,106 @@
  // ==========================================
  const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyKuZhZb_aOg7Iyb2YTYHOwOMKognF57OpGuzmPJxNfo2dpa-F81j-iI5yuRVDqaidvRg/exec";
 
- async function callGAS(action, payload = {}) {
-   try {
-     const response = await fetch(GAS_API_URL, {
-       method: 'POST',
-       headers: { 'Content-Type': 'text/plain' },
-       body: JSON.stringify({ action: action, ...payload })
-     });
-     const text = await response.text();
-     let data;
+ async function callGAS(action, payload = {}, retries = 2) {
+   for (let attempt = 0; attempt <= retries; attempt++) {
      try {
-       data = JSON.parse(text);
-     } catch (parseErr) {
-       // JSONでない応答（Googleのログイン画面・エラーページ等）を検出して原因を表示
-       const head = text.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 80);
-       throw new Error('サーバー応答がJSONではありません（GASのデプロイ/権限設定を確認）: ' + head);
+       const controller = new AbortController();
+       const timeoutId = setTimeout(() => controller.abort(), 12000); // 12秒タイムアウト設定
+
+       const response = await fetch(GAS_API_URL, {
+         method: 'POST',
+         headers: { 'Content-Type': 'text/plain' },
+         body: JSON.stringify({ action: action, ...payload }),
+         signal: controller.signal
+       });
+       clearTimeout(timeoutId);
+
+       const text = await response.text();
+       let data;
+       try {
+         data = JSON.parse(text);
+       } catch (parseErr) {
+         const head = text.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 80);
+         throw new Error('サーバー応答がJSONではありません: ' + head);
+       }
+       if (data && data.error) throw new Error(data.error);
+       return data;
+     } catch (error) {
+       console.warn(`API Error [${action}] (試行 ${attempt + 1}/${retries + 1}):`, error);
+       if (attempt < retries) {
+         // 1秒、2秒と徐々に間隔をあけてリトライ
+         await new Promise(res => setTimeout(res, (attempt + 1) * 1000));
+       } else {
+         throw error;
+       }
      }
-     if (data && data.error) throw new Error(data.error);
-     return data;
-   } catch (error) {
-     console.error('API Error [' + action + ']:', error);
-     throw error;
    }
  }
 
  // ==========================================
- // バーコードスキャナー
+ // 疑似即時反映 (Optimistic UI) 系関数
+ // ==========================================
+ // 日付文字列を取得するヘルパー
+ function getLogDateStr(l) {
+   if (l.start && l.start.time) return l.start.time.split(' ')[0];
+   if (l.middle && l.middle.time) return l.middle.time.split(' ')[0];
+   if (l.end && l.end.time) return l.end.time.split(' ')[0];
+   return '';
+ }
+
+ // 新規保存時にローカルの配列へ即時追加する
+ function appendOptimisticLog(logData, res) {
+   // もしGASが気を利かせて最新履歴(res.history)を返してくれたらそれを採用する
+   if (res && res.history) {
+     fullHistoryLogs = res.history;
+     return;
+   }
+   const now = new Date();
+   const timeStr = `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+   const todayStr = timeStr.split(' ')[0];
+   const newStageData = { time: timeStr, worker: logData.worker, measured: logData.measured, qty: logData.quantity || '' };
+
+   let existingIdx = fullHistoryLogs.findIndex(l => l.coilNo === logData.coilNo && l.productName === logData.productName && getLogDateStr(l) === todayStr);
+
+   if (existingIdx !== -1) {
+     let existingLog = fullHistoryLogs[existingIdx];
+     if (logData.enforcedStage === '中') existingLog.middle = newStageData;
+     else if (logData.enforcedStage === '終') {
+       existingLog.end = newStageData;
+       existingLog.end.qty = logData.quantity;
+     }
+     // 更新されたアイテムを一番上に移動させる
+     fullHistoryLogs.splice(existingIdx, 1);
+     fullHistoryLogs.unshift(existingLog);
+   } else {
+     let newLog = {
+       coilNo: logData.coilNo, productName: logData.productName, machine: logData.machine,
+       start: logData.enforcedStage === '始' ? newStageData : null,
+       middle: logData.enforcedStage === '中' ? newStageData : null,
+       end: logData.enforcedStage === '終' ? newStageData : null
+     };
+     fullHistoryLogs.unshift(newLog);
+   }
+ }
+
+ // バックグラウンドで静かに最新の履歴を取得して同期する関数
+ function fetchHistoryInBackground() {
+   callGAS('getInit', { includeWorkers: false }, 1).then(data => {
+     if (data && data.history) {
+       fullHistoryLogs = data.history;
+       if (data.coils) activeCoilsServer = data.coils;
+       localStorage.setItem(CACHE_KEY, JSON.stringify({
+         workers: rawWorkers, history: fullHistoryLogs, coils: activeCoilsServer
+       }));
+       loadRecentHistory({ cached: { history: fullHistoryLogs } }); // サイレント再描画
+     }
+   }).catch(e => console.warn("Background fetch failed", e));
+ }
+
+ // ==========================================
+ // バーコードスキャナー（略）
  // ==========================================
  function startBarcodeScanning() {
-   // 多重起動で画面が崩れるのを防ぐ：既に動作中なら一度完全に止めてから起動
    if (scanStarting) return;
    scanStarting = true;
    setTimeout(() => { scanStarting = false; }, 800);
@@ -532,14 +598,10 @@
    lastBarcode = "";
    quaggaInitialized = false;
 
-   if ('BarcodeDetector' in window) {
-     startNativeScan(scanSession);
-   } else {
-     startQuaggaScan();
-   }
+   if ('BarcodeDetector' in window) startNativeScan(scanSession);
+   else startQuaggaScan();
  }
 
- // 読み取り確定時の共通処理
  function handleBarcodeFound(raw) {
    let code = String(raw || '').trim();
    if (!code) return;
@@ -558,7 +620,6 @@
    }
  }
 
- // --- 高速版：ブラウザ標準のBarcodeDetector（Android Chrome等） ---
  async function startNativeScan(session) {
    const scanStatus = document.getElementById('scanStatus');
    try {
@@ -593,7 +654,7 @@
            const results = await detector.detect(video);
            if (results.length > 0 && session === scanSession) handleBarcodeFound(results[0].rawValue);
          }
-       } catch (e) { /* フレーム単位のエラーは無視 */ }
+       } catch (e) { }
        if (session === scanSession) nativeTimer = setTimeout(loop, 50);
      };
      loop();
@@ -609,7 +670,6 @@
    if (nativeStream) { nativeStream.getTracks().forEach(t => t.stop()); nativeStream = null; }
  }
 
- // --- 互換版：Quagga（iPad/iPhone Safari等）精度・速度を調整 ---
  async function startQuaggaScan() {
    const scanStatus = document.getElementById('scanStatus');
    try { await loadQuagga(); } catch (e) {
@@ -620,43 +680,26 @@
    document.getElementById('preview').innerHTML = '';
    Quagga.init({
      inputStream: {
-       name: "Live",
-       type: "LiveStream",
-       target: document.querySelector('#preview'),
-       constraints: {
-         width: { ideal: 1280 },
-         height: { ideal: 720 },
-         facingMode: "environment"
-       },
-       // ガイド枠付近だけを解析して高速化
+       name: "Live", type: "LiveStream", target: document.querySelector('#preview'),
+       constraints: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: "environment" },
        area: { top: "20%", right: "5%", left: "5%", bottom: "20%" }
      },
      locator: { patchSize: "medium", halfSample: true },
      numOfWorkers: Math.min(navigator.hardwareConcurrency || 2, 4),
      frequency: 30,
-     decoder: {
-       readers: ["code_128_reader", "ean_reader", "code_39_reader"],
-       multiple: false
-     },
+     decoder: { readers: ["code_128_reader", "ean_reader", "code_39_reader"], multiple: false },
      locate: true
    }, function(err) {
-     if (err) {
-       console.error('Quagga init error:', err);
-       scanStatus.innerText = "カメラの起動に失敗しました。権限を確認してください。";
-       return;
-     }
+     if (err) { scanStatus.innerText = "カメラの起動に失敗しました。権限を確認してください。"; return; }
      Quagga.start();
      quaggaInitialized = true;
      setupTrackExtras();
      scanStatus.innerText = LANG_DATA[currentLang].scanMsg || "スキャン中...";
    });
-
    Quagga.offDetected();
    Quagga.onDetected(function(data) {
      if (!quaggaInitialized || !data.codeResult || !data.codeResult.code) return;
-     // 読み取り誤差が大きい結果は捨てる（誤読防止）
-     const errs = (data.codeResult.decodedCodes || [])
-       .filter(c => c.error !== undefined).map(c => c.error);
+     const errs = (data.codeResult.decodedCodes || []).filter(c => c.error !== undefined).map(c => c.error);
      if (errs.length) {
        const avg = errs.reduce((a, b) => a + b, 0) / errs.length;
        if (avg > 0.12) return;
@@ -665,7 +708,6 @@
    });
  }
 
- // --- ピント連続AF・ライト（対応端末のみ） ---
  function getActiveTrack() {
    try {
      if (nativeStream) return nativeStream.getVideoTracks()[0];
@@ -678,9 +720,7 @@
    if (!track || !track.getCapabilities) return;
    const caps = track.getCapabilities();
    try {
-     if (caps.focusMode && caps.focusMode.includes('continuous')) {
-       await track.applyConstraints({ advanced: [{ focusMode: 'continuous' }] });
-     }
+     if (caps.focusMode && caps.focusMode.includes('continuous')) await track.applyConstraints({ advanced: [{ focusMode: 'continuous' }] });
    } catch (e) {}
    if (caps.torch) document.getElementById('torchBtn').style.display = 'block';
  }
@@ -698,10 +738,7 @@
  function stopBarcodeScanning() {
    scanSession++;
    stopNativeStream();
-   try {
-     Quagga.stop();
-     Quagga.offDetected();
-   } catch (e) {}
+   try { Quagga.stop(); Quagga.offDetected(); } catch (e) {}
    document.getElementById('preview').innerHTML = '';
    document.getElementById('torchBtn').style.display = 'none';
    document.getElementById('torchBtn').textContent = '💡 ライトON';
@@ -715,7 +752,6 @@
  // ==========================================
  document.addEventListener('DOMContentLoaded', function() {
    initStaticLabels();
-   // 1) 前回のデータを即表示（待ち時間ゼロ）
    try {
      const c = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
      if (c && Array.isArray(c.history)) {
@@ -723,9 +759,7 @@
        loadRecentHistory({ cached: c });
      }
    } catch (e) {}
-   // 2) 作業者・履歴・コイル候補を1回の通信でまとめて最新化
    loadRecentHistory({ includeWorkers: true });
-   // 3) カメラ非対応(標準API無し)端末は、アイドル時にQuaggaを先読み
    if (!('BarcodeDetector' in window)) {
      (window.requestIdleCallback || (f => setTimeout(f, 1500)))(() => loadQuagga().catch(() => {}));
    }
@@ -783,16 +817,6 @@
    checkMeasuredValue();
  }
 
- async function loadWorkerList() {
-   try {
-     const workers = await callGAS('getWorkers');
-     rawWorkers = Array.isArray(workers) ? workers : [];
-     renderWorkerDropdown();
-   } catch (e) {
-     console.error("Worker load error:", e);
-   }
- }
-
  function refreshCoilSupportList() {
    try {
      const coilList = activeCoilsServer;
@@ -809,9 +833,7 @@
        option.textContent = coilNo;
        datalist.appendChild(option);
      });
-   } catch (e) {
-     console.error("Coil support list error:", e);
-   }
+   } catch (e) {}
  }
 
  function closeGlobalWarning() {
@@ -819,9 +841,6 @@
    document.getElementById('globalWarningOverlay').style.display = 'none';
  }
 
- // ------------------------------------------
- // 履歴：1ステージ分の行HTMLを生成
- // ------------------------------------------
  function renderStageRow(idx, stage, icon, d, log, withQty) {
    const workerOpts = rawWorkers.map(w =>
      `<option value="${escHtml(w)}" ${w === d.worker ? 'selected' : ''}>${escHtml(w)}</option>`).join('');
@@ -851,6 +870,66 @@
    </div>`;
  }
 
+ function renderHistoryUI(isOfflineCache = false) {
+   const historyListDiv = document.getElementById('historyList');
+   if (fullHistoryLogs.length === 0) {
+     historyListDiv.innerHTML = `<div style="text-align:center;color:#666;padding:20px;">${LANG_DATA[currentLang].noHistory}</div>`;
+     refreshCoilSupportList();
+     return;
+   }
+
+   let html = '';
+   if (isOfflineCache) {
+     html += `<div style="background:rgba(245,158,11,0.15); border:1px solid #f59e0b; color:#fde68a; padding:10px 14px; border-radius:10px; margin-bottom:12px; font-size:0.85rem; display:flex; justify-content:space-between; align-items:center;">
+       <span>⚠️ 通信エラーのためキャッシュ（直近保持データ）を表示中</span>
+       <button type="button" class="control-btn" style="padding:3px 8px; font-size:0.75rem; background:#f59e0b; color:#000;" onclick="loadRecentHistory({ includeWorkers: true })">再読み込み</button>
+     </div>`;
+   }
+
+   const displayLogs = fullHistoryLogs.slice(0, 20);
+
+   displayLogs.forEach((log, idx) => {
+     try {
+       let timelineHtml = '';
+       let finalQty = '';
+       const isEndReached = !!(log.end);
+       const hasChoko = !!(log.chokoReason && log.chokoReason !== '');
+       const cardClassBase = isEndReached ? 'history-card' : 'history-card is-incomplete';
+       const cardClass = hasChoko ? `${cardClassBase} has-chokotei` : cardClassBase;
+
+       if (log.start) timelineHtml += renderStageRow(idx, '始', '▶', log.start, log, false);
+       if (log.middle) timelineHtml += renderStageRow(idx, '中', '🔄', log.middle, log, false);
+       if (log.end) {
+         timelineHtml += renderStageRow(idx, '終', '■', log.end, log, true);
+         if (log.end.qty) finalQty = `<div class="qty-display-box" id="qty-display-${idx}">📦 Qty: ${escHtml(log.end.qty)}</div>`;
+       }
+
+       let chokoHtml = '';
+       if (hasChoko) {
+         chokoHtml = `<div class="choko-info">⚠️ ${escHtml(log.chokoReason)} ／ 廃棄: ${escHtml(log.wasteQty || 0)}個 ／ 箱チェック: ${log.boxCheck ? '完了' : '未'}${log.chokoTime ? ' ／ ' + escHtml(log.chokoTime) : ''}</div>`;
+       }
+
+       html += `
+       <div class="${cardClass}">
+         <div class="card-top">
+           <div class="card-coil-title">Coil No: ${escHtml(log.coilNo)}</div>
+           <div class="card-meta-info">
+             <span>Product: <b>${escHtml(log.productName)}</b></span>
+             <span>Machine: <b>${escHtml(log.machine)}</b></span>
+           </div>
+         </div>
+         <div class="timeline-container">${timelineHtml}</div>
+         ${finalQty}
+         ${chokoHtml}
+         <button type="button" class="control-btn" style="width: 100%; margin-top:14px; background:#f59e0b; color: white;" onclick="openChokoteiModal('${escJs(log.coilNo)}', '${escJs(log.productName)}')">⚠️ チョコ停を記録</button>
+       </div>`;
+     } catch (cardErr) {}
+   });
+
+   historyListDiv.innerHTML = html;
+   refreshCoilSupportList();
+ }
+
  async function loadRecentHistory(opts) {
    opts = opts || {};
    const historyListDiv = document.getElementById('historyList');
@@ -860,7 +939,7 @@
    try {
      let data = opts.cached;
      if (!data) {
-       data = await callGAS('getInit', { includeWorkers: !!opts.includeWorkers });
+       data = await callGAS('getInit', { includeWorkers: !!opts.includeWorkers }, 2);
        if (data.historyError) throw new Error(data.historyError);
        if (Array.isArray(data.workers)) { rawWorkers = data.workers; renderWorkerDropdown(); }
        try {
@@ -874,62 +953,33 @@
      const hasWarning = fullHistoryLogs.some(log => log.isWarning);
      if (hasWarning && !warningDismissed && !opts.cached) document.getElementById('globalWarningOverlay').style.display = 'flex';
 
-     if (fullHistoryLogs.length === 0) {
-       historyListDiv.innerHTML = `<div style="text-align:center;color:#666;padding:20px;">${LANG_DATA[currentLang].noHistory}</div>`;
-       refreshCoilSupportList();
+     renderHistoryUI(false);
+   } catch (err) {
+     console.error("loadRecentHistory error:", err);
+     // 通信エラー発生時：ローカルストレージのキャッシュがあれば表示
+     try {
+       const cachedRaw = localStorage.getItem(CACHE_KEY);
+       if (cachedRaw) {
+         const c = JSON.parse(cachedRaw);
+         if (c && Array.isArray(c.history) && c.history.length > 0) {
+           fullHistoryLogs = c.history;
+           if (Array.isArray(c.coils)) activeCoilsServer = c.coils;
+           renderHistoryUI(true);
+           return;
+         }
+       }
+     } catch (e) {}
+
+     if (fullHistoryLogs.length) {
+       renderHistoryUI(true);
        return;
      }
 
-     let html = '';
-     const displayLogs = fullHistoryLogs.slice(0, 20);
-
-     displayLogs.forEach((log, idx) => {
-       try {
-         let timelineHtml = '';
-         let finalQty = '';
-         const isEndReached = !!(log.end);
-         const hasChoko = !!(log.chokoReason && log.chokoReason !== '');
-         const cardClassBase = isEndReached ? 'history-card' : 'history-card is-incomplete';
-         const cardClass = hasChoko ? `${cardClassBase} has-chokotei` : cardClassBase;
-
-         if (log.start) timelineHtml += renderStageRow(idx, '始', '▶', log.start, log, false);
-         if (log.middle) timelineHtml += renderStageRow(idx, '中', '🔄', log.middle, log, false);
-         if (log.end) {
-           timelineHtml += renderStageRow(idx, '終', '■', log.end, log, true);
-           if (log.end.qty) finalQty = `<div class="qty-display-box" id="qty-display-${idx}">📦 Qty: ${escHtml(log.end.qty)}</div>`;
-         }
-
-         let chokoHtml = '';
-         if (hasChoko) {
-           chokoHtml = `<div class="choko-info">⚠️ ${escHtml(log.chokoReason)} ／ 廃棄: ${escHtml(log.wasteQty || 0)}個 ／ 箱チェック: ${log.boxCheck ? '完了' : '未'}${log.chokoTime ? ' ／ ' + escHtml(log.chokoTime) : ''}</div>`;
-         }
-
-         html += `
-         <div class="${cardClass}">
-           <div class="card-top">
-             <div class="card-coil-title">Coil No: ${escHtml(log.coilNo)}</div>
-             <div class="card-meta-info">
-               <span>Product: <b>${escHtml(log.productName)}</b></span>
-               <span>Machine: <b>${escHtml(log.machine)}</b></span>
-             </div>
-           </div>
-           <div class="timeline-container">${timelineHtml}</div>
-           ${finalQty}
-           ${chokoHtml}
-           <button type="button" class="control-btn" style="width: 100%; margin-top:14px; background:#f59e0b; color: white;" onclick="openChokoteiModal('${escJs(log.coilNo)}', '${escJs(log.productName)}')">⚠️ チョコ停を記録</button>
-         </div>`;
-       } catch (cardErr) {
-         // 1件の描画エラーで全体が落ちないようにする
-         console.error('History card render error (idx=' + idx + '):', cardErr, log);
-       }
-     });
-
-     historyListDiv.innerHTML = html;
-     refreshCoilSupportList();
-   } catch (err) {
-     console.error('loadRecentHistory error:', err);
-     if (fullHistoryLogs.length) return; // 表示済みのデータは消さない
-     historyListDiv.innerHTML = `<div style="text-align:center;color:#f87171;padding:20px;">${LANG_DATA[currentLang].historyCommError}<br><small style="color:#94a3b8;">${escHtml(err && err.message ? err.message : err)}</small></div>`;
+     historyListDiv.innerHTML = `<div style="text-align:center;color:#f87171;padding:20px;">
+       ${LANG_DATA[currentLang].historyCommError}<br>
+       <small style="color:#94a3b8;display:block;margin-top:6px;">${escHtml(err && err.message ? err.message : err)}</small>
+       <button type="button" class="control-btn" style="margin-top:12px;" onclick="loadRecentHistory({ includeWorkers: true })">🔄 再読み込み</button>
+     </div>`;
    }
  }
 
@@ -1033,13 +1083,7 @@
      }
    }
    const todayStr = new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/-/g, '/');
-   let foundLog = fullHistoryLogs.find(l => {
-     let logDateStr = '';
-     if (l.start && l.start.time) logDateStr = l.start.time.split(' ')[0];
-     else if (l.middle && l.middle.time) logDateStr = l.middle.time.split(' ')[0];
-     else if (l.end && l.end.time) logDateStr = l.end.time.split(' ')[0];
-     return l.coilNo === coilNo && l.productName === selectedName && logDateStr === todayStr;
-   });
+   let foundLog = fullHistoryLogs.find(l => l.coilNo === coilNo && l.productName === selectedName && getLogDateStr(l) === todayStr);
    if (foundLog) {
      if (foundLog.end) {
        let lockMsg = LANG_DATA[currentLang].lockError.replace('{prod}', selectedName);
@@ -1100,10 +1144,7 @@
    e.preventDefault();
    const judgeBox = document.getElementById('judgeResult');
    if (judgeBox && judgeBox.classList.contains('judge-ng')) {
-     let alertMsg = "⚠️ 判定がNGのため、送信できません。\n数値を再度確認してください。";
-     if (currentLang === 'id') alertMsg = "⚠️ Penilaian NG, tidak dapat mengirim.\nSilakan periksa kembali nilainya.";
-     if (currentLang === 'pt') alertMsg = "⚠️ Resultado NG, não é possível enviar.\nPor favor, verifique o valor novamente.";
-     alert(alertMsg);
+     alert(currentLang === 'id' ? "⚠️ Penilaian NG, tidak dapat mengirim." : (currentLang === 'pt' ? "⚠️ Resultado NG, não é possível enviar." : "⚠️ 判定がNGのため、送信できません。"));
      return;
    }
    const submitBtn = document.getElementById('submitBtn');
@@ -1138,9 +1179,17 @@
      nextStage = '始';
      document.getElementById('masterTargetDisplay').textContent = '';
      resetJudge();
-     loadRecentHistory();
-     refreshCoilSupportList();
      document.getElementById('coilNo').focus();
+
+     // -----------------------------------------------------
+     // 【高速化のキモ】 通信完了を待たずにUIだけ先に書き換える
+     // -----------------------------------------------------
+     appendOptimisticLog(logData, res);
+     loadRecentHistory({ cached: { history: fullHistoryLogs, workers: rawWorkers, coils: activeCoilsServer } });
+     
+     // 念のため裏側で静かに最新化（他の人が更新した分を拾うため）
+     fetchHistoryInBackground();
+
    } catch (err) {
      hideOverlay();
      submitBtn.disabled = false;
@@ -1173,34 +1222,31 @@
    let quantity = '';
    if (stage === '終') {
      quantity = document.getElementById(`edit-qty-${idx}-${stage}`).value;
-     if (!quantity) {
-       alert("加工数量を入力してください。");
-       return;
-     }
+     if (!quantity) { alert("加工数量を入力してください。"); return; }
    }
-   if (!worker || !measured) {
-     alert("作業者と実寸計測値を入力してください。");
-     return;
-   }
+   if (!worker || !measured) { alert("作業者と実寸計測値を入力してください。"); return; }
 
    const msgDiv = document.getElementById('message');
    showOverlay(LANG_DATA[currentLang].saving || "書き込み中...");
-   const logData = {
-     coilNo: coilNo,
-     worker: worker,
-     machine: machine,
-     productName: productName,
-     measured: measured,
-     enforcedStage: stage,
-     quantity: quantity
-   };
+   const logData = { coilNo: coilNo, worker: worker, machine: machine, productName: productName, measured: measured, enforcedStage: stage, quantity: quantity };
    try {
      const res = await callGAS('saveLog', { logData: logData });
      hideOverlay();
      msgDiv.className = 'success';
      msgDiv.textContent = `【${res.type}】修正内容を上書き保存しました！`;
      msgDiv.style.display = 'block';
-     loadRecentHistory();
+
+     // 疑似即時反映
+     let log = fullHistoryLogs[idx];
+     if (log) {
+       log.machine = machine;
+       let target = stage === '始' ? log.start : (stage === '中' ? log.middle : log.end);
+       if (target) { target.worker = worker; target.measured = measured; if (stage === '終') target.qty = quantity; }
+     }
+     if (res && res.history) fullHistoryLogs = res.history;
+     
+     loadRecentHistory({ cached: { history: fullHistoryLogs, workers: rawWorkers, coils: activeCoilsServer } });
+     fetchHistoryInBackground();
    } catch (err) {
      hideOverlay();
      msgDiv.className = 'error';
@@ -1226,12 +1272,8 @@
  }
 
  function checkOtherReason() {
-   const reason = document.getElementById('chokoReason').value;
-   if (reason === 'その他') {
-     document.getElementById('otherReason').classList.remove('hidden');
-   } else {
-     document.getElementById('otherReason').classList.add('hidden');
-   }
+   if (document.getElementById('chokoReason').value === 'その他') document.getElementById('otherReason').classList.remove('hidden');
+   else document.getElementById('otherReason').classList.add('hidden');
  }
 
  async function submitChokotei() {
@@ -1239,21 +1281,11 @@
    const otherReason = document.getElementById('otherReason').value;
    const wasteQty = document.getElementById('wasteQty').value;
    const boxCheck = document.getElementById('boxCheck').checked;
-
    const finalReason = (reasonSelect === 'その他') ? otherReason : reasonSelect;
 
-   if (reasonSelect === 'その他' && !finalReason.trim()) {
-     alert("その他の理由を入力してください。");
-     return;
-   }
+   if (reasonSelect === 'その他' && !finalReason.trim()) { alert("その他の理由を入力してください。"); return; }
 
-   const logData = {
-     coilNo: currentChokoCoilNo,
-     productName: currentChokoProductName,
-     reason: finalReason,
-     wasteQty: wasteQty ? parseInt(wasteQty, 10) : 0,
-     boxCheck: boxCheck
-   };
+   const logData = { coilNo: currentChokoCoilNo, productName: currentChokoProductName, reason: finalReason, wasteQty: wasteQty ? parseInt(wasteQty, 10) : 0, boxCheck: boxCheck };
 
    closeChokoteiModal();
    showOverlay("チョコ停記録を送信中...");
@@ -1261,11 +1293,18 @@
    try {
      const res = await callGAS('saveChokotei', { logData: logData });
      hideOverlay();
-     // GAS側は { status, message } を返すので status で判定する
      if (res && res.status === 'error') throw new Error(res.message || '保存に失敗しました');
      if (res && res.status === 'mail_error') alert(res.message);
      else alert("チョコ停を記録しました");
-     loadRecentHistory();
+
+     // 疑似即時反映
+     const todayStr = new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/-/g, '/');
+     let log = fullHistoryLogs.find(l => l.coilNo === currentChokoCoilNo && l.productName === currentChokoProductName && getLogDateStr(l) === todayStr);
+     if (log) { log.chokoReason = finalReason; log.wasteQty = logData.wasteQty; log.boxCheck = boxCheck; }
+     if (res && res.history) fullHistoryLogs = res.history;
+
+     loadRecentHistory({ cached: { history: fullHistoryLogs, workers: rawWorkers, coils: activeCoilsServer } });
+     fetchHistoryInBackground();
    } catch (e) {
      hideOverlay();
      alert("エラーが発生しました: " + (e.message || "通信エラー"));
