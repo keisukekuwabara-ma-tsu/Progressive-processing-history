@@ -1,1315 +1,537 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
- <meta charset="UTF-8">
- <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
- <title id="pageTitle">順送プレス加工実績入力</title>
- <link rel="preconnect" href="https://script.google.com">
- <link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
- <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
- <style>
- :root {
- --bg-color: #0d0e12;
- --card-bg: #161820;
- --text-color: #e2e8f0;
- --accent-color: #00adb5;
- --accent-glow: rgba(0, 173, 181, 0.4);
- --border-color: #262936;
- --input-bg: #1f222f;
- --success-color: #10b981;
- --error-color: #ef4444;
- }
-
- body {
- font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
- background-color: var(--bg-color);
- color: var(--text-color);
- margin: 0;
- padding: 16px;
- display: flex;
- flex-direction: column;
- align-items: center;
- -webkit-font-smoothing: antialiased;
- }
-
- #globalWarningOverlay {
- position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
- background-color: rgba(220, 38, 38, 0.98);
- z-index: 100000; display: none; flex-direction: column;
- justify-content: center; align-items: center; text-align: center;
- padding: 24px; color: #ffffff; box-sizing: border-box;
- }
- #globalWarningOverlay h1 { font-size: 2.5rem; margin-top: 0; margin-bottom: 20px; font-weight: 800; }
- #globalWarningOverlay p { font-size: 1.3rem; line-height: 1.6; margin-bottom: 35px; max-width: 600px; }
- .warning-close-btn {
- padding: 16px 48px; background: #ffffff; color: #dc2626; border: none;
- border-radius: 50px; font-weight: 800; font-size: 1.2rem; cursor: pointer;
- box-shadow: 0 10px 20px rgba(0,0,0,0.3); transition: transform 0.1s ease;
- }
- .warning-close-btn:active { transform: scale(0.96); }
-
- .lang-bar { width: 100%; max-width: 500px; display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
- .lang-btn {
- padding: 14px 10px; background-color: var(--card-bg); border: 2px solid var(--border-color);
- border-radius: 12px; color: #94a3b8; font-size: 1.1rem; font-weight: 700; cursor: pointer;
- display: flex; align-items: center; justify-content: center; gap: 8px;
- transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); flex: 1; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
- }
- .lang-btn.active {
- background-color: #1e293b; color: #ffffff; border-color: var(--accent-color);
- box-shadow: 0 0 16px var(--accent-glow); transform: translateY(-2px);
- }
-
- .container {
- width: 100%; max-width: 500px; background: var(--card-bg); padding: 24px;
- border-radius: 16px; border: 1px solid var(--border-color);
- box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5); box-sizing: border-box; margin-bottom: 25px;
- }
-
- h2 { text-align: center; color: #ffffff; margin-top: 0; margin-bottom: 24px; font-size: 1.5rem; letter-spacing: 0.05em; position: relative; }
- h2::after { content: ''; display: block; width: 40px; height: 4px; background: var(--accent-color); margin: 8px auto 0; border-radius: 2px; }
- .form-group { margin-bottom: 20px; }
- label.field-label { display: block; margin-bottom: 8px; font-size: 0.95rem; color: #94a3b8; font-weight: 600; }
- input[type="text"], input[type="number"], select {
- width: 100%; padding: 14px 16px; box-sizing: border-box; background-color: var(--input-bg);
- border: 2px solid var(--border-color); border-radius: 10px; color: #ffffff;
- font-size: 1.15rem; font-weight: 500; transition: all 0.2s ease;
- }
- input:focus, select:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 0 4px var(--accent-glow); background-color: #242837; }
-
- .inline-input-group { display: flex; gap: 10px; }
- .inline-input-group input { flex: 1; }
-
- .scan-btn { padding: 0 16px; background-color: #f59e0b; border: none; border-radius: 10px; color: white; font-size: 1.2rem; cursor: pointer; transition: background 0.2s; }
- .scan-btn:hover { background-color: #d97706; }
-
- .confirm-btn {
- padding: 0 24px; background-color: #3b82f6; border: none; border-radius: 10px;
- color: white; font-size: 1.1rem; font-weight: 700; cursor: pointer; white-space: nowrap;
- transition: background 0.2s; box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
- }
- .confirm-btn:hover { background-color: #2563eb; }
-
- .defect-warning-box {
- margin-top: 14px; background: rgba(251, 146, 60, 0.08); border: 1px dashed #fb923c;
- border-radius: 10px; padding: 12px 14px; font-size: 0.95rem; color: #ffedd5; display: none; line-height: 1.4;
- }
- .defect-warning-box b { color: #fb923c; display: block; margin-bottom: 4px; font-size: 1rem; }
-
- .judge-box {
- padding: 14px; border-radius: 10px; text-align: center; font-weight: 800; font-size: 1.6rem;
- letter-spacing: 0.05em; margin-top: 12px; display: none; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); animation: pulse 1.5s infinite alternate;
- }
- .judge-ok { background-color: rgba(16, 185, 129, 0.15); color: #34d399; border: 2px solid #10b981; }
- .judge-ng { background-color: rgba(239, 68, 68, 0.15); color: #f87171; border: 2px solid #ef4444; }
-
- .submit-btn {
- width: 100%; padding: 16px; background: linear-gradient(135deg, #00adb5, #008087); border: none;
- border-radius: 12px; color: white; font-size: 1.2rem; font-weight: 700; cursor: pointer; margin-top: 20px;
- transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(0, 173, 181, 0.3);
- }
- .submit-btn:active { transform: scale(0.98); }
- .submit-btn:disabled { background: #334155 !important; color: #64748b; cursor: not-allowed; box-shadow: none; }
-
- #message { margin-top: 18px; padding: 14px; border-radius: 10px; text-align: center; font-weight: 700; font-size: 1rem; display: none; }
- .success { background-color: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #10b981; }
- .error { background-color: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; }
- .hidden { display: none !important; }
- .target-val { color: #fb923c; font-size: 0.85rem; margin-left: 8px; font-weight: normal; }
-
- .history-container { width: 100%; max-width: 500px; box-sizing: border-box; }
- .history-title { font-size: 1.2rem; color: #ffffff; margin-bottom: 16px; font-weight: 700; border-left: 4px solid var(--accent-color); padding-left: 10px; letter-spacing: 0.03em; }
- .history-list { display: flex; flex-direction: column; gap: 16px; }
- .history-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 14px; padding: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
- .history-card.is-incomplete { border: 2px solid #ef4444; background: rgba(239, 68, 68, 0.03); box-shadow: 0 0 10px rgba(239, 68, 68, 0.2); }
-
- /* チョコ停リボン */
- .history-card.has-chokotei { position: relative; border: 2px solid #f59e0b; }
- .history-card.has-chokotei::after {
-   content: "⚠️ チョコ停発生";
-   position: absolute; top: 10px; right: -10px;
-   background: #f59e0b; color: #000;
-   padding: 4px 12px; font-weight: bold; font-size: 0.8rem;
-   border-radius: 4px 0 0 4px; z-index: 1;
- }
- .choko-info { margin-top: 10px; font-size: 0.85rem; color: #fde68a; background: rgba(245,158,11,0.08); border: 1px dashed #f59e0b; border-radius: 8px; padding: 8px 12px; line-height: 1.5; }
-
- .card-top { border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 12px; }
- .card-coil-title { font-size: 1.2rem; font-weight: 800; color: #ffffff; }
- .card-meta-info { font-size: 0.9rem; color: #94a3b8; margin-top: 6px; display: flex; gap: 16px; flex-wrap: wrap; }
- .card-meta-info span b { color: var(--accent-color); }
- .timeline-container { display: flex; flex-direction: column; gap: 8px; }
- .timeline-row { background: #1e2230; border-radius: 8px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; }
- .stage-label { font-weight: 800; width: 48px; padding: 3px 0; border-radius: 6px; text-align: center; font-size: 0.8rem; }
- .lbl-始 { background-color: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
- .lbl-中 { background-color: rgba(234, 179, 8, 0.15); color: #fde047; border: 1px solid rgba(234, 179, 8, 0.4); }
- .lbl-終 { background-color: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
- .stage-details { flex: 1; margin-left: 14px; display: flex; flex-wrap: wrap; gap: 8px; color: #cbd5e1; }
- .stage-time { font-size: 0.8rem; color: #64748b; text-align: right; white-space: nowrap; }
- .edit-link { margin-left: auto; background: none; border: none; color: var(--accent-color); cursor: pointer; font-size: 0.85rem; padding: 0; font-weight: bold; }
- .stage-edit-form { display: none; flex: 1; margin-left: 14px; gap: 6px; align-items: center; flex-wrap: wrap; }
- .stage-edit-form select, .stage-edit-form input { width: auto; padding: 2px 4px; font-size: 0.85rem; background: var(--input-bg); color: #fff; border: 1px solid var(--border-color); border-radius: 4px; }
- .stage-edit-form input[type="number"] { width: 55px; }
- .qty-display-box { margin-top: 12px; background: rgba(0, 173, 181, 0.08); border: 1px dashed rgba(0, 173, 181, 0.5); border-radius: 8px; padding: 10px 14px; font-size: 1.05rem; font-weight: 700; color: #ffffff; display: flex; align-items: center; gap: 8px; }
-
- .overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(13, 14, 18, 0.9); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.25s ease; }
- .overlay.show { opacity: 1; pointer-events: auto; }
- .spinner { width: 56px; height: 56px; border: 5px solid #1f222f; border-top: 5px solid var(--accent-color); border-radius: 50%; animation: spin 0.8s linear infinite; }
- .overlay-text { margin-top: 18px; color: var(--accent-color); font-weight: 700; font-size: 1.2rem; letter-spacing: 0.05em; }
- @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
- @keyframes pulse { 0% { opacity: 0.85; } 100% { opacity: 1; } }
-
- /* カメラ：全画面・縦積み固定 */
- body.scanner-open { overflow: hidden; }
- #scannerOverlay { position: fixed; inset: 0; width: 100%; height: 100vh; height: 100dvh; background: #000; z-index: 99999; display: none; flex-direction: column; box-sizing: border-box; overflow: hidden; }
- #scannerHeader { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top)); background: #111; color: white; border-bottom: 2px solid #333; flex: 0 0 auto; }
- #scannerHeader h3 { margin: 0; color: #58a6ff; font-size: 1rem; flex: 1; min-width: 0; }
- #scannerHeader button { background: #ef4444; color: white; border: none; padding: 10px 18px; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; flex: 0 0 auto; white-space: nowrap; }
- #preview-container { flex: 1 1 auto; min-height: 0; position: relative; overflow: hidden; background: #000; width: 100%; }
- #preview { position: absolute; inset: 0; width: 100%; height: 100%; overflow: hidden; }
- #preview video { position: absolute !important; top: 0; left: 0; width: 100% !important; height: 100% !important; object-fit: cover; z-index: 1; display: block; transform: none !important; }
- #preview canvas { display: none !important; }
- #scan-guide { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80%; max-width: 480px; aspect-ratio: 2 / 1; max-height: 60%; border: 3px dashed #00ff00; border-radius: 8px; box-shadow: 0 0 0 9999px rgba(0,0,0,0.35), inset 0 0 10px rgba(0, 255, 0, 0.2); z-index: 5; pointer-events: none; overflow: hidden; }
- #scan-line { position: absolute; left: 0; width: 100%; height: 2px; top: 10%; background: #ff375f; box-shadow: 0 0 15px #ff375f; animation: scanMotion 1.5s ease-in-out infinite alternate; }
- @keyframes scanMotion { 0% { top: 8%; } 100% { top: 92%; } }
- #scannerFooter { flex: 0 0 auto; background: #111; border-top: 1px solid #333; padding-bottom: env(safe-area-inset-bottom); }
- #scanStatus { padding: 12px 16px; text-align: center; color: #f59e0b; font-weight: bold; font-size: 0.95rem; }
- #scannerHint { text-align: center; color: #94a3b8; font-size: 0.8rem; padding: 0 12px 8px; }
-
- .control-btn { padding: 8px 16px; background: #00adb5; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.9rem; transition: background 0.2s; white-space: nowrap; }
- .control-btn:hover { background: #008087; }
-
- @media (min-width: 768px) {
-   body { padding: 24px; }
-   .container { max-width: 600px; }
-   .history-container { max-width: 600px; }
- }
- @media (min-width: 1024px) {
-   .container { max-width: 800px; }
-   h2 { font-size: 2rem; }
-   input[type="text"], input[type="number"], select { font-size: 1.3rem; padding: 16px 18px; }
- }
- </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>順送プレス加工実績入力</title>
+<link rel="preconnect" href="https://script.google.com">
+<link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
+<style>
+:root{--bg:#eef2f6;--card:#fff;--tx:#0f172a;--sub:#475569;--ac:#0369a1;--acl:#e0f2fe;--bd:#cbd5e1;--ok:#15803d;--okl:#dcfce7;--ng:#b91c1c;--ngl:#fee2e2;--wn:#b45309;--wnl:#fef3c7}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:"Hiragino Sans","Noto Sans JP",system-ui,sans-serif;background:var(--bg);color:var(--tx);margin:0;padding:12px 12px 60px;display:flex;flex-direction:column;align-items:center;font-size:17px}
+.container,.history-container{width:100%;max-width:560px}
+.container{background:var(--card);padding:20px;border-radius:18px;margin-bottom:22px;box-shadow:0 2px 10px rgba(15,23,42,.1)}
+h2{text-align:center;margin:0 0 18px;font-size:1.4rem;color:var(--ac)}
+.step{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.1rem;margin:6px 0 14px;padding-bottom:8px;border-bottom:2px solid var(--acl)}
+.num{display:inline-flex;width:30px;height:30px;border-radius:50%;background:var(--ac);color:#fff;align-items:center;justify-content:center;font-size:1rem}
+.fg{margin-bottom:18px}
+.fl{display:block;margin-bottom:8px;font-size:1rem;color:var(--sub);font-weight:700}
+input[type=text],input[type=number],select{width:100%;height:56px;padding:0 14px;background:#fff;border:2px solid var(--bd);border-radius:12px;color:var(--tx);font-size:1.2rem}
+input:focus,select:focus{outline:none;border-color:var(--ac);box-shadow:0 0 0 4px var(--acl)}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.seg button{height:64px;border:2px solid var(--bd);border-radius:12px;background:#fff;color:var(--tx);font-size:1.4rem;font-weight:800;cursor:pointer}
+.seg button.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.row{display:flex;gap:8px}.row input{flex:1;min-width:0}
+.scan-btn,.confirm-btn{height:56px;border:none;border-radius:12px;color:#fff;font-weight:800;cursor:pointer}
+.scan-btn{width:64px;background:#f59e0b;font-size:1.5rem}
+.confirm-btn{padding:0 22px;background:var(--ac);font-size:1.15rem}
+.stagebadge{display:inline-block;padding:6px 16px;border-radius:999px;background:var(--acl);color:var(--ac);font-weight:800;margin-bottom:14px}
+.defect{margin-top:12px;background:var(--wnl);border-left:6px solid #f59e0b;border-radius:8px;padding:12px 14px;display:none;line-height:1.5}
+.defect b{color:var(--wn);display:block;margin-bottom:4px}
+#measured{height:72px;font-size:2rem;text-align:center;font-weight:800}
+.target-val{display:block;color:var(--wn);font-size:.95rem;margin-top:4px;font-weight:700}
+.judge{padding:14px;border-radius:12px;text-align:center;font-weight:900;font-size:1.7rem;margin-top:12px;display:none}
+.ok{background:var(--okl);color:var(--ok);border:3px solid var(--ok)}
+.ng{background:var(--ngl);color:var(--ng);border:3px solid var(--ng)}
+.submit-btn{width:100%;height:64px;background:var(--ok);border:none;border-radius:14px;color:#fff;font-size:1.3rem;font-weight:800;cursor:pointer;position:sticky;bottom:12px;z-index:5;box-shadow:0 6px 16px rgba(21,128,61,.4)}
+.submit-btn:active{transform:scale(.98)}
+.submit-btn:disabled{background:#94a3b8!important;box-shadow:none}
+#message{position:fixed;top:10px;left:12px;right:12px;max-width:560px;margin:0 auto;z-index:10000;padding:14px;border-radius:12px;text-align:center;font-weight:700;display:none;box-shadow:0 6px 20px rgba(0,0,0,.25);line-height:1.5}
+.success{background:var(--ok);color:#fff}.error{background:var(--ng);color:#fff}
+.hidden{display:none!important}
+.htitle{font-size:1.15rem;font-weight:800;border-left:6px solid var(--ac);padding-left:10px}
+.hcard{background:var(--card);border-radius:14px;padding:16px;margin-bottom:14px;position:relative;border-left:8px solid var(--ok);box-shadow:0 1px 6px rgba(15,23,42,.1)}
+.hcard.inc{border-left-color:#f59e0b;background:#fffbeb}
+.hcard::before{content:"完了";position:absolute;top:12px;right:12px;padding:3px 12px;border-radius:999px;background:var(--okl);color:var(--ok);font-weight:800;font-size:.85rem}
+.hcard.inc::before{content:"作業中";background:var(--wnl);color:var(--wn)}
+.hcard.choko::after{content:"⚠️ チョコ停";position:absolute;top:12px;right:78px;padding:3px 10px;border-radius:999px;background:var(--ngl);color:var(--ng);font-weight:800;font-size:.85rem}
+.choko-info{margin-top:10px;font-size:.95rem;color:var(--ng);background:var(--ngl);border-radius:8px;padding:8px 12px;line-height:1.5}
+.ctop{margin-bottom:10px;padding-right:130px}
+.ctitle{font-size:1.25rem;font-weight:900}
+.cmeta{font-size:.95rem;color:var(--sub);margin-top:4px;display:flex;gap:4px 14px;flex-wrap:wrap}
+.cmeta b{color:var(--tx)}
+.tl{display:flex;flex-direction:column;gap:8px}
+.tr{background:#f8fafc;border:1px solid var(--bd);border-radius:10px;padding:10px 12px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}
+.sl{font-weight:900;min-width:52px;padding:4px 0;border-radius:8px;text-align:center;font-size:.95rem;color:#fff}
+.l始{background:#0369a1}.l中{background:#d97706}.l終{background:var(--ok)}
+.sv{flex:1;display:flex;align-items:center;gap:8px;font-size:1.05rem;font-weight:600;min-width:0}
+.st{font-size:.85rem;color:var(--sub);white-space:nowrap}
+.edit-link{margin-left:auto;height:40px;padding:0 14px;background:var(--acl);border:none;border-radius:8px;color:var(--ac);font-weight:800;font-size:.95rem;cursor:pointer}
+.sf{display:none;flex:1 1 100%;gap:8px;align-items:center;flex-wrap:wrap}
+.sf select,.sf input{width:auto;height:44px;padding:0 8px;font-size:1rem;border-radius:8px}
+.sf input[type=number]{width:80px}
+.qty{margin-top:10px;background:var(--acl);border-radius:8px;padding:10px 14px;font-weight:800;font-size:1.1rem}
+.cb{height:48px;padding:0 16px;background:var(--ac);color:#fff;border:none;border-radius:10px;font-weight:800;cursor:pointer;font-size:1rem;white-space:nowrap}
+.cb.sm{height:44px;padding:0 14px}
+.overlay{position:fixed;inset:0;background:rgba(15,23,42,.6);z-index:9999;display:flex;justify-content:center;align-items:center;opacity:0;pointer-events:none;transition:opacity .15s}
+.overlay.show{opacity:1;pointer-events:auto}
+.spinner{width:52px;height:52px;border:6px solid #fff;border-top-color:var(--ac);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#chokoModal{align-items:flex-end}
+#chokoModal .container{max-width:600px;margin:0;border-radius:22px 22px 0 0;max-height:92vh;overflow:auto;padding-bottom:calc(20px + env(safe-area-inset-bottom))}
+#warn{position:fixed;inset:0;background:rgba(220,38,38,.98);z-index:100000;display:none;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:24px;color:#fff}
+#warn h1{font-size:2.2rem;margin:0 0 20px}#warn p{font-size:1.2rem;line-height:1.6;margin-bottom:30px}
+#warn button{padding:16px 48px;background:#fff;color:#dc2626;border:none;border-radius:50px;font-weight:800;font-size:1.2rem}
+body.so{overflow:hidden}
+#scan{position:fixed;inset:0;height:100dvh;background:#000;z-index:99999;display:none;flex-direction:column}
+#sh{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 16px;padding-top:max(12px,env(safe-area-inset-top));background:#111;color:#fff}
+#sh h3{margin:0;color:#58a6ff;font-size:1rem;flex:1}
+#sh button{background:#ef4444;color:#fff;border:none;padding:10px 18px;border-radius:8px;font-weight:700;cursor:pointer}
+#pc{flex:1;min-height:0;position:relative;overflow:hidden}
+#preview{position:absolute;inset:0}
+#preview video{position:absolute!important;inset:0;width:100%!important;height:100%!important;object-fit:cover;transform:none!important}
+#preview canvas{display:none!important}
+#guide{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:80%;max-width:480px;aspect-ratio:2/1;border:3px dashed #0f0;border-radius:8px;box-shadow:0 0 0 9999px rgba(0,0,0,.35);z-index:5;pointer-events:none;overflow:hidden}
+#line{position:absolute;left:0;width:100%;height:2px;background:#ff375f;box-shadow:0 0 15px #ff375f;animation:sm 1.5s ease-in-out infinite alternate}
+@keyframes sm{0%{top:8%}100%{top:92%}}
+#sf2{background:#111;padding:12px 16px calc(12px + env(safe-area-inset-bottom));text-align:center;color:#f59e0b;font-weight:700}
+@media(min-width:768px){.container,.history-container{max-width:600px}}
+</style>
 </head>
 <body>
 
-<div id="globalWarningOverlay">
- <h1 id="uiWarningTitle">⚠️ 未完了の作業があります</h1>
- <p id="uiWarningBody">前日以前の履歴で「終」まで完了していないデータがあります。<br>まず履歴を確認してください。</p>
- <button type="button" class="warning-close-btn" id="btnWarningClose" onclick="closeGlobalWarning()">確認しました</button>
+<div id="warn">
+  <h1>⚠️ 未完了の作業があります</h1>
+  <p>前日以前の履歴で「終」まで完了していないデータがあります。<br>まず履歴を確認してください。</p>
+  <button type="button" onclick="closeWarn()">確認しました</button>
 </div>
+<div id="loading" class="overlay"><div class="spinner"></div></div>
 
-<div id="loadingOverlay" class="overlay">
- <div class="spinner"></div>
- <div id="overlayText" class="overlay-text">処理中...</div>
-</div>
-
-<div id="scannerOverlay">
-  <div id="scannerHeader">
-    <h3>枠内にバーコードを写してください</h3>
-    <button id="torchBtn" onclick="toggleTorch()" style="display:none; background:#f59e0b;">💡 ライトON</button>
-    <button type="button" onclick="stopBarcodeScanning()">閉じる</button>
-  </div>
-  <div id="preview-container">
-    <div id="preview"></div>
-    <div id="scan-guide"><div id="scan-line"></div></div>
-  </div>
-  <div id="scannerFooter">
-    <div id="scanStatus">カメラを起動中...</div>
-    <div id="scannerHint">💡 暗い場合は照明を確保してください ｜ バーコードを枠いっぱいに写すと速く読めます</div>
-  </div>
-</div>
-
-<div class="lang-bar">
- <button type="button" id="btn-lang-ja" class="lang-btn active" onclick="switchLanguage('ja')">🇯🇵 日本語</button>
- <button type="button" id="btn-lang-id" class="lang-btn" onclick="switchLanguage('id')">🇮🇩 Indo</button>
- <button type="button" id="btn-lang-pt" class="lang-btn" onclick="switchLanguage('pt')">🇧🇷 Port</button>
+<div id="scan">
+  <div id="sh"><h3>枠内にバーコードを写してください</h3>
+    <button id="torchBtn" onclick="toggleTorch()" style="display:none;background:#f59e0b">💡 ライトON</button>
+    <button type="button" onclick="stopScan()">閉じる</button></div>
+  <div id="pc"><div id="preview"></div><div id="guide"><div id="line"></div></div></div>
+  <div id="sf2"><span id="scanStatus">カメラを起動中...</span></div>
 </div>
 
 <div class="container">
- <h2 id="uiMainHeader">順送プレス加工実績入力</h2>
+  <h2>順送プレス加工実績入力</h2>
+  <form id="pressForm" onkeydown="return event.key!='Enter'">
+    <div class="step"><span class="num">1</span>作業者・機械</div>
+    <div class="fg"><label class="fl" for="worker">作業者</label>
+      <select id="worker" required><option value="">選択してください</option></select></div>
+    <div class="fg"><span class="fl">使用する機械</span>
+      <div class="seg" id="seg">
+        <button type="button" data-m="順送【80ｔ】">80t</button>
+        <button type="button" data-m="順送【110ｔ】">110t</button>
+        <button type="button" data-m="順送【200ｔ】">200t</button>
+      </div>
+      <select id="machine" class="hidden">
+        <option value="">選択してください</option>
+        <option value="順送【80ｔ】">順送【80ｔ】</option>
+        <option value="順送【110ｔ】">順送【110ｔ】</option>
+        <option value="順送【200ｔ】">順送【200ｔ】</option></select></div>
 
-<form id="pressForm" onkeydown="return event.key != 'Enter';">
- <div class="form-group">
- <label class="field-label" id="lblWorker" for="worker">作業者</label>
- <select id="worker" required onchange="moveToNextField('machine')">
- <option value="">選択してください</option>
- </select>
- </div>
+    <div class="step"><span class="num">2</span>コイルNo</div>
+    <div class="fg">
+      <div class="row">
+        <input type="text" id="coilNo" list="coilList" required placeholder="入力 / 📷 / 一覧から選択" autocomplete="off" autocapitalize="characters">
+        <button type="button" class="scan-btn" onclick="startScan()">📷</button>
+        <button type="button" class="confirm-btn" onclick="onCoil()">確定</button>
+      </div>
+      <datalist id="coilList"></datalist></div>
 
- <div class="form-group">
- <label class="field-label" id="lblMachine" for="machine">使用する機械</label>
- <select id="machine" required onchange="moveToNextField('coilNo')">
- <option value="" id="optMachineDefault">選択してください</option>
- <option value="順送【80ｔ】">順送【80ｔ】</option>
- <option value="順送【110ｔ】">順送【110ｔ】</option>
- <option value="順送【200ｔ】">順送【200ｔ】</option>
- </select>
- </div>
-
- <div class="form-group">
- <label class="field-label" id="lblCoilNo" for="coilNo">コイルNo</label>
- <div class="inline-input-group">
- <input type="text" id="coilNo" list="coilHistoryOptions" required onkeydown="if(event.key === 'Enter'){ onCoilDetermined(); return false; }">
- <button type="button" class="scan-btn" id="btnScan" onclick="startBarcodeScanning()" title="カメラでバーコードを読み取る">📷</button>
- <button type="button" class="confirm-btn" id="btnConfirm" onclick="onCoilDetermined()">確定</button>
- </div>
- <datalist id="coilHistoryOptions"></datalist>
- </div>
-
- <div id="dynamic-area" class="hidden">
- <div class="form-group">
- <label class="field-label" id="lblProductName" for="productName">該当品名</label>
- <select id="productName" required onchange="onProductChanged()">
- </select>
- <div id="defectWarning" class="defect-warning-box"></div>
- </div>
-
- <div class="form-group">
- <label class="field-label" id="lblMeasured" for="measured">
- 実寸計測値 (mm) <span id="masterTargetDisplay" class="target-val"></span>
- </label>
- <input type="number" id="measured" step="0.1" required placeholder="0.0" oninput="checkMeasuredValue()">
- <div id="judgeResult" class="judge-box"></div>
- </div>
-
- <div id="quantity-field" class="form-group hidden">
- <label class="field-label" id="lblQuantity" for="quantity">加工数量 (個数) 【※今回の送信で加工終了となります】</label>
- <input type="number" id="quantity">
- </div>
-
- <button type="submit" id="submitBtn" class="submit-btn">実績を送信</button>
- </div>
- </form>
-
- <div id="message"></div>
+    <div id="dyn" class="hidden">
+      <div class="step"><span class="num">3</span>計測・記録</div>
+      <div id="stageBadge" class="stagebadge"></div>
+      <div class="fg"><label class="fl" for="productName">該当品名</label>
+        <select id="productName" required></select>
+        <div id="defect" class="defect"></div></div>
+      <div class="fg"><label class="fl" for="measured">実寸計測値 (mm)<span id="tgt" class="target-val"></span></label>
+        <input type="number" id="measured" step="0.1" inputmode="decimal" required placeholder="0.0">
+        <div id="judge" class="judge"></div></div>
+      <div id="qtyField" class="fg hidden"><label class="fl" for="quantity">加工数量 (個) ※今回の送信で加工終了</label>
+        <input type="number" id="quantity" inputmode="numeric" placeholder="数量を入力"></div>
+      <button type="submit" id="submitBtn" class="submit-btn">実績を送信</button>
+    </div>
+  </form>
 </div>
+<div id="message"></div>
 
 <div class="history-container">
- <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-   <div class="history-title" id="uiHistoryTitle" style="margin-bottom:0;">直近20件の品名別加工履歴</div>
-   <button type="button" class="control-btn" style="padding:4px 10px; font-size:0.8rem; background:#262936; border:1px solid #334155;" onclick="loadRecentHistory({ includeWorkers: true })" title="履歴を再取得">🔄 更新</button>
- </div>
- <div id="historyList" class="history-list">
- <div style="text-align:center;color:#666;padding:20px;" id="uiHistoryLoading">履歴データを読み込み中...</div>
- </div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+    <div class="htitle">直近10件の品名別加工履歴</div>
+    <button type="button" class="cb" style="padding:4px 10px;font-size:.8rem;background:#262936;border:1px solid #334155" onclick="load(true)">🔄 更新</button>
+  </div>
+  <div id="hist"><div style="text-align:center;color:#666;padding:20px">履歴データを読み込み中...</div></div>
 </div>
 
-<div id="chokoteiModal" class="overlay">
-  <div class="container" style="background: #1f222f; position: relative;">
-    <h3 style="color: #f59e0b; text-align: center; margin-top: 0;">⚠️ チョコ停の記録</h3>
-    <div class="form-group">
-      <label class="field-label">原因を選択</label>
-      <select id="chokoReason" onchange="checkOtherReason()">
-        <option value="ミスフィード">ミスフィード</option>
-        <option value="材料反り送り異常（ミスフィード）">材料反り送り異常（ミスフィード）</option>
-        <option value="金型詰まり">金型詰まり</option>
-        <option value="ピアスカス詰まり">ピアスカス詰まり</option>
-        <option value="その他">その他</option>
-      </select>
-      <input type="text" id="otherReason" placeholder="その他の内容を入力" class="hidden" style="margin-top: 10px;">
-    </div>
-    <div class="form-group" style="display:flex; align-items:center; padding: 10px 0;">
-      <label style="color: #fff; font-weight: bold; display: flex; align-items: center; gap: 10px; cursor: pointer;">
-        <input type="checkbox" id="boxCheck" style="width: 24px; height: 24px; cursor: pointer;">
-        箱チェック完了
-      </label>
-    </div>
-    <div class="form-group">
-      <label class="field-label">廃棄数 (個)</label>
-      <input type="number" id="wasteQty" placeholder="0">
-    </div>
-    <button class="submit-btn" style="background: #f59e0b; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3); margin-top: 10px;" onclick="submitChokotei()">記録する</button>
-    <button class="control-btn" style="background: #64748b; width: 100%; margin-top: 15px; padding: 16px; font-size: 1.1rem; border-radius: 12px;" onclick="closeChokoteiModal()">キャンセル</button>
+<div id="chokoModal" class="overlay">
+  <div class="container">
+    <h3 style="color:var(--wn);text-align:center;margin:0 0 16px">⚠️ チョコ停の記録</h3>
+    <div class="fg"><label class="fl">原因を選択</label>
+      <select id="chokoReason">
+        <option>ミスフィード</option><option>材料反り送り異常（ミスフィード）</option>
+        <option>金型詰まり</option><option>ピアスカス詰まり</option><option>その他</option></select>
+      <input type="text" id="otherReason" placeholder="その他の内容を入力" class="hidden" style="margin-top:10px"></div>
+    <div class="fg"><label style="font-weight:800;display:flex;align-items:center;gap:12px;min-height:48px">
+      <input type="checkbox" id="boxCheck" style="width:28px;height:28px"> 箱チェック完了</label></div>
+    <div class="fg"><label class="fl">廃棄数 (個)</label><input type="number" id="wasteQty" inputmode="numeric" placeholder="0"></div>
+    <button class="submit-btn" style="background:#d97706;position:static;box-shadow:none" onclick="submitChoko()">記録する</button>
+    <button class="cb" style="background:#64748b;width:100%;margin-top:12px;height:56px;font-size:1.1rem" onclick="closeChoko()">キャンセル</button>
   </div>
 </div>
 
 <script>
- const LANG_DATA = {
- ja: {
- title: "順送プレス加工実績入力",
- selectPlease: "選択してください",
- selectProduct: "該当複数あり、品名を選択してください▼",
- worker: "作業者",
- machine: "使用する機械",
- coilNo: "コイルNo",
- coilPlaceholder: "手入力・カメラ または一覧から選択",
- confirm: "確定",
- productName: "該当品名",
- measured: "実寸計測値 (mm)",
- rangeText: "基準",
- okRange: "OK範囲",
- quantity: "加工数量 (個数) 【※今回の送信で加工終了となります】",
- qtyPlaceholder: "数量を入力",
- submit: "実績を送信",
- historyTitle: "直近20件の品名別加工履歴",
- historyLoading: "履歴データを読み込み中...",
- noHistory: "履歴データがまだありません。",
- commError: "通信エラーが発生しました。",
- historyCommError: "履歴の読み込みでエラーが発生しました",
- checkingStock: "在庫データを照合中...",
- saving: "実績ログへ書き込み中...",
- ok: "判定：OK",
- ng: "判定：NG (許容範囲外)",
- successSaved: "実績ログに正常に登録・追記しました！",
- saveError: "保存エラー: ",
- lockError: "🚨 <b>入力エラー:</b> このコイルにおける「{prod}」の加工はすでに【終】まで完全に完了しています。<br>二周目の再加工登録は認められません。",
- defectTitle: "⚠️ 過去の不良事例・注意点",
- warnTitle: "⚠️ 未完了の作業があります",
- warnBody: "前日以前の履歴で「終」まで完了していないデータがあります。<br>まず履歴を確認してください。",
- warnClose: "確認しました",
- scanMsg: "スキャン中... 赤い線をバーコードに合わせてください"
- },
- id: {
- title: "Input Hasil Produksi Press",
- selectPlease: "Silakan pilih",
- selectProduct: "Ada beberapa produk, silakan pilih nama produk▼",
- worker: "Operator",
- machine: "Mesin yang digunakan",
- coilNo: "No Coil",
- coilPlaceholder: "Input manual/Kamera atau pilih",
- confirm: "Konfirmasi",
- productName: "Nama Produk",
- measured: "Nilai Pengukuran Aktual (mm)",
- rangeText: "Standar",
- okRange: "Kisaran OK",
- quantity: "Jumlah Produksi (Pcs) 【*Pengiriman ini akan menyelesaikan proses】",
- qtyPlaceholder: "Masukkan jumlah kuantitas",
- submit: "Kirim Hasil",
- historyTitle: "20 Riwayat Pemrosesan Terakhir Berdasarkan Produk",
- historyLoading: "Memuat data riwayat...",
- noHistory: "Belum ada data riwayat.",
- commError: "Terjadi kesalahan komunikasi.",
- historyCommError: "Terjadi kesalahan saat memuat riwayat",
- checkingStock: "Memeriksa data stok...",
- saving: "Menyimpan ke log hasil...",
- ok: "Penilaian: OK",
- ng: "Penilaian: NG (Di luar kisaran)",
- successSaved: "Berhasil terdaftar dan diperbarui di log hasil!",
- saveError: "Kesalahan penyimpanan: ",
- lockError: "🚨 <b>Kesalahan Input:</b> Proses untuk produk \"{prod}\" pada coil ini telah selesai sepenuhnya hingga tahap [Akhir].<br>Penginputan ulang untuk kedua kalinya tidak diperbolehkan.",
- defectTitle: "⚠️ Riwayat Cacat / Poin Perhatian",
- warnTitle: "⚠️ Ada Pekerjaan Belum Selesai",
- warnBody: "Ada data dalam riwayat sebelum hari ini yang belum selesai hingga tahap [Akhir].<br>Silakan periksa riwayat terlebih dahulu.",
- warnClose: "Saya mengerti",
- scanMsg: "Memindai... Arahkan garis merah ke barcode"
- },
- pt: {
- title: "Entrada de Resultados de Prensa",
- selectPlease: "Por favor, selecione",
- selectProduct: "Múltiplos produtos encontrados, selecione o nome▼",
- worker: "Operador",
- machine: "Máquina Utilizada",
- coilNo: "Nº da Bobina (Coil No)",
- coilPlaceholder: "Manual/Câmera ou selecione da lista",
- confirm: "Confirmar",
- productName: "Nome do Produto",
- measured: "Valor Medido Real (mm)",
- rangeText: "Padrão",
- okRange: "Faixa OK",
- quantity: "Quantidade Produzida (Pcs) 【*Este envio interrompe o processo】",
- qtyPlaceholder: "Digite a quantidade",
- submit: "Enviar Resultado",
- historyTitle: "Últimos 20 Históricos de Processamento por Produto",
- historyLoading: "Carregando dados do histórico...",
- noHistory: "Nenhum dado de histórico disponível.",
- commError: "Ocorreu um erro de comunicação.",
- historyCommError: "Erro ao carregar o histórico",
- checkingStock: "Verificando dados de estoque...",
- saving: "Gravando no log de resultados...",
- ok: "Resultado: OK",
- ng: "Resultado: NG (Fora da faixa)",
- successSaved: "Registrado e atualizado com sucesso no log de resultados!",
- saveError: "Erro ao salvar: ",
- lockError: "Erro de Entrada: O processamento do produto \"{prod}\" nesta bobina já foi totalmente concluído até a etapa [Fim]. Não é permitido registrar novamente.",
- defectTitle: "⚠️ Histórico de Defeitos / Pontos de Atenção",
- warnTitle: "⚠️ Existe Trabalho Inacabado",
- warnBody: "Existem dados no histórico de dias anteriores que não foram concluídos até o [Fim]. Por favor, verifique o histórico primeiro.",
- warnClose: "Entendido",
- scanMsg: "Escaneando... Alinhe a linha vermelha com o código de barras"
- }
- };
-
- let currentLang = 'ja';
- let currentProducts = [];
- let targetValue = null;
- let nextStage = '始';
- let fullHistoryLogs = [];
- let rawWorkers = [];
- let activeCoilsServer = [];
- let warningDismissed = false;
- const productCache = {};
- const CACHE_KEY = 'ppInitV1';
-
- let quaggaPromise = null;
- function loadQuagga() {
-   if (window.Quagga) return Promise.resolve();
-   if (!quaggaPromise) {
-     quaggaPromise = new Promise((resolve, reject) => {
-       const sc = document.createElement('script');
-       sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js';
-       sc.onload = resolve;
-       sc.onerror = () => { quaggaPromise = null; reject(new Error('quagga load failed')); };
-       document.head.appendChild(sc);
-     });
-   }
-   return quaggaPromise;
- }
-
- let barcodeMatchCount = 0;
- let lastBarcode = "";
- let quaggaInitialized = false;
- let nativeStream = null;
- let nativeTimer = null;
- let scanSession = 0;
- let torchOn = false;
- let scanStarting = false;
- const REQUIRED_MATCHES = 2;
-
- let currentChokoCoilNo = '';
- let currentChokoProductName = '';
-
- const MACHINES = ["順送【80ｔ】", "順送【110ｔ】", "順送【200ｔ】"];
-
- const escHtml = s => String(s ?? '')
-   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-   .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
- const escJs = s => escHtml(String(s ?? '').replace(/\\/g, '\\\\').replace(/'/g, "\\'"));
-
- // ==========================================
- // API通信
- // ==========================================
- const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyKuZhZb_aOg7Iyb2YTYHOwOMKognF57OpGuzmPJxNfo2dpa-F81j-iI5yuRVDqaidvRg/exec";
-
- async function callGAS(action, payload = {}, retries = 2) {
-   for (let attempt = 0; attempt <= retries; attempt++) {
-     try {
-       const controller = new AbortController();
-       const timeoutId = setTimeout(() => controller.abort(), 12000); // 12秒タイムアウト設定
-
-       const response = await fetch(GAS_API_URL, {
-         method: 'POST',
-         headers: { 'Content-Type': 'text/plain' },
-         body: JSON.stringify({ action: action, ...payload }),
-         signal: controller.signal
-       });
-       clearTimeout(timeoutId);
-
-       const text = await response.text();
-       let data;
-       try {
-         data = JSON.parse(text);
-       } catch (parseErr) {
-         const head = text.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 80);
-         throw new Error('サーバー応答がJSONではありません: ' + head);
-       }
-       if (data && data.error) throw new Error(data.error);
-       return data;
-     } catch (error) {
-       console.warn(`API Error [${action}] (試行 ${attempt + 1}/${retries + 1}):`, error);
-       if (attempt < retries) {
-         // 1秒、2秒と徐々に間隔をあけてリトライ
-         await new Promise(res => setTimeout(res, (attempt + 1) * 1000));
-       } else {
-         throw error;
-       }
-     }
-   }
- }
-
- // ==========================================
- // 疑似即時反映 (Optimistic UI) 系関数
- // ==========================================
- // 日付文字列を取得するヘルパー
- function getLogDateStr(l) {
-   if (l.start && l.start.time) return l.start.time.split(' ')[0];
-   if (l.middle && l.middle.time) return l.middle.time.split(' ')[0];
-   if (l.end && l.end.time) return l.end.time.split(' ')[0];
-   return '';
- }
-
- // 新規保存時にローカルの配列へ即時追加する
- function appendOptimisticLog(logData, res) {
-   // もしGASが気を利かせて最新履歴(res.history)を返してくれたらそれを採用する
-   if (res && res.history) {
-     fullHistoryLogs = res.history;
-     return;
-   }
-   const now = new Date();
-   const timeStr = `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-   const todayStr = timeStr.split(' ')[0];
-   const newStageData = { time: timeStr, worker: logData.worker, measured: logData.measured, qty: logData.quantity || '' };
-
-   let existingIdx = fullHistoryLogs.findIndex(l => l.coilNo === logData.coilNo && l.productName === logData.productName && getLogDateStr(l) === todayStr);
-
-   if (existingIdx !== -1) {
-     let existingLog = fullHistoryLogs[existingIdx];
-     if (logData.enforcedStage === '中') existingLog.middle = newStageData;
-     else if (logData.enforcedStage === '終') {
-       existingLog.end = newStageData;
-       existingLog.end.qty = logData.quantity;
-     }
-     // 更新されたアイテムを一番上に移動させる
-     fullHistoryLogs.splice(existingIdx, 1);
-     fullHistoryLogs.unshift(existingLog);
-   } else {
-     let newLog = {
-       coilNo: logData.coilNo, productName: logData.productName, machine: logData.machine,
-       start: logData.enforcedStage === '始' ? newStageData : null,
-       middle: logData.enforcedStage === '中' ? newStageData : null,
-       end: logData.enforcedStage === '終' ? newStageData : null
-     };
-     fullHistoryLogs.unshift(newLog);
-   }
- }
-
- // バックグラウンドで静かに最新の履歴を取得して同期する関数
- function fetchHistoryInBackground() {
-   callGAS('getInit', { includeWorkers: false }, 1).then(data => {
-     if (data && data.history) {
-       fullHistoryLogs = data.history;
-       if (data.coils) activeCoilsServer = data.coils;
-       localStorage.setItem(CACHE_KEY, JSON.stringify({
-         workers: rawWorkers, history: fullHistoryLogs, coils: activeCoilsServer
-       }));
-       loadRecentHistory({ cached: { history: fullHistoryLogs } }); // サイレント再描画
-     }
-   }).catch(e => console.warn("Background fetch failed", e));
- }
-
- // ==========================================
- // バーコードスキャナー（略）
- // ==========================================
- function startBarcodeScanning() {
-   if (scanStarting) return;
-   scanStarting = true;
-   setTimeout(() => { scanStarting = false; }, 800);
-   try { Quagga.stop(); Quagga.offDetected(); } catch (e) {}
-   stopNativeStream();
-   document.body.classList.add('scanner-open');
-   const scannerOverlay = document.getElementById('scannerOverlay');
-   const scanStatus = document.getElementById('scanStatus');
-   scannerOverlay.style.display = 'flex';
-   scanStatus.innerText = LANG_DATA[currentLang].scanMsg || "スキャン中...";
-   document.getElementById('torchBtn').style.display = 'none';
-   torchOn = false;
-   scanSession++;
-   barcodeMatchCount = 0;
-   lastBarcode = "";
-   quaggaInitialized = false;
-
-   if ('BarcodeDetector' in window) startNativeScan(scanSession);
-   else startQuaggaScan();
- }
-
- function handleBarcodeFound(raw) {
-   let code = String(raw || '').trim();
-   if (!code) return;
-   code = (code.replace(/^0+(?=.)/, '') || code).toUpperCase();
-   if (code === lastBarcode) barcodeMatchCount++;
-   else { lastBarcode = code; barcodeMatchCount = 1; }
-
-   if (barcodeMatchCount >= REQUIRED_MATCHES) {
-     if (navigator.vibrate) navigator.vibrate(60);
-     document.getElementById('coilNo').value = code;
-     stopBarcodeScanning();
-     setTimeout(() => onCoilDetermined(), 200);
-   } else {
-     document.getElementById('scanStatus').innerText =
-       `${LANG_DATA[currentLang].scanMsg || "スキャン中..."} (${barcodeMatchCount}/${REQUIRED_MATCHES})`;
-   }
- }
-
- async function startNativeScan(session) {
-   const scanStatus = document.getElementById('scanStatus');
-   try {
-     let formats = ['code_128', 'code_39', 'ean_13', 'ean_8', 'itf'];
-     if (BarcodeDetector.getSupportedFormats) {
-       const sup = await BarcodeDetector.getSupportedFormats();
-       formats = formats.filter(f => sup.includes(f));
-     }
-     if (formats.length === 0) throw new Error('no formats');
-     const detector = new BarcodeDetector({ formats });
-
-     nativeStream = await navigator.mediaDevices.getUserMedia({
-       video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1080 } },
-       audio: false
-     });
-     if (session !== scanSession) { stopNativeStream(); return; }
-
-     const video = document.createElement('video');
-     video.setAttribute('playsinline', '');
-     video.muted = true;
-     video.srcObject = nativeStream;
-     const preview = document.getElementById('preview');
-     preview.innerHTML = '';
-     preview.appendChild(video);
-     await video.play();
-     setupTrackExtras();
-
-     const loop = async () => {
-       if (session !== scanSession) return;
-       try {
-         if (video.readyState >= 2) {
-           const results = await detector.detect(video);
-           if (results.length > 0 && session === scanSession) handleBarcodeFound(results[0].rawValue);
-         }
-       } catch (e) { }
-       if (session === scanSession) nativeTimer = setTimeout(loop, 50);
-     };
-     loop();
-   } catch (err) {
-     console.warn('Native scan failed, fallback to Quagga:', err);
-     stopNativeStream();
-     if (session === scanSession) startQuaggaScan();
-   }
- }
-
- function stopNativeStream() {
-   if (nativeTimer) { clearTimeout(nativeTimer); nativeTimer = null; }
-   if (nativeStream) { nativeStream.getTracks().forEach(t => t.stop()); nativeStream = null; }
- }
-
- async function startQuaggaScan() {
-   const scanStatus = document.getElementById('scanStatus');
-   try { await loadQuagga(); } catch (e) {
-     scanStatus.innerText = 'スキャナの読み込みに失敗しました。通信を確認してください。';
-     return;
-   }
-   if (!document.body.classList.contains('scanner-open')) return;
-   document.getElementById('preview').innerHTML = '';
-   Quagga.init({
-     inputStream: {
-       name: "Live", type: "LiveStream", target: document.querySelector('#preview'),
-       constraints: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: "environment" },
-       area: { top: "20%", right: "5%", left: "5%", bottom: "20%" }
-     },
-     locator: { patchSize: "medium", halfSample: true },
-     numOfWorkers: Math.min(navigator.hardwareConcurrency || 2, 4),
-     frequency: 30,
-     decoder: { readers: ["code_128_reader", "ean_reader", "code_39_reader"], multiple: false },
-     locate: true
-   }, function(err) {
-     if (err) { scanStatus.innerText = "カメラの起動に失敗しました。権限を確認してください。"; return; }
-     Quagga.start();
-     quaggaInitialized = true;
-     setupTrackExtras();
-     scanStatus.innerText = LANG_DATA[currentLang].scanMsg || "スキャン中...";
-   });
-   Quagga.offDetected();
-   Quagga.onDetected(function(data) {
-     if (!quaggaInitialized || !data.codeResult || !data.codeResult.code) return;
-     const errs = (data.codeResult.decodedCodes || []).filter(c => c.error !== undefined).map(c => c.error);
-     if (errs.length) {
-       const avg = errs.reduce((a, b) => a + b, 0) / errs.length;
-       if (avg > 0.12) return;
-     }
-     handleBarcodeFound(data.codeResult.code);
-   });
- }
-
- function getActiveTrack() {
-   try {
-     if (nativeStream) return nativeStream.getVideoTracks()[0];
-     return Quagga.CameraAccess.getActiveTrack();
-   } catch (e) { return null; }
- }
-
- async function setupTrackExtras() {
-   const track = getActiveTrack();
-   if (!track || !track.getCapabilities) return;
-   const caps = track.getCapabilities();
-   try {
-     if (caps.focusMode && caps.focusMode.includes('continuous')) await track.applyConstraints({ advanced: [{ focusMode: 'continuous' }] });
-   } catch (e) {}
-   if (caps.torch) document.getElementById('torchBtn').style.display = 'block';
- }
-
- async function toggleTorch() {
-   const track = getActiveTrack();
-   if (!track) return;
-   try {
-     torchOn = !torchOn;
-     await track.applyConstraints({ advanced: [{ torch: torchOn }] });
-     document.getElementById('torchBtn').textContent = torchOn ? '💡 ライトOFF' : '💡 ライトON';
-   } catch (e) { torchOn = !torchOn; }
- }
-
- function stopBarcodeScanning() {
-   scanSession++;
-   stopNativeStream();
-   try { Quagga.stop(); Quagga.offDetected(); } catch (e) {}
-   document.getElementById('preview').innerHTML = '';
-   document.getElementById('torchBtn').style.display = 'none';
-   document.getElementById('torchBtn').textContent = '💡 ライトON';
-   document.getElementById('scannerOverlay').style.display = 'none';
-   document.body.classList.remove('scanner-open');
-   quaggaInitialized = false;
- }
-
- // ==========================================
- // アプリケーションロジック
- // ==========================================
- document.addEventListener('DOMContentLoaded', function() {
-   initStaticLabels();
-   try {
-     const c = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
-     if (c && Array.isArray(c.history)) {
-       if (Array.isArray(c.workers)) { rawWorkers = c.workers; renderWorkerDropdown(); }
-       loadRecentHistory({ cached: c });
-     }
-   } catch (e) {}
-   loadRecentHistory({ includeWorkers: true });
-   if (!('BarcodeDetector' in window)) {
-     (window.requestIdleCallback || (f => setTimeout(f, 1500)))(() => loadQuagga().catch(() => {}));
-   }
- });
-
- function initStaticLabels() {
-   const lang = LANG_DATA[currentLang];
-   document.title = lang.title;
-   document.getElementById('pageTitle').textContent = lang.title;
-   document.getElementById('uiMainHeader').textContent = lang.title;
-   document.getElementById('lblWorker').textContent = lang.worker;
-   document.getElementById('lblMachine').textContent = lang.machine;
-   document.getElementById('lblCoilNo').textContent = lang.coilNo;
-   document.getElementById('btnConfirm').textContent = lang.confirm;
-   document.getElementById('lblProductName').textContent = lang.productName;
-   document.getElementById('lblMeasured').childNodes[0].textContent = lang.measured + " ";
-   document.getElementById('lblQuantity').textContent = lang.quantity;
-   document.getElementById('submitBtn').textContent = lang.submit;
-   document.getElementById('uiHistoryTitle').textContent = lang.historyTitle;
-   document.getElementById('coilNo').placeholder = lang.coilPlaceholder;
-   document.getElementById('quantity').placeholder = lang.qtyPlaceholder;
-   document.getElementById('uiWarningTitle').textContent = lang.warnTitle;
-   document.getElementById('uiWarningBody').innerHTML = lang.warnBody;
-   document.getElementById('btnWarningClose').textContent = lang.warnClose;
-   const optMachine = document.getElementById('optMachineDefault');
-   if (optMachine) optMachine.textContent = lang.selectPlease;
-   renderWorkerDropdown();
- }
-
- function renderWorkerDropdown() {
-   const select = document.getElementById('worker');
-   if (!select) return;
-   const currentSelectedValue = select.value;
-   select.innerHTML = '';
-   const firstOpt = document.createElement('option');
-   firstOpt.value = "";
-   firstOpt.textContent = LANG_DATA[currentLang].selectPlease;
-   select.appendChild(firstOpt);
-   rawWorkers.forEach(name => {
-     const opt = document.createElement('option');
-     opt.value = name;
-     opt.textContent = name;
-     select.appendChild(opt);
-   });
-   select.value = currentSelectedValue;
- }
-
- function switchLanguage(langCode) {
-   currentLang = langCode;
-   document.querySelectorAll('.lang-bar .lang-btn').forEach(btn => btn.classList.remove('active'));
-   const targetBtn = document.getElementById('btn-lang-' + langCode);
-   if (targetBtn) targetBtn.classList.add('active');
-   initStaticLabels();
-   if (document.getElementById('productName').value) onProductChanged();
-   checkMeasuredValue();
- }
-
- function refreshCoilSupportList() {
-   try {
-     const coilList = activeCoilsServer;
-     const incompleteLogs = fullHistoryLogs.filter(log => !log.end);
-     const incompleteCoils = [...new Set(incompleteLogs.map(log => log.coilNo))];
-     const allCoils = [...new Set([...(Array.isArray(coilList) ? coilList : []), ...incompleteCoils])].sort();
-
-     const datalist = document.getElementById('coilHistoryOptions');
-     if (!datalist) return;
-     datalist.innerHTML = '';
-     allCoils.forEach(function(coilNo) {
-       const option = document.createElement('option');
-       option.value = coilNo;
-       option.textContent = coilNo;
-       datalist.appendChild(option);
-     });
-   } catch (e) {}
- }
-
- function closeGlobalWarning() {
-   warningDismissed = true;
-   document.getElementById('globalWarningOverlay').style.display = 'none';
- }
-
- function renderStageRow(idx, stage, icon, d, log, withQty) {
-   const workerOpts = rawWorkers.map(w =>
-     `<option value="${escHtml(w)}" ${w === d.worker ? 'selected' : ''}>${escHtml(w)}</option>`).join('');
-   const machineOpts = MACHINES.map(m =>
-     `<option value="${escHtml(m)}" ${m === log.machine ? 'selected' : ''}>${escHtml(m)}</option>`).join('');
-   const measuredNum = parseFloat(d.measured);
-   const measuredLabel = isNaN(measuredNum) ? '-' : measuredNum.toFixed(1) + 'mm';
-   const coilArg = escJs(log.coilNo);
-   const prodArg = escJs(log.productName);
-
-   return `
-   <div class="timeline-row" id="row-${idx}-${stage}">
-     <span class="stage-label lbl-${stage}">${icon} ${stage}</span>
-     <div class="stage-details" id="view-${idx}-${stage}" style="display:flex; flex:1; align-items:center;">
-       <span>👤 ${escHtml(d.worker)} &nbsp;📐 ${measuredLabel}</span>
-       <button type="button" class="edit-link" onclick="toggleInlineEdit(${idx}, '${stage}', true)">✏️ 修正</button>
-     </div>
-     <div class="stage-edit-form" id="form-${idx}-${stage}">
-       <select id="edit-machine-${idx}-${stage}">${machineOpts}</select>
-       <select id="edit-worker-${idx}-${stage}">${workerOpts}</select>
-       <input type="number" id="edit-measured-${idx}-${stage}" step="0.1" value="${escHtml(d.measured || '')}">mm
-       ${withQty ? `<input type="number" id="edit-qty-${idx}-${stage}" value="${escHtml(d.qty || '')}" placeholder="数量">個` : ''}
-       <button type="button" class="control-btn" style="padding:2px 6px; font-size:0.75rem; background:#10b981;" onclick="submitInlineEdit(${idx}, '${stage}', '${coilArg}', '${prodArg}')">保存</button>
-       <button type="button" class="control-btn" style="padding:2px 6px; font-size:0.75rem; background:#64748b;" onclick="toggleInlineEdit(${idx}, '${stage}', false)">×</button>
-     </div>
-     <span class="stage-time" id="time-${idx}-${stage}" style="margin-left:8px;">${escHtml(d.time)}</span>
-   </div>`;
- }
-
- function renderHistoryUI(isOfflineCache = false) {
-   const historyListDiv = document.getElementById('historyList');
-   if (fullHistoryLogs.length === 0) {
-     historyListDiv.innerHTML = `<div style="text-align:center;color:#666;padding:20px;">${LANG_DATA[currentLang].noHistory}</div>`;
-     refreshCoilSupportList();
-     return;
-   }
-
-   let html = '';
-   if (isOfflineCache) {
-     html += `<div style="background:rgba(245,158,11,0.15); border:1px solid #f59e0b; color:#fde68a; padding:10px 14px; border-radius:10px; margin-bottom:12px; font-size:0.85rem; display:flex; justify-content:space-between; align-items:center;">
-       <span>⚠️ 通信エラーのためキャッシュ（直近保持データ）を表示中</span>
-       <button type="button" class="control-btn" style="padding:3px 8px; font-size:0.75rem; background:#f59e0b; color:#000;" onclick="loadRecentHistory({ includeWorkers: true })">再読み込み</button>
-     </div>`;
-   }
-
-   const displayLogs = fullHistoryLogs.slice(0, 20);
-
-   displayLogs.forEach((log, idx) => {
-     try {
-       let timelineHtml = '';
-       let finalQty = '';
-       const isEndReached = !!(log.end);
-       const hasChoko = !!(log.chokoReason && log.chokoReason !== '');
-       const cardClassBase = isEndReached ? 'history-card' : 'history-card is-incomplete';
-       const cardClass = hasChoko ? `${cardClassBase} has-chokotei` : cardClassBase;
-
-       if (log.start) timelineHtml += renderStageRow(idx, '始', '▶', log.start, log, false);
-       if (log.middle) timelineHtml += renderStageRow(idx, '中', '🔄', log.middle, log, false);
-       if (log.end) {
-         timelineHtml += renderStageRow(idx, '終', '■', log.end, log, true);
-         if (log.end.qty) finalQty = `<div class="qty-display-box" id="qty-display-${idx}">📦 Qty: ${escHtml(log.end.qty)}</div>`;
-       }
-
-       let chokoHtml = '';
-       if (hasChoko) {
-         chokoHtml = `<div class="choko-info">⚠️ ${escHtml(log.chokoReason)} ／ 廃棄: ${escHtml(log.wasteQty || 0)}個 ／ 箱チェック: ${log.boxCheck ? '完了' : '未'}${log.chokoTime ? ' ／ ' + escHtml(log.chokoTime) : ''}</div>`;
-       }
-
-       html += `
-       <div class="${cardClass}">
-         <div class="card-top">
-           <div class="card-coil-title">Coil No: ${escHtml(log.coilNo)}</div>
-           <div class="card-meta-info">
-             <span>Product: <b>${escHtml(log.productName)}</b></span>
-             <span>Machine: <b>${escHtml(log.machine)}</b></span>
-           </div>
-         </div>
-         <div class="timeline-container">${timelineHtml}</div>
-         ${finalQty}
-         ${chokoHtml}
-         <button type="button" class="control-btn" style="width: 100%; margin-top:14px; background:#f59e0b; color: white;" onclick="openChokoteiModal('${escJs(log.coilNo)}', '${escJs(log.productName)}')">⚠️ チョコ停を記録</button>
-       </div>`;
-     } catch (cardErr) {}
-   });
-
-   historyListDiv.innerHTML = html;
-   refreshCoilSupportList();
- }
-
- async function loadRecentHistory(opts) {
-   opts = opts || {};
-   const historyListDiv = document.getElementById('historyList');
-   const historyLoadingEl = document.getElementById('uiHistoryLoading');
-   if (historyLoadingEl && !fullHistoryLogs.length) historyLoadingEl.textContent = LANG_DATA[currentLang].historyLoading;
-
-   try {
-     let data = opts.cached;
-     if (!data) {
-       data = await callGAS('getInit', { includeWorkers: !!opts.includeWorkers }, 2);
-       if (data.historyError) throw new Error(data.historyError);
-       if (Array.isArray(data.workers)) { rawWorkers = data.workers; renderWorkerDropdown(); }
-       try {
-         localStorage.setItem(CACHE_KEY, JSON.stringify({
-           workers: rawWorkers, history: data.history || [], coils: data.coils || []
-         }));
-       } catch (e) {}
-     }
-     fullHistoryLogs = Array.isArray(data.history) ? data.history : [];
-     activeCoilsServer = Array.isArray(data.coils) ? data.coils : [];
-     const hasWarning = fullHistoryLogs.some(log => log.isWarning);
-     if (hasWarning && !warningDismissed && !opts.cached) document.getElementById('globalWarningOverlay').style.display = 'flex';
-
-     renderHistoryUI(false);
-   } catch (err) {
-     console.error("loadRecentHistory error:", err);
-     // 通信エラー発生時：ローカルストレージのキャッシュがあれば表示
-     try {
-       const cachedRaw = localStorage.getItem(CACHE_KEY);
-       if (cachedRaw) {
-         const c = JSON.parse(cachedRaw);
-         if (c && Array.isArray(c.history) && c.history.length > 0) {
-           fullHistoryLogs = c.history;
-           if (Array.isArray(c.coils)) activeCoilsServer = c.coils;
-           renderHistoryUI(true);
-           return;
-         }
-       }
-     } catch (e) {}
-
-     if (fullHistoryLogs.length) {
-       renderHistoryUI(true);
-       return;
-     }
-
-     historyListDiv.innerHTML = `<div style="text-align:center;color:#f87171;padding:20px;">
-       ${LANG_DATA[currentLang].historyCommError}<br>
-       <small style="color:#94a3b8;display:block;margin-top:6px;">${escHtml(err && err.message ? err.message : err)}</small>
-       <button type="button" class="control-btn" style="margin-top:12px;" onclick="loadRecentHistory({ includeWorkers: true })">🔄 再読み込み</button>
-     </div>`;
-   }
- }
-
- function moveToNextField(nextFieldId) {
-   const nextField = document.getElementById(nextFieldId);
-   if (nextField) setTimeout(() => { nextField.focus(); }, 100);
- }
-
- function showOverlay(text) {
-   document.getElementById('overlayText').textContent = text;
-   document.getElementById('loadingOverlay').classList.add('show');
- }
-
- function hideOverlay() {
-   document.getElementById('loadingOverlay').classList.remove('show');
- }
-
- async function onCoilDetermined() {
-   const coilNo = document.getElementById('coilNo').value.trim();
-   if (!coilNo) return;
-   const dynamicArea = document.getElementById('dynamic-area');
-   const msgDiv = document.getElementById('message');
-   showOverlay(LANG_DATA[currentLang].checkingStock);
-   dynamicArea.classList.add('hidden');
-   msgDiv.style.display = 'none';
-   resetJudge();
-   document.getElementById('quantity-field').classList.add('hidden');
-   document.getElementById('quantity').required = false;
-   try {
-     let res;
-     const pc = productCache[coilNo];
-     if (pc && Date.now() - pc.t < 300000) {
-       res = pc.res;
-     } else {
-       res = await callGAS('getProducts', { coilNo: coilNo });
-       if (res && res.success) productCache[coilNo] = { t: Date.now(), res: res };
-     }
-     hideOverlay();
-     if (res.success) {
-       currentProducts = res.products || [];
-       const pSelect = document.getElementById('productName');
-       pSelect.innerHTML = '';
-       if (currentProducts.length > 1) {
-         const defaultOpt = document.createElement('option');
-         defaultOpt.value = '';
-         defaultOpt.textContent = LANG_DATA[currentLang].selectProduct;
-         pSelect.appendChild(defaultOpt);
-       }
-       currentProducts.forEach(prod => {
-         const opt = document.createElement('option');
-         opt.value = prod.name;
-         opt.textContent = prod.name;
-         pSelect.appendChild(opt);
-       });
-       dynamicArea.classList.remove('hidden');
-       if (currentProducts.length === 1) onProductChanged();
-       else pSelect.focus();
-     } else {
-       msgDiv.className = 'error';
-       msgDiv.textContent = res.msg;
-       msgDiv.style.display = 'block';
-     }
-   } catch (err) {
-     hideOverlay();
-     msgDiv.className = 'error';
-     msgDiv.textContent = LANG_DATA[currentLang].commError;
-     msgDiv.style.display = 'block';
-   }
- }
-
- function onProductChanged() {
-   const selectedName = document.getElementById('productName').value;
-   const targetDisplay = document.getElementById('masterTargetDisplay');
-   const coilNo = document.getElementById('coilNo').value.trim();
-   const msgDiv = document.getElementById('message');
-   const submitBtn = document.getElementById('submitBtn');
-   const defectDiv = document.getElementById('defectWarning');
-   msgDiv.style.display = 'none';
-   submitBtn.disabled = false;
-   defectDiv.style.display = 'none';
-   defectDiv.innerHTML = '';
-   if (!selectedName) {
-     targetValue = null;
-     targetDisplay.textContent = '';
-     resetJudge();
-     return;
-   }
-   const matched = currentProducts.find(p => p.name === selectedName);
-   if (matched) {
-     targetValue = parseFloat(matched.measured);
-     const minOk = (targetValue - 0.8).toFixed(1);
-     const maxOk = (targetValue + 0.8).toFixed(1);
-     targetDisplay.textContent = `（${LANG_DATA[currentLang].rangeText}: ${targetValue.toFixed(1)} / ${LANG_DATA[currentLang].okRange}: ${minOk}～${maxOk}）`;
-     if (matched.defect) {
-       const defectText = (typeof matched.defect === 'object') ?
-         (matched.defect[currentLang] || matched.defect['ja'] || '') : String(matched.defect);
-       if (defectText.trim() !== "") {
-         defectDiv.innerHTML = `<b>${LANG_DATA[currentLang].defectTitle}</b>${escHtml(defectText)}`;
-         defectDiv.style.display = 'block';
-       }
-     }
-   }
-   const todayStr = new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/-/g, '/');
-   let foundLog = fullHistoryLogs.find(l => l.coilNo === coilNo && l.productName === selectedName && getLogDateStr(l) === todayStr);
-   if (foundLog) {
-     if (foundLog.end) {
-       let lockMsg = LANG_DATA[currentLang].lockError.replace('{prod}', selectedName);
-       msgDiv.className = 'error';
-       msgDiv.innerHTML = lockMsg;
-       msgDiv.style.display = 'block';
-       submitBtn.disabled = true;
-       return;
-     } else if (foundLog.middle) nextStage = '終';
-     else if (foundLog.start) nextStage = '中';
-     else nextStage = '始';
-   } else {
-     nextStage = '始';
-   }
-   const qtyField = document.getElementById('quantity-field');
-   const qtyInput = document.getElementById('quantity');
-   if (nextStage === '終') {
-     qtyField.classList.remove('hidden');
-     qtyInput.required = true;
-   } else {
-     qtyField.classList.add('hidden');
-     qtyInput.required = false;
-   }
-   document.getElementById('measured').focus();
-   checkMeasuredValue();
- }
-
- function checkMeasuredValue() {
-   const inputValue = document.getElementById('measured').value.trim();
-   const judgeBox = document.getElementById('judgeResult');
-   if (inputValue === '' || targetValue === null) {
-     resetJudge();
-     return;
-   }
-   const currentInput = parseFloat(inputValue);
-   const lowerLimit = targetValue - 0.8;
-   const upperLimit = targetValue + 0.8;
-   if (currentInput >= lowerLimit && currentInput <= upperLimit) {
-     judgeBox.textContent = LANG_DATA[currentLang].ok;
-     judgeBox.className = 'judge-box judge-ok';
-     judgeBox.style.display = 'block';
-   } else {
-     judgeBox.textContent = LANG_DATA[currentLang].ng;
-     judgeBox.className = 'judge-box judge-ng';
-     judgeBox.style.display = 'block';
-   }
- }
-
- function resetJudge() {
-   const judgeBox = document.getElementById('judgeResult');
-   if (judgeBox) {
-     judgeBox.style.display = 'none';
-     judgeBox.textContent = '';
-   }
- }
-
- document.getElementById('pressForm').addEventListener('submit', async function(e) {
-   e.preventDefault();
-   const judgeBox = document.getElementById('judgeResult');
-   if (judgeBox && judgeBox.classList.contains('judge-ng')) {
-     alert(currentLang === 'id' ? "⚠️ Penilaian NG, tidak dapat mengirim." : (currentLang === 'pt' ? "⚠️ Resultado NG, não é possível enviar." : "⚠️ 判定がNGのため、送信できません。"));
-     return;
-   }
-   const submitBtn = document.getElementById('submitBtn');
-   const msgDiv = document.getElementById('message');
-   submitBtn.disabled = true;
-   msgDiv.style.display = 'none';
-   showOverlay(LANG_DATA[currentLang].saving);
-   const logData = {
-     coilNo: document.getElementById('coilNo').value.trim(),
-     worker: document.getElementById('worker').value,
-     machine: document.getElementById('machine').value,
-     productName: document.getElementById('productName').value,
-     measured: document.getElementById('measured').value,
-     enforcedStage: nextStage,
-     quantity: document.getElementById('quantity').value
-   };
-   try {
-     const res = await callGAS('saveLog', { logData: logData });
-     hideOverlay();
-     submitBtn.disabled = false;
-     msgDiv.className = 'success';
-     msgDiv.textContent = `【${res.type}】 ${LANG_DATA[currentLang].successSaved}`;
-     msgDiv.style.display = 'block';
-     document.getElementById('coilNo').value = '';
-     document.getElementById('measured').value = '';
-     document.getElementById('quantity').value = '';
-     document.getElementById('quantity-field').classList.add('hidden');
-     document.getElementById('quantity').required = false;
-     document.getElementById('dynamic-area').classList.add('hidden');
-     currentProducts = [];
-     targetValue = null;
-     nextStage = '始';
-     document.getElementById('masterTargetDisplay').textContent = '';
-     resetJudge();
-     document.getElementById('coilNo').focus();
-
-     // -----------------------------------------------------
-     // 【高速化のキモ】 通信完了を待たずにUIだけ先に書き換える
-     // -----------------------------------------------------
-     appendOptimisticLog(logData, res);
-     loadRecentHistory({ cached: { history: fullHistoryLogs, workers: rawWorkers, coils: activeCoilsServer } });
-     
-     // 念のため裏側で静かに最新化（他の人が更新した分を拾うため）
-     fetchHistoryInBackground();
-
-   } catch (err) {
-     hideOverlay();
-     submitBtn.disabled = false;
-     msgDiv.className = 'error';
-     msgDiv.textContent = LANG_DATA[currentLang].saveError + err.message;
-     msgDiv.style.display = 'block';
-   }
- });
-
- // --- インライン直接編集 ---
- function toggleInlineEdit(idx, stage, isEdit) {
-   const viewEl = document.getElementById(`view-${idx}-${stage}`);
-   const formEl = document.getElementById(`form-${idx}-${stage}`);
-   const timeEl = document.getElementById(`time-${idx}-${stage}`);
-   if (isEdit) {
-     viewEl.style.display = 'none';
-     if (timeEl) timeEl.style.display = 'none';
-     formEl.style.display = 'flex';
-   } else {
-     viewEl.style.display = 'flex';
-     if (timeEl) timeEl.style.display = 'block';
-     formEl.style.display = 'none';
-   }
- }
-
- async function submitInlineEdit(idx, stage, coilNo, productName) {
-   const machine = document.getElementById(`edit-machine-${idx}-${stage}`).value;
-   const worker = document.getElementById(`edit-worker-${idx}-${stage}`).value;
-   const measured = document.getElementById(`edit-measured-${idx}-${stage}`).value;
-   let quantity = '';
-   if (stage === '終') {
-     quantity = document.getElementById(`edit-qty-${idx}-${stage}`).value;
-     if (!quantity) { alert("加工数量を入力してください。"); return; }
-   }
-   if (!worker || !measured) { alert("作業者と実寸計測値を入力してください。"); return; }
-
-   const msgDiv = document.getElementById('message');
-   showOverlay(LANG_DATA[currentLang].saving || "書き込み中...");
-   const logData = { coilNo: coilNo, worker: worker, machine: machine, productName: productName, measured: measured, enforcedStage: stage, quantity: quantity };
-   try {
-     const res = await callGAS('saveLog', { logData: logData });
-     hideOverlay();
-     msgDiv.className = 'success';
-     msgDiv.textContent = `【${res.type}】修正内容を上書き保存しました！`;
-     msgDiv.style.display = 'block';
-
-     // 疑似即時反映
-     let log = fullHistoryLogs[idx];
-     if (log) {
-       log.machine = machine;
-       let target = stage === '始' ? log.start : (stage === '中' ? log.middle : log.end);
-       if (target) { target.worker = worker; target.measured = measured; if (stage === '終') target.qty = quantity; }
-     }
-     if (res && res.history) fullHistoryLogs = res.history;
-     
-     loadRecentHistory({ cached: { history: fullHistoryLogs, workers: rawWorkers, coils: activeCoilsServer } });
-     fetchHistoryInBackground();
-   } catch (err) {
-     hideOverlay();
-     msgDiv.className = 'error';
-     msgDiv.textContent = (LANG_DATA[currentLang].saveError || "保存エラー: ") + err.message;
-     msgDiv.style.display = 'block';
-   }
- }
-
- // --- チョコ停モーダルおよび送信処理 ---
- function openChokoteiModal(coilNo, productName) {
-   currentChokoCoilNo = coilNo;
-   currentChokoProductName = productName;
-   document.getElementById('chokoReason').value = 'ミスフィード';
-   document.getElementById('otherReason').value = '';
-   document.getElementById('otherReason').classList.add('hidden');
-   document.getElementById('wasteQty').value = '';
-   document.getElementById('boxCheck').checked = false;
-   document.getElementById('chokoteiModal').classList.add('show');
- }
-
- function closeChokoteiModal() {
-   document.getElementById('chokoteiModal').classList.remove('show');
- }
-
- function checkOtherReason() {
-   if (document.getElementById('chokoReason').value === 'その他') document.getElementById('otherReason').classList.remove('hidden');
-   else document.getElementById('otherReason').classList.add('hidden');
- }
-
- async function submitChokotei() {
-   const reasonSelect = document.getElementById('chokoReason').value;
-   const otherReason = document.getElementById('otherReason').value;
-   const wasteQty = document.getElementById('wasteQty').value;
-   const boxCheck = document.getElementById('boxCheck').checked;
-   const finalReason = (reasonSelect === 'その他') ? otherReason : reasonSelect;
-
-   if (reasonSelect === 'その他' && !finalReason.trim()) { alert("その他の理由を入力してください。"); return; }
-
-   const logData = { coilNo: currentChokoCoilNo, productName: currentChokoProductName, reason: finalReason, wasteQty: wasteQty ? parseInt(wasteQty, 10) : 0, boxCheck: boxCheck };
-
-   closeChokoteiModal();
-   showOverlay("チョコ停記録を送信中...");
-
-   try {
-     const res = await callGAS('saveChokotei', { logData: logData });
-     hideOverlay();
-     if (res && res.status === 'error') throw new Error(res.message || '保存に失敗しました');
-     if (res && res.status === 'mail_error') alert(res.message);
-     else alert("チョコ停を記録しました");
-
-     // 疑似即時反映
-     const todayStr = new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/-/g, '/');
-     let log = fullHistoryLogs.find(l => l.coilNo === currentChokoCoilNo && l.productName === currentChokoProductName && getLogDateStr(l) === todayStr);
-     if (log) { log.chokoReason = finalReason; log.wasteQty = logData.wasteQty; log.boxCheck = boxCheck; }
-     if (res && res.history) fullHistoryLogs = res.history;
-
-     loadRecentHistory({ cached: { history: fullHistoryLogs, workers: rawWorkers, coils: activeCoilsServer } });
-     fetchHistoryInBackground();
-   } catch (e) {
-     hideOverlay();
-     alert("エラーが発生しました: " + (e.message || "通信エラー"));
-   }
- }
+const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyKuZhZb_aOg7Iyb2YTYHOwOMKognF57OpGuzmPJxNfo2dpa-F81j-iI5yuRVDqaidvRg/exec";
+const CK = 'ppInitV2';
+const MACHINES = ["順送【80ｔ】", "順送【110ｔ】", "順送【200ｔ】"];
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad = n => String(n).padStart(2, '0');
+
+let logs = [], workers = [], coils = [], products = [], target = null, stage = '始';
+let warnDismissed = false, chokoLog = null;
+const pcache = {};
+
+// ---------- 通信 ----------
+async function api(action, payload = {}, retries = 1, timeout = 15000) {
+  for (let a = 0; a <= retries; a++) {
+    const ac = new AbortController(), t = setTimeout(() => ac.abort(), timeout);
+    try {
+      const r = await fetch(GAS_API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ action, ...payload }), signal: ac.signal });
+      const text = await r.text();
+      let d;
+      try { d = JSON.parse(text); } catch (e) { throw new Error('サーバー応答が不正です'); }
+      if (d && d.error) throw new Error(d.error);
+      return d;
+    } catch (e) {
+      if (a >= retries) throw e;
+      await new Promise(r => setTimeout(r, 500));
+    } finally { clearTimeout(t); }
+  }
+}
+
+const nowStr = () => { const d = new Date(); return `${d.getFullYear()}/${pad(d.getMonth()+1)}/${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`; };
+const todayStr = () => nowStr().split(' ')[0];
+const logDate = l => ((l.start || l.middle || l.end || {}).time || '').split(' ')[0];
+const findToday = (c, p) => logs.find(l => l.coilNo === c && l.productName === p && logDate(l) === todayStr());
+
+function persist() { try { localStorage.setItem(CK, JSON.stringify({ workers, history: logs, coils })); } catch (e) {} }
+function applyServer(res) {
+  if (res && Array.isArray(res.history)) { logs = res.history; if (res.coils) coils = res.coils; persist(); render(); }
+}
+
+// ---------- 初期化 ----------
+document.addEventListener('DOMContentLoaded', () => {
+  try {
+    const c = JSON.parse(localStorage.getItem(CK) || 'null');
+    if (c) { workers = c.workers || []; logs = c.history || []; coils = c.coils || []; fillWorkers(); render(); }
+  } catch (e) {}
+  load(false);
+  $('hist').addEventListener('click', onHistClick);
+  $('coilNo').addEventListener('keydown', e => { if (e.key === 'Enter') onCoil(); });
+  setMachine(pref().machine || ''); $('worker').value = pref().worker || '';
+  $('message').addEventListener('click', e => e.currentTarget.style.display = 'none');
+  $('worker').addEventListener('change', savePref);
+  $('seg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; setMachine(b.dataset.m); savePref(); $('coilNo').focus(); });
+  $('productName').addEventListener('change', onProduct);
+  $('measured').addEventListener('input', judge);
+  $('chokoReason').addEventListener('change', e => $('otherReason').classList.toggle('hidden', e.target.value !== 'その他'));
+});
+
+async function load(force) {
+  try {
+    const d = await api('getInit', { includeWorkers: force || !workers.length });
+    if (Array.isArray(d.workers)) { workers = d.workers; fillWorkers(); }
+    logs = d.history || []; coils = d.coils || [];
+    persist();
+    if (logs.some(l => l.isWarning) && !warnDismissed) $('warn').style.display = 'flex';
+    render();
+  } catch (e) {
+    if (!logs.length) $('hist').innerHTML = `<div style="text-align:center;color:#f87171;padding:20px">履歴の読み込みでエラーが発生しました<br><small style="color:#94a3b8">${esc(e.message)}</small><br><button class="cb" style="margin-top:12px" onclick="load(true)">🔄 再読み込み</button></div>`;
+    else showMsg('通信エラーのため保存済みデータを表示中', true);
+  }
+}
+function closeWarn() { warnDismissed = true; $('warn').style.display = 'none'; }
+function fillWorkers() {
+  const s = $('worker'), v = s.value;
+  s.innerHTML = '<option value="">選択してください</option>' + workers.map(w => `<option value="${esc(w)}">${esc(w)}</option>`).join('');
+  s.value = v || pref().worker || '';
+}
+let msgT;
+function showMsg(t, err) { const m = $('message'); m.className = err ? 'error' : 'success'; m.textContent = t; m.style.display = 'block'; clearTimeout(msgT); if (!err) msgT = setTimeout(() => m.style.display = 'none', 4000); }
+function setMachine(m) { $('machine').value = m; document.querySelectorAll('#seg button').forEach(b => b.classList.toggle('on', b.dataset.m === m)); }
+function pref() { try { return JSON.parse(localStorage.getItem('ppPref') || '{}'); } catch (e) { return {}; } }
+function savePref() { try { localStorage.setItem('ppPref', JSON.stringify({ worker: $('worker').value, machine: $('machine').value })); } catch (e) {} }
+
+// ---------- コイル確定 ----------
+async function onCoil() {
+  const coilNo = $('coilNo').value.trim();
+  if (!coilNo) return;
+  $('message').style.display = 'none'; $('dyn').classList.add('hidden'); resetJudge();
+  $('qtyField').classList.add('hidden'); $('quantity').required = false;
+  let res = pcache[coilNo];
+  if (!res || Date.now() - res.t > 600000) {
+    $('loading').classList.add('show');
+    try { const r = await api('getProducts', { coilNo }); if (r.success) pcache[coilNo] = { t: Date.now(), r }; res = { r }; }
+    catch (e) { $('loading').classList.remove('show'); return showMsg('通信エラーが発生しました。', true); }
+    $('loading').classList.remove('show');
+  }
+  const r = res.r;
+  if (!r.success) return showMsg(r.msg, true);
+  products = r.products || [];
+  const sel = $('productName');
+  sel.innerHTML = (products.length > 1 ? '<option value="">該当複数あり、品名を選択してください▼</option>' : '') +
+    products.map(p => `<option value="${esc(p.name)}">${esc(p.name)}</option>`).join('');
+  $('dyn').classList.remove('hidden');
+  if (products.length === 1) onProduct(); else sel.focus();
+}
+
+function onProduct() {
+  const name = $('productName').value, coilNo = $('coilNo').value.trim();
+  const sb = $('submitBtn'), df = $('defect');
+  $('message').style.display = 'none'; sb.disabled = false; df.style.display = 'none';
+  if (!name) { target = null; $('tgt').textContent = ''; resetJudge(); return; }
+  const p = products.find(x => x.name === name);
+  if (p) {
+    target = parseFloat(p.measured);
+    $('tgt').textContent = `（基準: ${target.toFixed(1)} / OK範囲: ${(target-0.8).toFixed(1)}～${(target+0.8).toFixed(1)}）`;
+    if (p.defect) { df.innerHTML = `<b>⚠️ 過去の不良事例・注意点</b>${esc(p.defect)}`; df.style.display = 'block'; }
+  }
+  const f = findToday(coilNo, name);
+  if (f && f.end) {
+    showMsg(`🚨 入力エラー: このコイルにおける「${name}」の加工はすでに【終】まで完了しています。二周目の再加工登録は認められません。`, true);
+    sb.disabled = true; return;
+  }
+  stage = !f ? '始' : f.middle ? '終' : f.start ? '中' : '始';
+  $('stageBadge').textContent = '今回の記録：「' + stage + '」' + (stage === '終' ? '（最終）' : '');
+  $('qtyField').classList.toggle('hidden', stage !== '終');
+  $('quantity').required = stage === '終';
+  $('measured').focus(); judge();
+}
+
+function judge() {
+  const v = $('measured').value.trim(), j = $('judge');
+  if (v === '' || target === null) return resetJudge();
+  const ok = Math.abs(parseFloat(v) - target) <= 0.8 + 1e-9;
+  j.textContent = ok ? '判定：OK' : '判定：NG (許容範囲外)';
+  j.className = 'judge ' + (ok ? 'ok' : 'ng'); j.style.display = 'block';
+}
+function resetJudge() { const j = $('judge'); j.style.display = 'none'; j.textContent = ''; }
+
+// ---------- 保存（先に画面更新 → 裏で送信） ----------
+function applyLocal(d) {
+  const t = nowStr();
+  const data = { time: t, worker: d.worker, measured: d.measured, qty: d.quantity || '' };
+  let log = findToday(d.coilNo, d.productName);
+  if (log) {
+    log.machine = d.machine;
+    const cur = log[{ '始': 'start', '中': 'middle', '終': 'end' }[d.enforcedStage]];
+    if (d.edit && cur) { data.time = cur.time; }
+    log[{ '始': 'start', '中': 'middle', '終': 'end' }[d.enforcedStage]] = data;
+    logs = [log, ...logs.filter(l => l !== log)];
+  } else {
+    log = { row: null, coilNo: d.coilNo, productName: d.productName, machine: d.machine, start: null, middle: null, end: null };
+    log[{ '始': 'start', '中': 'middle', '終': 'end' }[d.enforcedStage]] = data;
+    logs.unshift(log);
+  }
+}
+
+function send(d, okText) {
+  applyLocal(d); persist(); render();
+  showMsg('送信中…（画面は先に更新済みです）');
+  api('saveLog', { logData: d }, 1, 20000).then(res => {
+    showMsg(`【${res.type}】${okText}`);
+    applyServer(res);
+  }).catch(e => { showMsg('保存エラー: ' + e.message + ' ／ 履歴を再取得します', true); load(false); });
+}
+
+$('pressForm').addEventListener('submit', e => {
+  e.preventDefault();
+  if ($('judge').classList.contains('ng')) return alert('⚠️ 判定がNGのため、送信できません。');
+  if (!$('worker').value || !$('machine').value) return alert('作業者と機械を選択してください。');
+  const coilNo = $('coilNo').value.trim(), productName = $('productName').value;
+  const f = findToday(coilNo, productName);
+  const d = { coilNo, productName, worker: $('worker').value, machine: $('machine').value,
+    measured: $('measured').value, enforcedStage: stage, quantity: $('quantity').value, row: f ? f.row : null };
+  send(d, '実績ログに登録しました！');
+  ['coilNo', 'measured', 'quantity'].forEach(i => $(i).value = '');
+  $('qtyField').classList.add('hidden'); $('quantity').required = false;
+  $('dyn').classList.add('hidden'); $('tgt').textContent = '';
+  products = []; target = null; stage = '始'; resetJudge(); $('coilNo').focus();
+});
+
+// ---------- 履歴描画（イベント委譲） ----------
+function stageRow(i, st, icon, d, log, qty) {
+  const wo = workers.map(w => `<option ${w === d.worker ? 'selected' : ''}>${esc(w)}</option>`).join('');
+  const mo = MACHINES.map(m => `<option ${m === log.machine ? 'selected' : ''}>${esc(m)}</option>`).join('');
+  const n = parseFloat(d.measured), ml = isNaN(n) ? '-' : n.toFixed(1) + 'mm';
+  return `<div class="tr"><span class="sl l${st}">${icon} ${st}</span>
+    <div class="sv" id="v-${i}-${st}"><span>👤 ${esc(d.worker)} &nbsp;📐 ${ml}</span>
+      <button type="button" class="edit-link" data-act="edit" data-i="${i}" data-s="${st}">✏️ 修正</button></div>
+    <div class="sf" id="f-${i}-${st}">
+      <select id="em-${i}-${st}">${mo}</select><select id="ew-${i}-${st}">${wo}</select>
+      <input type="number" id="ed-${i}-${st}" step="0.1" value="${esc(d.measured || '')}">mm
+      ${qty ? `<input type="number" id="eq-${i}-${st}" value="${esc(d.qty || '')}" placeholder="数量">個` : ''}
+      <button type="button" class="cb sm" style="background:#10b981" data-act="save" data-i="${i}" data-s="${st}">保存</button>
+      <button type="button" class="cb sm" style="background:#64748b" data-act="cancel" data-i="${i}" data-s="${st}">×</button></div>
+    <span class="st" id="t-${i}-${st}">${esc((d.time || '').slice(5, 16))}</span></div>`;
+}
+
+function render() {
+  const el = $('hist');
+  if (!logs.length) el.innerHTML = '<div style="text-align:center;color:#666;padding:20px">履歴データがまだありません。</div>';
+  else el.innerHTML = logs.slice(0, 10).map((l, i) => {
+    const hasC = !!l.chokoReason;
+    return `<div class="hcard${l.end ? '' : ' inc'}${hasC ? ' choko' : ''}">
+      <div class="ctop"><div class="ctitle">Coil No: ${esc(l.coilNo)}</div>
+        <div class="cmeta"><span>Product: <b>${esc(l.productName)}</b></span><span>Machine: <b>${esc(l.machine)}</b></span></div></div>
+      <div class="tl">${l.start ? stageRow(i, '始', '▶', l.start, l, false) : ''}${l.middle ? stageRow(i, '中', '🔄', l.middle, l, false) : ''}${l.end ? stageRow(i, '終', '■', l.end, l, true) : ''}</div>
+      ${l.end && l.end.qty ? `<div class="qty">📦 Qty: ${esc(l.end.qty)}</div>` : ''}
+      ${hasC ? `<div class="choko-info">⚠️ ${esc(l.chokoReason)} ／ 廃棄: ${esc(l.wasteQty || 0)}個 ／ 箱チェック: ${l.boxCheck ? '完了' : '未'}${l.chokoTime ? ' ／ ' + esc(l.chokoTime) : ''}</div>` : ''}
+      <button type="button" class="cb" style="width:100%;margin-top:14px;background:#f59e0b" data-act="choko" data-i="${i}">⚠️ チョコ停を記録</button></div>`;
+  }).join('');
+  $('coilList').innerHTML = [...new Set([...coils, ...logs.filter(l => !l.end).map(l => l.coilNo)])].sort().map(c => `<option value="${esc(c)}">`).join('');
+}
+
+function onHistClick(e) {
+  const b = e.target.closest('[data-act]');
+  if (!b) return;
+  const i = +b.dataset.i, s = b.dataset.s, act = b.dataset.act;
+  if (act === 'edit' || act === 'cancel') {
+    const ed = act === 'edit';
+    $(`v-${i}-${s}`).style.display = ed ? 'none' : 'flex';
+    $(`t-${i}-${s}`).style.display = ed ? 'none' : 'block';
+    $(`f-${i}-${s}`).style.display = ed ? 'flex' : 'none';
+  } else if (act === 'save') {
+    const log = logs[i];
+    const d = { coilNo: log.coilNo, productName: log.productName, enforcedStage: s, edit: true, row: log.row,
+      machine: $(`em-${i}-${s}`).value, worker: $(`ew-${i}-${s}`).value, measured: $(`ed-${i}-${s}`).value,
+      quantity: s === '終' ? $(`eq-${i}-${s}`).value : '' };
+    if (!d.worker || !d.measured) return alert('作業者と実寸計測値を入力してください。');
+    if (s === '終' && !d.quantity) return alert('加工数量を入力してください。');
+    send(d, '修正内容を上書き保存しました！');
+  } else if (act === 'choko') {
+    chokoLog = logs[i];
+    $('chokoReason').value = 'ミスフィード'; $('otherReason').value = ''; $('otherReason').classList.add('hidden');
+    $('wasteQty').value = ''; $('boxCheck').checked = false;
+    $('chokoModal').classList.add('show');
+  }
+}
+
+// ---------- チョコ停 ----------
+function closeChoko() { $('chokoModal').classList.remove('show'); }
+function submitChoko() {
+  const sel = $('chokoReason').value;
+  const reason = sel === 'その他' ? $('otherReason').value.trim() : sel;
+  if (!reason) return alert('その他の理由を入力してください。');
+  const log = chokoLog;
+  const d = { coilNo: log.coilNo, productName: log.productName, row: log.row, reason,
+    wasteQty: parseInt($('wasteQty').value, 10) || 0, boxCheck: $('boxCheck').checked };
+  closeChoko();
+  Object.assign(log, { chokoReason: reason, wasteQty: d.wasteQty, boxCheck: d.boxCheck, chokoTime: nowStr() });
+  persist(); render();
+  showMsg('チョコ停を送信中…');
+  api('saveChokotei', { logData: d }, 1, 20000).then(res => {
+    if (res.status === 'error') { showMsg(res.message, true); return load(false); }
+    showMsg(res.status === 'mail_error' ? res.message : 'チョコ停を記録しました', res.status === 'mail_error');
+    applyServer(res);
+  }).catch(e => { showMsg('エラー: ' + e.message, true); load(false); });
+}
+
+// ---------- バーコード ----------
+let scanSession = 0, nativeStream = null, nativeTimer = null, torchOn = false, starting = false;
+let matchCount = 0, lastCode = '', quaggaOk = false, quaggaP = null;
+function loadQuagga() {
+  if (window.Quagga) return Promise.resolve();
+  if (!quaggaP) quaggaP = new Promise((res, rej) => {
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js';
+    s.onload = res; s.onerror = () => { quaggaP = null; rej(); };
+    document.head.appendChild(s);
+  });
+  return quaggaP;
+}
+function startScan() {
+  if (starting) return;
+  starting = true; setTimeout(() => starting = false, 800);
+  try { Quagga.stop(); Quagga.offDetected(); } catch (e) {}
+  stopNative();
+  document.body.classList.add('so'); $('scan').style.display = 'flex';
+  $('scanStatus').textContent = 'スキャン中... 赤い線をバーコードに合わせてください';
+  $('torchBtn').style.display = 'none'; torchOn = false;
+  scanSession++; matchCount = 0; lastCode = ''; quaggaOk = false;
+  if ('BarcodeDetector' in window) nativeScan(scanSession); else quaggaScan();
+}
+function found(raw) {
+  let c = String(raw || '').trim();
+  if (!c) return;
+  c = (c.replace(/^0+(?=.)/, '') || c).toUpperCase();
+  if (c === lastCode) matchCount++; else { lastCode = c; matchCount = 1; }
+  if (matchCount >= 2) {
+    if (navigator.vibrate) navigator.vibrate(60);
+    $('coilNo').value = c; stopScan(); setTimeout(onCoil, 100);
+  } else $('scanStatus').textContent = `スキャン中... (${matchCount}/2)`;
+}
+async function nativeScan(session) {
+  try {
+    let f = ['code_128', 'code_39', 'ean_13', 'ean_8', 'itf'];
+    if (BarcodeDetector.getSupportedFormats) { const sup = await BarcodeDetector.getSupportedFormats(); f = f.filter(x => sup.includes(x)); }
+    if (!f.length) throw 0;
+    const det = new BarcodeDetector({ formats: f });
+    nativeStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false });
+    if (session !== scanSession) return stopNative();
+    const v = document.createElement('video');
+    v.setAttribute('playsinline', ''); v.muted = true; v.srcObject = nativeStream;
+    $('preview').innerHTML = ''; $('preview').appendChild(v);
+    await v.play(); trackExtras();
+    const loop = async () => {
+      if (session !== scanSession) return;
+      try { if (v.readyState >= 2) { const r = await det.detect(v); if (r.length && session === scanSession) found(r[0].rawValue); } } catch (e) {}
+      if (session === scanSession) nativeTimer = setTimeout(loop, 50);
+    };
+    loop();
+  } catch (e) { stopNative(); if (session === scanSession) quaggaScan(); }
+}
+function stopNative() {
+  if (nativeTimer) { clearTimeout(nativeTimer); nativeTimer = null; }
+  if (nativeStream) { nativeStream.getTracks().forEach(t => t.stop()); nativeStream = null; }
+}
+async function quaggaScan() {
+  try { await loadQuagga(); } catch (e) { $('scanStatus').textContent = 'スキャナの読み込みに失敗しました。通信を確認してください。'; return; }
+  if (!document.body.classList.contains('so')) return;
+  $('preview').innerHTML = '';
+  Quagga.init({
+    inputStream: { name: 'Live', type: 'LiveStream', target: $('preview'),
+      constraints: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: 'environment' }, area: { top: '20%', right: '5%', left: '5%', bottom: '20%' } },
+    locator: { patchSize: 'medium', halfSample: true }, numOfWorkers: Math.min(navigator.hardwareConcurrency || 2, 4),
+    frequency: 30, decoder: { readers: ['code_128_reader', 'ean_reader', 'code_39_reader'], multiple: false }, locate: true
+  }, err => {
+    if (err) { $('scanStatus').textContent = 'カメラの起動に失敗しました。権限を確認してください。'; return; }
+    Quagga.start(); quaggaOk = true; trackExtras();
+  });
+  Quagga.offDetected();
+  Quagga.onDetected(d => {
+    if (!quaggaOk || !d.codeResult || !d.codeResult.code) return;
+    const errs = (d.codeResult.decodedCodes || []).filter(c => c.error !== undefined).map(c => c.error);
+    if (errs.length && errs.reduce((a, b) => a + b, 0) / errs.length > 0.12) return;
+    found(d.codeResult.code);
+  });
+}
+function track() { try { return nativeStream ? nativeStream.getVideoTracks()[0] : Quagga.CameraAccess.getActiveTrack(); } catch (e) { return null; } }
+async function trackExtras() {
+  const t = track();
+  if (!t || !t.getCapabilities) return;
+  const c = t.getCapabilities();
+  try { if (c.focusMode && c.focusMode.includes('continuous')) await t.applyConstraints({ advanced: [{ focusMode: 'continuous' }] }); } catch (e) {}
+  if (c.torch) $('torchBtn').style.display = 'block';
+}
+async function toggleTorch() {
+  const t = track();
+  if (!t) return;
+  try { torchOn = !torchOn; await t.applyConstraints({ advanced: [{ torch: torchOn }] }); $('torchBtn').textContent = torchOn ? '💡 ライトOFF' : '💡 ライトON'; }
+  catch (e) { torchOn = !torchOn; }
+}
+function stopScan() {
+  scanSession++; stopNative();
+  try { Quagga.stop(); Quagga.offDetected(); } catch (e) {}
+  $('preview').innerHTML = ''; $('torchBtn').style.display = 'none'; $('torchBtn').textContent = '💡 ライトON';
+  $('scan').style.display = 'none'; document.body.classList.remove('so'); quaggaOk = false;
+}
 </script>
 </body>
 </html>
